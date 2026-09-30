@@ -1,27 +1,15 @@
 # Phase Roadmap
 
-## Phase 0 — Requirement and design review
+## Completed MVP foundation
 
-Approve PRD, MVP scope, business rules, flows, screen list, ERD, data dictionary, API direction, architecture direction and test plan. No schema/migration before this gate.
+Authentication, user isolation, wallet/category setup, persisted plans, transactions, insights and wallet transfers are implemented and covered by automated tests.
 
-## Phase 1 — Foundation
+## Delivered MVP
 
-Authentication, user isolation, wallet/category setup, persisted planning inputs and validation.
+Core activity, planning, insight and wallet transfer phases are implemented.
 
-## Phase 2 — Core activity
+## Remaining hardening
 
-Income/expense transactions, derived wallet balance, edit/delete recalculation and transaction listing.
+Production deployment approval, automated backups, centralized logging, monitoring, multi-instance rate limiting and dependency major-version upgrades remain.
 
-## Phase 3 — Planning and budget
 
-Monthly plans, planned income, carry-over, planned saving, expense budgets and budget status.
-
-## Phase 4 — Insight
-
-Dashboard, overspending detection, monthly analysis and previous-month comparison.
-
-## Phase 5 — Hardening
-
-Financial regression tests, authorization tests, accessibility, performance and release readiness.
-
-P1/P2 features must not enter a phase until MVP usage and product evidence justify them.

@@ -73,6 +73,13 @@
 - Month plan supports previous/next/current month navigation, an explicit create state for months without a plan, draft allocation editing with cancel/confirmation, and derived budget status.
 - Data dependency: monthly plan, active categories and derived actuals.
 
+## Wallet Transfer
+
+- Purpose: move money between two active wallets without creating income or expense.
+- Main information: source wallet, destination wallet, amount, date and note.
+- Main actions: create, edit and delete transfer.
+- Data dependency: wallets and transfer API.
+
 ## Monthly Analysis
 
 - Purpose: understand a selected month and its change from prior month.

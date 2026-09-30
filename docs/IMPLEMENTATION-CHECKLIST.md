@@ -2,28 +2,28 @@
 
 ## Phase 1 — Foundation
 
-- [ ] Project/workspace setup and environment validation
-- [ ] PostgreSQL, Prisma schema and migrations
-- [ ] Seed default categories
-- [ ] Register/login/logout/current user
-- [ ] Session security and user isolation
-- [ ] Wallet CRUD/archive and derived balance
-- [ ] Category CRUD/archive
+- [x] Project/workspace setup and environment validation
+- [x] PostgreSQL, Prisma schema and migrations
+- [x] Seed default categories
+- [x] Register/login/logout/current user
+- [x] Session security and user isolation
+- [x] Wallet CRUD/archive and derived balance
+- [x] Category CRUD/archive
 
 ## Phase 2 — Core activity
 
-- [ ] Transaction create/list/read/update/soft delete
-- [ ] Type, ownership, archive and amount validation
-- [ ] Edit/delete recalculation across month/category/wallet
-- [ ] Date range/month filters, pagination and empty/error states
+- [x] Transaction create/list/read/update/soft delete
+- [x] Type, ownership, archive and amount validation
+- [x] Edit/delete recalculation across month/category/wallet
+- [x] Date range/month filters, pagination and empty/error states
 
 ## Phase 3 — Planning and budget
 
-- [ ] Monthly plan uniqueness and validation
-- [ ] plannedSaving on MonthlyPlan
+- [x] Monthly plan uniqueness and validation
+- [x] plannedSaving on MonthlyPlan
 - [x] Expense-only allocations
 - [x] Atomic allocation replacement and available-money validation
-- [ ] Derived planned/actual/unallocated/budget status metrics
+- [x] Derived planned/actual/unallocated/budget status metrics
 
 ## Phase 4 — Insight
 
@@ -34,10 +34,10 @@
 
 ## Phase 5 — Hardening
 
-- [ ] Security/authorization tests
-- [ ] Financial regression tests
-- [ ] Accessibility audit
-- [ ] Desktop/mobile responsive QA
+- [x] Security/authorization tests
+- [x] Financial regression tests
+- [x] Accessibility audit
+- [x] Desktop/mobile responsive QA
 - [ ] Migration, backup, logging, monitoring and production checklist
 - [x] WalletTransfer migration and ownership API
 - [x] Wallet transfer integration/E2E/accessibility coverage

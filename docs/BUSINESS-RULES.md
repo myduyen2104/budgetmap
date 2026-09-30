@@ -73,7 +73,7 @@ Food planned 3.000.000đ, actual 3.600.000đ → overspending 600.000đ.
 
 Số tiền user dự kiến earmark cho savings, được nhập trực tiếp trên MonthlyPlan. Đây chưa phải actual saving transaction và không phải Expense trong MVP. Nếu planned saving là 3.000.000đ và actual expense là 5.000.000đ thì actual expense vẫn là 5.000.000đ.
 
-MVP chưa có savings goal, savings wallet hoặc transfer. Không được hiển thị planned saving như tiền đã chuyển thành công.
+MVP chưa có savings goal hoặc savings wallet; wallet transfer đã được hỗ trợ như một movement riêng. Không được hiển thị planned saving như tiền đã chuyển thành công.
 
 ### Unallocated money
 

@@ -35,6 +35,10 @@ Dashboard/Transactions → Add expense → choose wallet and expense category �
 
 Open transaction → edit amount/category/wallet/date/type or delete → confirm → recalculate every affected wallet, category and month. A date change from 31/08 to 01/09 updates both months.
 
+## Chuyển tiền giữa các ví
+
+Transactions → Add transfer → choose source and destination wallets → enter amount and date → confirm. Transfers update both wallet balances but are excluded from income, expense and budget aggregates.
+
 ## Xem dashboard
 
 Dashboard → choose month → view planned/actual income, actual expense, remaining cash flow, expense budget usage, budget table, overspending and recent transactions.

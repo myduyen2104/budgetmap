@@ -44,7 +44,6 @@
 ## P1 — Sau MVP
 
 - Forgot password.
-- Transfer giữa wallets.
 - Copy previous month plan.
 - Category hierarchy.
 - Fixed/flexible expense.
@@ -65,4 +64,4 @@
 
 ## Explicitly out of scope for MVP
 
-Transfer transaction/entity, recurring transaction automation, debt/loan, bank sync, OCR, AI, multi-currency, shared wallet, investment, crypto, native mobile, offline mode, PDF reporting và complex notification system.
+Recurring transaction automation, debt/loan, bank sync, OCR, AI, multi-currency, shared wallet, investment, crypto, native mobile, offline mode, PDF reporting và complex notification system.

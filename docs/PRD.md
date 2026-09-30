@@ -1,7 +1,7 @@
 # Product Requirements Document — BudgetMap MVP
 
-**Status:** Draft for Product Owner review  
-**Phase:** Phase 0 — Requirement & Design  
+**Status:** MVP release candidate — implementation aligned with source  
+**Phase:** MVP release candidate — implementation and hardening  
 **Primary user:** Cá nhân tự quản lý tài chính  
 **Currency:** VND
 

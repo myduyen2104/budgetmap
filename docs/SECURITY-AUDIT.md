@@ -2,7 +2,7 @@
 
 Release status: MVP release candidate — approved for staging/internal deployment. This is not production release approval; accepted dependency risks and mitigations below remain active.
 
-Phase 5 hardening uses Argon2id passwords, opaque hashed sessions, HttpOnly/SameSite cookies, production Secure cookies, expiry/revocation, DTO whitelist/forbidNonWhitelisted validation, ownership-scoped Prisma queries, strict CORS origin, Origin checks for production state-changing cookie requests and security response headers. Login failures are generic and rate-limited in memory. Secrets and database URLs are not logged or committed. For multiple API instances, use a shared rate-limit store.
+Current implementation uses Argon2id passwords, opaque hashed sessions, HttpOnly/SameSite cookies, production Secure cookies, expiry/revocation, DTO whitelist/forbidNonWhitelisted validation, ownership-scoped Prisma queries, strict CORS origin, Origin checks for production state-changing cookie requests and security response headers. Login failures are generic and rate-limited in memory. Secrets and database URLs are not logged or committed. For multiple API instances, use a shared rate-limit store.
 
 ## Dependency audit (2026-09-05)
 

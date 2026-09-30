@@ -4,7 +4,7 @@
 
 Next.js web application → NestJS API → Prisma → PostgreSQL.
 
-This remains a design decision only in Phase 0. No runtime is being created now.
+The runtime is implemented as a Next.js web app, a NestJS API and PostgreSQL accessed through Prisma.
 
 ## Responsibilities
 

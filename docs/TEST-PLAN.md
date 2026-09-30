@@ -1,6 +1,6 @@
 # MVP Test Plan Direction
 
-No test implementation is part of Phase 0. This document defines acceptance scenarios for later development.
+The acceptance scenarios below are implemented across unit, integration and Playwright tests. Run the commands in `README.md` to execute them.
 
 ## Financial calculations
 

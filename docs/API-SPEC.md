@@ -8,6 +8,7 @@ This is a short implementation direction. The normative endpoint contract is [AP
 - Wallets: list, create, update, archive.
 - Categories: list, create, update, archive.
 - Transactions: list, create, read, update, delete.
+- Wallet transfers: list, create, read, update, soft-delete between two active wallets.
 - Monthly plans: read/create/update `plannedIncome`, `carryOver` and `plannedSaving`; replace Expense Budget allocations.
 - Dashboard: selected month summary, budget status, overspending, recent transactions and chart data.
 - Reports: selected month and previous-month expense comparison.
@@ -20,4 +21,4 @@ Transaction listing should support month/date range, type, category, wallet, pag
 
 Money is serialized as decimal strings. Dashboard/report responses expose derived values and must distinguish null/N/A usage from zero usage. Validation, ownership and domain errors need stable error categories.
 
-Saving progress/actual saving, Transfer and all P1/P2 endpoints are excluded from the MVP contract. `plannedSaving` is only a MonthlyPlan input.
+Saving progress/actual saving and other P1/P2 endpoints are excluded from the MVP contract. Wallet transfer endpoints are implemented in this MVP. `plannedSaving` is only a MonthlyPlan input.

@@ -2,9 +2,9 @@
 
 BudgetMap là ứng dụng quản lý tài chính cá nhân giúp người dùng lập kế hoạch tiền theo tháng, phân bổ ngân sách, ghi nhận thu/chi thực tế và nhận biết category nào đang xài lố.
 
-## Phase 0 status
+## Trạng thái hiện tại
 
-Project hiện đang ở **Requirement & Design Review**. Documentation là source of truth. Chưa bắt đầu development runtime.
+Đây là MVP release candidate đã có frontend, API, PostgreSQL/Prisma, authentication, user isolation, wallets, categories, transactions, wallet transfers, monthly plans, dashboard, analysis và automated tests. Dự án phù hợp cho staging hoặc sử dụng nội bộ có kiểm soát.
 
 Đọc tài liệu theo thứ tự: [PRD](docs/PRD.md) → [MVP Scope](docs/MVP-SCOPE.md) → [Business Rules](docs/BUSINESS-RULES.md) → [User Flows](docs/USER-FLOWS.md) → [Screen List](docs/SCREEN-LIST.md) → [ERD](docs/ERD.md) → [Data Dictionary](docs/DATA-DICTIONARY.md) → [API Contract](docs/API-CONTRACT.md) → [Error Catalog](docs/ERROR-CATALOG.md) → [Database Migration Plan](docs/DATABASE-MIGRATION-PLAN.md) → [Frontend UX Spec](docs/FRONTEND-UX-SPEC.md) → [Auth & Security](docs/AUTH-SECURITY.md) → [Environment Setup](docs/ENVIRONMENT-SETUP.md) → [Architecture](docs/ARCHITECTURE.md) → [Test Plan](docs/TEST-PLAN.md) → [Implementation Checklist](docs/IMPLEMENTATION-CHECKLIST.md) → [Roadmap](docs/ROADMAP.md).
 
@@ -30,9 +30,16 @@ Run `./install-dev.sh` for local setup and to start the API/Web development proc
 
 BudgetMap phải trả lời được đồng thời: người dùng còn bao nhiêu tiền theo dòng tiền thực tế, và category nào đã xài lố dù tổng tiền vẫn còn.
 
-## Phase 0 non-goals
+## Chức năng hiện có
 
-Không tạo frontend, backend runtime, migration, database implementation, dependency setup hoặc production deployment trong phase này.
+- Register, login, logout, profile và session cookie bảo mật.
+- Nhiều wallet, số dư suy ra, category income/expense và archive.
+- Income/expense transaction: thêm, lọc, phân trang, sửa và soft-delete.
+- Wallet transfer giữa hai ví active cùng user.
+- Monthly plan với planned income, carry-over, planned saving và expense allocations.
+- Dashboard, budget status, overspending, chart và monthly analysis.
+
+Các chức năng chưa có gồm recurring transactions, copy plan, forgot password, CSV export, bank sync, OCR, AI, multi-currency, shared wallet, native mobile và offline mode. Xem `docs/MVP-SCOPE.md`.
 
 ## Staging deployment
 

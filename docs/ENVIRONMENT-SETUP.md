@@ -13,6 +13,6 @@ npm run typecheck
 npm run build
 ```
 
-Local development should run the web and API through documented workspace scripts once those apps exist. CI runs install, migration validation, tests, typecheck and build against an isolated PostgreSQL database. For release, set `CORS_ORIGIN` to the exact HTTPS frontend origin, keep `AUTH_SESSION_SECRET` outside source control, run `prisma migrate deploy`, and never seed production.
+Local development runs the web and API through `install-dev.sh` and the workspace scripts documented in `README.md`. CI runs install, migration validation, tests, typecheck and build against an isolated PostgreSQL database. For release, set `CORS_ORIGIN` to the exact HTTPS frontend origin, keep `AUTH_SESSION_SECRET` outside source control, run `prisma migrate deploy`, and never seed production.
 
 E2E uses `127.0.0.1:5434/budgetmap_test`, API port `3102`, web port `3101`, and `CORS_ORIGIN=http://127.0.0.1:3101`. Prepare with `DATABASE_URL=postgresql://budgetmap:budgetmap@127.0.0.1:5434/budgetmap_test?schema=public npm run db:test:migrate`, then run `npm run test:e2e` or `npm run test:a11y`. Copy `.env.test.example` only for local test configuration; never use `.env` development credentials for E2E.
