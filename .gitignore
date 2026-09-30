@@ -1,0 +1,12 @@
+.agents/
+node_modules
+.env
+.env.*
+!.env.example
+!.env.test.example
+!.env.staging.example
+dist/
+.next/
+.next-build/
+.next-*
+test-results/

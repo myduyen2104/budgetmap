@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String?       @unique
+  email        String?       @unique
+  passwordHash String
+  displayName  String?
+  wallets      Wallet[]
+  categories   Category[]
+  transactions Transaction[]
+  transfers    WalletTransfer[]
+  monthlyPlans MonthlyPlan[]
+  sessions     Session[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Session {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model Wallet {
+  id             String        @id @default(cuid())
+  userId         String
+  name           String
+  type           String
+  initialBalance Decimal       @db.Decimal(19, 2)
+  archivedAt     DateTime?
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions   Transaction[]
+  outgoingTransfers WalletTransfer[] @relation("TransferSource")
+  incomingTransfers WalletTransfer[] @relation("TransferDestination")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId, archivedAt])
+}
+
+model Category {
+  id           String                    @id @default(cuid())
+  userId       String
+  name         String
+  type         CategoryType
+  icon         String?
+  color        String?
+  archivedAt   DateTime?
+  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  allocations  MonthlyBudgetAllocation[]
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+
+  @@index([userId, type, archivedAt])
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  userId          String
+  walletId        String
+  categoryId      String
+  type            TransactionType
+  amount          Decimal         @db.Decimal(19, 2)
+  transactionDate DateTime        @db.Date
+  note            String?
+  deletedAt       DateTime?
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet          Wallet          @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  category        Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId, transactionDate, type])
+  @@index([walletId, transactionDate])
+  @@index([categoryId, transactionDate])
+}
+
+model WalletTransfer {
+  id                 String   @id @default(cuid())
+  userId             String
+  sourceWalletId     String
+  destinationWalletId String
+  amount             Decimal  @db.Decimal(19, 2)
+  transferDate      DateTime @db.Date
+  note               String?
+  deletedAt          DateTime?
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceWallet       Wallet   @relation("TransferSource", fields: [sourceWalletId], references: [id], onDelete: Restrict)
+  destinationWallet Wallet   @relation("TransferDestination", fields: [destinationWalletId], references: [id], onDelete: Restrict)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId, transferDate])
+  @@index([sourceWalletId, transferDate])
+  @@index([destinationWalletId, transferDate])
+}
+
+model MonthlyPlan {
+  id            String                    @id @default(cuid())
+  userId        String
+  year          Int
+  month         Int
+  plannedIncome Decimal                   @db.Decimal(19, 2)
+  carryOver     Decimal                   @db.Decimal(19, 2)
+  plannedSaving Decimal                   @default(0) @db.Decimal(19, 2)
+  user          User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  allocations   MonthlyBudgetAllocation[]
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+
+  @@unique([userId, year, month])
+}
+
+model MonthlyBudgetAllocation {
+  id            String      @id @default(cuid())
+  monthlyPlanId String
+  categoryId    String
+  plannedAmount Decimal     @db.Decimal(19, 2)
+  monthlyPlan   MonthlyPlan @relation(fields: [monthlyPlanId], references: [id], onDelete: Cascade)
+  category      Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // MVP permits at most one expense allocation per category per plan.
+  @@unique([monthlyPlanId, categoryId])
+}

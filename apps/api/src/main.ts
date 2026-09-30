@@ -1,0 +1,7 @@
+import 'reflect-metadata';
+import {ForbiddenException,RequestMethod,ValidationPipe} from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
+import cookieParser from 'cookie-parser';
+import type {NextFunction,Request,Response} from 'express';
+import {AppModule} from './app.module.js';
+async function bootstrap():Promise<void>{const app=await NestFactory.create(AppModule);app.enableShutdownHooks();app.setGlobalPrefix('api',{exclude:[{path:'health',method:RequestMethod.GET}]});app.use(cookieParser());const allowedOrigins=(process.env.CORS_ORIGIN??process.env.NEXT_PUBLIC_WEB_URL??'http://localhost:3000').split(',').map(origin=>origin.trim()).filter(Boolean);app.enableCors({origin:allowedOrigins.length===1?allowedOrigins[0]:allowedOrigins,credentials:true});app.use((req:Request,res:Response,next:NextFunction)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');if(process.env.NODE_ENV==='production'&&!['GET','HEAD','OPTIONS'].includes(req.method)&&req.headers.origin&&!allowedOrigins.includes(req.headers.origin))throw new ForbiddenException('FORBIDDEN');next();});app.useGlobalPipes(new ValidationPipe({whitelist:true,forbidNonWhitelisted:true,transform:true}));await app.listen(Number(process.env.API_PORT??3001),process.env.API_HOST??'0.0.0.0');}void bootstrap();

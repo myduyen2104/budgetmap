@@ -1,0 +1,21 @@
+import type { ReactNode } from "react";
+import "./globals.css";
+import "./accessibility.css";
+import { AppShell } from "../components/app-shell";
+export default function Layout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <title>BudgetMap</title>
+      </head>
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(()=>{try{const saved=localStorage.getItem('budgetmap-theme');const theme=saved==='dark'||saved==='light'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=theme}catch{document.documentElement.dataset.theme='light'}})()`,
+          }}
+        />
+        <AppShell>{children}</AppShell>
+      </body>
+    </html>
+  );
+}
