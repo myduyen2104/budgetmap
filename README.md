@@ -4,46 +4,46 @@ BudgetMap là ứng dụng quản lý tài chính cá nhân giúp người dùng
 
 ## Trạng thái hiện tại
 
-Đây là MVP release candidate đã có frontend, API, PostgreSQL/Prisma, authentication, user isolation, wallets, categories, transactions, wallet transfers, monthly plans, dashboard, analysis và automated tests. Dự án phù hợp cho staging hoặc sử dụng nội bộ có kiểm soát.
+Đây là ứng viên phát hành MVP đã có giao diện web, API, PostgreSQL/Prisma, xác thực, phân tách dữ liệu người dùng, ví, danh mục, giao dịch, chuyển tiền giữa ví, kế hoạch tháng, bảng điều khiển, phân tích và kiểm thử tự động. Dự án phù hợp cho staging hoặc sử dụng nội bộ có kiểm soát.
 
 Đọc tài liệu theo thứ tự: [PRD](docs/PRD.md) → [MVP Scope](docs/MVP-SCOPE.md) → [Business Rules](docs/BUSINESS-RULES.md) → [User Flows](docs/USER-FLOWS.md) → [Screen List](docs/SCREEN-LIST.md) → [ERD](docs/ERD.md) → [Data Dictionary](docs/DATA-DICTIONARY.md) → [API Contract](docs/API-CONTRACT.md) → [Error Catalog](docs/ERROR-CATALOG.md) → [Database Migration Plan](docs/DATABASE-MIGRATION-PLAN.md) → [Frontend UX Spec](docs/FRONTEND-UX-SPEC.md) → [Auth & Security](docs/AUTH-SECURITY.md) → [Environment Setup](docs/ENVIRONMENT-SETUP.md) → [Architecture](docs/ARCHITECTURE.md) → [Test Plan](docs/TEST-PLAN.md) → [Implementation Checklist](docs/IMPLEMENTATION-CHECKLIST.md) → [Roadmap](docs/ROADMAP.md).
 
-Local PostgreSQL dùng host port `5434` (`localhost:5434` từ máy host, `postgres:5432` từ container). API/Prisma hiện được thiết kế chạy trực tiếp trên máy host.
+ PostgreSQL cục bộ dùng cổng máy chủ `5434` (`localhost:5434` từ máy host, `postgres:5432` từ container). API/Prisma hiện được thiết kế chạy trực tiếp trên máy host.
 
-Browser validation uses Playwright with an isolated `budgetmap_test` database. Install browser binaries once with `npx playwright install chromium`; binaries remain outside the repository. Run `npm run test:e2e` and `npm run test:a11y`.
+Kiểm thử trên trình duyệt dùng Playwright với cơ sở dữ liệu riêng `budgetmap_test`. Cài trình duyệt một lần bằng `npx playwright install chromium`; các tệp trình duyệt nằm ngoài kho mã nguồn. Chạy `npm run test:e2e` và `npm run test:a11y`.
 
-Release status: MVP release candidate — approved for staging/internal deployment. Production release is not approved; accepted build/dev audit risks remain documented in `docs/SECURITY-AUDIT.md`.
+Trạng thái phát hành: ứng viên phát hành MVP — đã được duyệt để triển khai thử nghiệm/sử dụng nội bộ. Chưa được duyệt cho môi trường chính thức; các rủi ro trong quá trình xây dựng và phát triển được ghi tại `docs/SECURITY-AUDIT.md`.
 
-## UI and staging
+## Giao diện và môi trường thử nghiệm
 
-### Icon attribution
+### Ghi nhận nguồn biểu tượng
 
-BudgetMap uses the free [Flaticon Uicons](https://www.flaticon.com/uicons) Regular Rounded set for interface navigation and actions. The icon set is provided by Flaticon/Freepik and is used under the free license with attribution. See the [Flaticon license](https://www.flaticon.com/license/license.pdf).
+BudgetMap sử dụng bộ biểu tượng miễn phí [Flaticon Uicons](https://www.flaticon.com/uicons) Regular Rounded cho điều hướng và thao tác. Bộ biểu tượng do Flaticon/Freepik cung cấp theo giấy phép miễn phí có yêu cầu ghi nhận nguồn. Xem [giấy phép Flaticon](https://www.flaticon.com/license/license.pdf).
 
-Run `./install-dev.sh` for local setup and to start the API/Web development processes. PostgreSQL is the only supporting service; no Strapi or Medusa is required. The script uses Docker PostgreSQL at `127.0.0.1:5434`, API at `2311`, and Next.js at `2310`. It does not stop or remove PostgreSQL. Open [http://127.0.0.1:2310/login](http://127.0.0.1:2310/login). Run `npm run test:e2e` and `npm run test:a11y` for browser validation. See [UI QA](docs/UI-QA.md) and [Staging Runbook](docs/STAGING-RUNBOOK.md) for viewport checks, environment variables, migrations, health checks and single-instance limits.
+Chạy `./install-dev.sh` để thiết lập cục bộ và khởi động API/web. PostgreSQL là dịch vụ hỗ trợ duy nhất; không cần Strapi hoặc Medusa. Tập lệnh dùng PostgreSQL trong Docker tại `127.0.0.1:5434`, API tại cổng `2311` và Next.js tại cổng `2310`; không dừng hoặc xóa PostgreSQL. Mở [http://127.0.0.1:2310/login](http://127.0.0.1:2310/login). Chạy `npm run test:e2e` và `npm run test:a11y` để kiểm thử trình duyệt. Xem [kiểm thử giao diện](docs/UI-QA.md) và [hướng dẫn môi trường thử nghiệm](docs/STAGING-RUNBOOK.md) để biết kiểm tra kích thước màn hình, biến môi trường, migration, kiểm tra sức khỏe và giới hạn một tiến trình API.
 
-## Release readiness
+## Điều kiện phát hành
 
-`GET /health` kiểm tra API và PostgreSQL. Production cần chạy một API instance khi rate limiter còn in-memory, dùng `prisma migrate deploy`, không seed production, và cấu hình HTTPS/CORS/cookie an toàn. Xem [Security Audit](docs/SECURITY-AUDIT.md), [Operations](docs/OPERATIONS.md) và [Release Checklist](docs/RELEASE-CHECKLIST.md).
+`GET /health` kiểm tra API và PostgreSQL. Môi trường chính thức cần chạy một API instance khi bộ giới hạn truy cập còn lưu trong bộ nhớ, dùng `prisma migrate deploy`, không seed dữ liệu production và cấu hình HTTPS/CORS/cookie an toàn. Xem [Security Audit](docs/SECURITY-AUDIT.md), [Operations](docs/OPERATIONS.md) và [Release Checklist](docs/RELEASE-CHECKLIST.md).
 
-## Product promise
+## Cam kết sản phẩm
 
 BudgetMap phải trả lời được đồng thời: người dùng còn bao nhiêu tiền theo dòng tiền thực tế, và category nào đã xài lố dù tổng tiền vẫn còn.
 
 ## Chức năng hiện có
 
-- Register, login, logout, profile và session cookie bảo mật.
-- Nhiều wallet, số dư suy ra, category income/expense và archive.
-- Income/expense transaction: thêm, lọc, phân trang, sửa và soft-delete.
-- Wallet transfer giữa hai ví active cùng user.
-- Monthly plan với planned income, carry-over, planned saving và expense allocations.
-- Dashboard, budget status, overspending, chart và monthly analysis.
+- Đăng ký, đăng nhập, đăng xuất, hồ sơ cá nhân và cookie phiên bảo mật.
+- Nhiều ví, số dư suy ra, danh mục thu/chi và lưu trữ.
+- Giao dịch thu/chi: thêm, lọc, phân trang, sửa và xóa mềm.
+- Chuyển tiền giữa hai ví đang hoạt động của cùng người dùng.
+- Kế hoạch tháng với thu nhập dự kiến, tiền chuyển tiếp, tiền tiết kiệm dự kiến và ngân sách chi tiêu.
+- Bảng điều khiển, trạng thái ngân sách, khoản chi vượt mức, biểu đồ và phân tích tháng.
 
-Các chức năng chưa có gồm recurring transactions, copy plan, forgot password, CSV export, bank sync, OCR, AI, multi-currency, shared wallet, native mobile và offline mode. Xem `docs/MVP-SCOPE.md`.
+Các chức năng chưa có gồm giao dịch định kỳ, sao chép kế hoạch, quên mật khẩu, xuất CSV, đồng bộ ngân hàng, OCR, trợ lý AI, đa tiền tệ, ví dùng chung, ứng dụng di động riêng và chế độ ngoại tuyến. Xem `docs/MVP-SCOPE.md`.
 
-## Staging deployment
+## Triển khai môi trường thử nghiệm
 
-No provider-specific deployment is configured in this repository, so staging must be provisioned explicitly. Use a separate managed PostgreSQL database, one Node.js 22 API instance, and one Next.js process behind HTTPS. Copy `.env.staging.example` into the platform environment and set secrets via its secret manager; do not commit real credentials.
+Kho mã nguồn chưa có cấu hình triển khai theo nhà cung cấp cụ thể, vì vậy môi trường thử nghiệm cần được tạo riêng. Dùng một cơ sở dữ liệu PostgreSQL được quản lý riêng, một API Node.js 22 và một tiến trình Next.js phía sau HTTPS. Sao chép `.env.staging.example` vào cấu hình môi trường của nền tảng và đặt secret qua trình quản lý thông tin bí mật; không commit thông tin xác thực thật.
 
 ```bash
 npm ci --no-audit --no-fund
@@ -56,4 +56,4 @@ npm run start --workspace=@budgetmap/api
 npm run start --workspace=@budgetmap/web
 ```
 
-Configure the proxy health check as `GET /health`, keep `CORS_ORIGIN` equal to the exact staging web origin, and do not run `install-dev.sh` against staging. Do not seed staging unless explicitly approved. See [docs/STAGING-RUNBOOK.md](docs/STAGING-RUNBOOK.md) and [docs/OPERATIONS.md](docs/OPERATIONS.md) for smoke testing, shutdown and rollback.
+Thiết lập kiểm tra sức khỏe proxy bằng `GET /health`, giữ `CORS_ORIGIN` đúng bằng nguồn web thử nghiệm, không chạy `install-dev.sh` trên môi trường thử nghiệm và không seed môi trường này nếu chưa được duyệt. Xem [docs/STAGING-RUNBOOK.md](docs/STAGING-RUNBOOK.md) và [docs/OPERATIONS.md](docs/OPERATIONS.md) để biết kiểm thử nhanh, dừng dịch vụ và khôi phục.
