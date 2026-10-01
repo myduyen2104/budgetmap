@@ -1,14 +1,17 @@
 {
   "name": "@budgetmap/api",
   "private": true,
+  "allowScripts": {
+    "@prisma/client": true,
+    "@prisma/engines": true,
+    "argon2": true,
+    "prisma": true
+  },
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "npx prisma generate && tsc -p tsconfig.json",
-    "postinstall": "prisma generate",
+    "build": "prisma generate --schema ../../packages/api/prisma/schema.prisma && tsc -p tsconfig.json",
+    "postinstall": "prisma generate --schema ../../packages/api/prisma/schema.prisma",
     "start": "node dist/apps/api/src/main.js"
-  },
-  "prisma": {
-    "schema": "../../packages/api/prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

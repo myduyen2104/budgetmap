@@ -14,7 +14,11 @@ export default function config(phase) {
     devIndicators: false,
     distDir:
       process.env.BUDGETMAP_NEXT_DIST ??
-      (phase === PHASE_DEVELOPMENT_SERVER ? ".next" : ".next-build"),
+      (process.env.VERCEL === "1"
+        ? ".next"
+        : phase === PHASE_DEVELOPMENT_SERVER
+          ? ".next"
+          : ".next-build"),
     async rewrites() {
       return [{ source: "/api/:path*", destination: `${apiOrigin}/api/:path*` }];
     },
