@@ -1,111 +1,111 @@
 # Business Rules — Source of Truth
 
-Nếu UI, API, ERD hoặc test mô tả khác tài liệu này thì phải sửa decision trước khi development.
+If the UI, API, ERD, or tests describe something differently from this document, update the decision before development.
 
 ## Source of truth
 
 - Planning inputs: `plannedIncome`, `carryOver`, allocations.
 - Actual inputs: income/expense transactions, wallet initial balance.
-- Dashboard và report metrics đều derived.
-- Không persist `actualIncome`, `actualExpense`, `currentBalance`, `remainingCashFlow`, `remainingBudget`, `usagePercentage` hoặc `overspendingAmount` làm source of truth.
+- Dashboard and report metrics are derived.
+- Do not persist `actualIncome`, `actualExpense`, `currentBalance`, `remainingCashFlow`, `remainingBudget`, `usagePercentage`, or `overspendingAmount` as the source of truth.
 
 ## Glossary and examples
 
 ### Planned income
 
-Khoản user dự kiến sẽ nhận trong tháng, ví dụ lương dự kiến 12.000.000đ. Đây là con số dùng để lập kế hoạch trước khi tiền thực sự về.
+The amount the user expects to receive during the month, such as an expected salary of VND 12,000,000. This is used for planning before the money actually arrives.
 
 ### Actual income
 
-Tổng các `INCOME` transactions thực tế trong tháng. Nếu user dự kiến 12.000.000đ nhưng mới nhận 10.000.000đ thì planned income vẫn là 12.000.000đ, actual income là 10.000.000đ.
+The total of actual `INCOME` transactions during the month. If the user expects VND 12,000,000 but has received only VND 10,000,000, planned income remains VND 12,000,000 and actual income is VND 10,000,000.
 
 ### Carry-over
 
-Phần tiền từ nguồn trước tháng hiện tại mà user chủ động đưa vào plan mới. User có 50.000.000đ trong ngân hàng nhưng chỉ muốn đưa 2.000.000đ vào kế hoạch thì carry-over là 2.000.000đ, không phải 50.000.000đ. MVP không cho carry-over âm.
+The amount from before the current month that the user deliberately carries into the new plan. If the user has VND 50,000,000 in the bank but wants to include only VND 2,000,000 in the plan, carry-over is VND 2,000,000, not VND 50,000,000. The MVP does not allow negative carry-over.
 
 ### Planned available money
 
-Số tiền user dự kiến có thể phân bổ:
+The amount the user expects to be available for allocation:
 
 `plannedIncome + carryOver`
 
-Ví dụ 12.000.000đ planned income + 1.000.000đ carry-over = 13.000.000đ.
+For example, VND 12,000,000 planned income + VND 1,000,000 carry-over = VND 13,000,000.
 
 ### Actual expense
 
-Tổng tiền thực sự chi ra từ các `EXPENSE` transactions trong tháng. Planned allocation không làm tăng actual expense.
+The total actually spent through `EXPENSE` transactions during the month. Planned allocations do not increase actual expense.
 
 ### Actual available money
 
-Góc nhìn dựa trên phát sinh thật:
+The view based on actual activity:
 
 `actualIncome + carryOver`
 
-Ví dụ actual income 10.000.000đ và carry-over 1.000.000đ thì actual available money là 11.000.000đ.
+For example, actual income of VND 10,000,000 plus VND 1,000,000 carry-over gives actual available money of VND 11,000,000.
 
 ### Remaining cash flow
 
-Tiền còn lại theo actual data:
+Remaining money based on actual data:
 
 `actualIncome + carryOver - actualExpense`
 
-Không dùng planned income trong công thức này.
+Planned income is not used in this formula.
 
 ### Expense budget
 
-Số tiền user dự kiến dành cho một expense category, ví dụ Food 3.000.000đ. Budget không phải transaction và không tự làm giảm wallet balance.
+The amount the user plans to assign to an expense category, such as VND 3,000,000 for Food. A budget is not a transaction and does not reduce the wallet balance.
 
 ### Remaining budget
 
 `plannedAmount - actualExpense(category)`.
 
-Nếu Food planned 3.000.000đ và actual 2.000.000đ thì remaining budget là 1.000.000đ.
+If Food is planned at VND 3,000,000 and actual spending is VND 2,000,000, remaining budget is VND 1,000,000.
 
 ### Overspending
 
-Chỉ xảy ra khi actual expense lớn hơn planned amount:
+This occurs only when actual expense exceeds the planned amount:
 
 `max(actualAmount - plannedAmount, 0)`.
 
-Food planned 3.000.000đ, actual 3.600.000đ → overspending 600.000đ.
+Food planned at VND 3,000,000 and actual spending at VND 3,600,000 results in VND 600,000 overspending.
 
 ### Planned saving
 
-Số tiền user dự kiến earmark cho savings, được nhập trực tiếp trên MonthlyPlan. Đây chưa phải actual saving transaction và không phải Expense trong MVP. Nếu planned saving là 3.000.000đ và actual expense là 5.000.000đ thì actual expense vẫn là 5.000.000đ.
+The amount the user plans to earmark for savings, entered directly on MonthlyPlan. It is not an actual savings transaction and is not an Expense in the MVP. If planned saving is VND 3,000,000 and actual expense is VND 5,000,000, actual expense remains VND 5,000,000.
 
-MVP chưa có savings goal hoặc savings wallet; wallet transfer đã được hỗ trợ như một movement riêng. Không được hiển thị planned saving như tiền đã chuyển thành công.
+The MVP has no savings goal or savings wallet; wallet transfers are supported as a separate movement. Do not display planned saving as money that has already been transferred.
 
 ### Unallocated money
 
-Tiền trong planned available money chưa được gán vào expense budget hoặc planned saving:
+Money in planned available money that has not been assigned to an expense budget or planned saving:
 
 `plannedAvailableMoney - totalAllocated`.
 
 `totalAllocated = totalExpenseAllocated + plannedSaving`.
 
-### Category không được cấp budget nhưng vẫn chi tiêu
+### Category without a budget but with spending
 
-Nếu Health không có allocation nhưng có expense 500.000đ: planned amount = 0, actual amount = 500.000đ, usage = N/A/null, status = EXCEEDED, overspending = 500.000đ. Không hiển thị Infinity%.
+If Health has no allocation but has VND 500,000 in expenses: planned amount = 0, actual amount = VND 500,000, usage = N/A/null, status = EXCEEDED, and overspending = VND 500,000. Do not display Infinity%.
 
 ## Wallet rules
 
-`initialBalance` là số dư wallet tại thời điểm user bắt đầu tracking. Không được nhập cùng khoản tiền vừa là initial balance vừa là income transaction.
+`initialBalance` is the wallet balance when the user starts tracking. Do not enter the same money as both initial balance and an income transaction.
 
 `walletBalance = initialBalance + income - expense`.
 
-Wallet archive chỉ chặn transaction mới; transaction cũ và historical balance vẫn được tính.
+Archiving a wallet only prevents new transactions; historical transactions and balances remain included.
 
 ## Allocation rules
 
-- MonthlyBudgetAllocation chỉ đại diện cho Expense Budget và phải reference một EXPENSE category.
-- Không có savings allocation trong MVP; plannedSaving chỉ là field của MonthlyPlan.
+- MonthlyBudgetAllocation represents only an Expense Budget and must reference an EXPENSE category.
+- There is no savings allocation in the MVP; plannedSaving is only a MonthlyPlan field.
 - `totalExpenseAllocated = SUM(MonthlyBudgetAllocation.plannedAmount)`.
 - `totalAllocated = totalExpenseAllocated + plannedSaving`.
 - `plannedSaving >= 0`.
 - `totalExpenseAllocated + plannedSaving <= plannedAvailableMoney`.
-- Actual spending được phép vượt allocation.
-- Planned saving không đi vào actual expense, expense budget usage hoặc wallet balance.
-- MVP không có actualSaving, savings progress hoặc saving transaction.
+- Actual spending may exceed an allocation.
+- Planned saving is not included in actual expense, expense budget usage, or wallet balance.
+- The MVP has no actualSaving, savings progress, or savings transaction.
 
 ## Status rules
 
@@ -114,15 +114,15 @@ Wallet archive chỉ chặn transaction mới; transaction cũ và historical ba
 - `AT_LIMIT`: usage = 100%.
 - `EXCEEDED`: usage > 100%.
 
-100% không phải overspending. Planned 0/actual 0 → SAFE, usage 0. Planned 0/actual > 0 → EXCEEDED, usage N/A/null.
+100% is not overspending. Planned 0/actual 0 → SAFE, usage 0. Planned 0/actual > 0 → EXCEEDED, usage N/A/null.
 
 ## Dates, ownership and recalculation
 
-`transactionDate` là business date quyết định tháng báo cáo; `createdAt` không quyết định tháng. Sửa transaction từ 31/08 sang 01/09 phải làm August giảm và September tăng. Đổi amount/category/wallet hoặc delete cũng phải recalculate aggregate liên quan.
+`transactionDate` is the business date that determines the reporting month; `createdAt` does not determine the month. Changing a transaction from 08/31 to 09/01 must decrease August and increase September. Changing amount/category/wallet or deleting must also recalculate affected aggregates.
 
-Backend phải derive user identity từ auth context và kiểm tra ownership cho mọi read, create, update và delete.
-Wallet transfer là movement riêng giữa hai wallet active thuộc cùng user. Source và destination phải khác nhau; transfer bị soft-delete thì không còn ảnh hưởng balance và không bao giờ được tính vào income/expense.
+The backend must derive user identity from the auth context and check ownership for every read, create, update, and delete.
+A wallet transfer is a separate movement between two active wallets owned by the same user. The source and destination must differ; a soft-deleted transfer no longer affects balances and is never included in income/expense aggregates.
 
 ## Precision
 
-MVP chọn PostgreSQL `NUMERIC(19,2)`/Decimal để tránh floating-point và giữ khả năng mở rộng. API dùng decimal string; UI VND hiển thị không có chữ số thập phân.
+The MVP uses PostgreSQL `NUMERIC(19,2)`/Decimal to avoid floating-point errors and preserve scalability. The API uses decimal strings; the VND UI displays no decimal places.

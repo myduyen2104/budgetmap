@@ -1,34 +1,34 @@
 # MVP Scope
 
-## P0 — MVP bắt buộc
+## P0 — Required MVP
 
 ### Identity and ownership
 
-- Register, login, logout, current user và basic profile.
-- Dữ liệu tách biệt tuyệt đối theo user.
+- Register, login, logout, current user, and basic profile.
+- All data is strictly isolated by user.
 
 ### Financial setup
 
-- Một user có nhiều wallet.
-- Initial balance tại thời điểm bắt đầu tracking.
+- A user can have multiple wallets.
+- Initial balance at the start of tracking.
 - Archive wallet.
-- Default category được tạo riêng cho từng user.
-- Custom category và archive category.
+- Default categories are created for each user.
+- Custom categories and category archiving.
 
 ### Monthly planning
 
-- Một plan cho mỗi user/tháng.
+- One plan per user per month.
 - `plannedIncome`.
-- `carryOver` không âm.
+- `carryOver` is non-negative.
 - Expense budget allocation.
-- `plannedSaving` trên MonthlyPlan để earmark tiền tiết kiệm.
-- Planned available, allocated và unallocated.
+- `plannedSaving` on MonthlyPlan to earmark savings.
+- Planned available, allocated, and unallocated money.
 
 ### Actual activity
 
-- `INCOME` và `EXPENSE` transaction.
+- `INCOME` and `EXPENSE` transactions.
 - Add, edit, delete.
-- Wallet, category, amount, business date và note.
+- Wallet, category, amount, business date, and note.
 - Derived wallet balance.
 
 ### Insight
@@ -38,10 +38,10 @@
 - Remaining cash flow.
 - Remaining budget theo category.
 - SAFE/WARNING/AT_LIMIT/EXCEEDED.
-- Category không có budget nhưng có expense.
-- Monthly analysis và previous-month expense comparison.
+- Categories with expenses but no budget.
+- Monthly analysis and previous-month expense comparison.
 
-## P1 — Sau MVP
+## P1 — Post-MVP
 
 - Forgot password.
 - Copy previous month plan.
@@ -49,9 +49,9 @@
 - Fixed/flexible expense.
 - Recurring transactions.
 - Savings goal/account.
-- CSV export và search transaction note.
+- CSV export and transaction-note search.
 
-## P2 — Nâng cao
+## P2 — Advanced
 
 - Bank synchronization/Open Banking.
 - OCR receipt.
@@ -60,8 +60,8 @@
 - Debt/loan management.
 - Multi-currency and exchange rates.
 - Shared/family wallet.
-- Native mobile, offline mode, advanced forecasting và notifications.
+- Native mobile, offline mode, advanced forecasting, and notifications.
 
 ## Explicitly out of scope for MVP
 
-Recurring transaction automation, debt/loan, bank sync, OCR, AI, multi-currency, shared wallet, investment, crypto, native mobile, offline mode, PDF reporting và complex notification system.
+Recurring transaction automation, debt/loan, bank sync, OCR, AI, multi-currency, shared wallet, investment, crypto, native mobile, offline mode, PDF reporting, and complex notification systems.

@@ -32,7 +32,7 @@
 - Purpose: inspect actual activity.
 - Main information: date, type, amount, wallet, category, note.
 - Main actions: filter, paginate, add, edit, delete.
-- Empty state: “Thêm giao dịch đầu tiên”.
+- Empty state: “Add your first transaction”.
 - Error state: invalid filter or load failure.
 - Data dependency: transaction, wallet and category data.
 
@@ -50,7 +50,7 @@
 - Purpose: manage places holding money.
 - Main information: name, type, initial/current derived balance, archived state.
 - Main actions: create, edit, archive.
-- Empty state: “Tạo ví đầu tiên”.
+- Empty state: “Create your first wallet”.
 - Error state: duplicate/invalid name or archive failure.
 - Data dependency: wallets and derived transactions.
 
@@ -68,7 +68,7 @@
 - Purpose: enter planned income, carry-over and allocations.
 - Main information: planned income, carry-over, planned saving, planned available, expense budgets, total expense allocated, total allocated and unallocated.
 - Main actions: create/edit plan, enter planned saving, add/edit/remove expense budget.
-- Empty state: “Bạn chưa lập kế hoạch cho tháng này”.
+- Empty state: “You have not created a plan for this month”.
 - Error state: duplicate month, negative input, allocation over available.
 - Month plan supports previous/next/current month navigation, an explicit create state for months without a plan, draft allocation editing with cancel/confirmation, and derived budget status.
 - Data dependency: monthly plan, active categories and derived actuals.
