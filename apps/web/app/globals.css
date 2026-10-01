@@ -1724,6 +1724,12 @@ button:hover:not(:disabled) {
   outline: 0;
   box-shadow: none !important;
   background: transparent !important;
+  color: var(--text, #29243a) !important;
+  -webkit-text-fill-color: currentColor;
+}
+.field-control input::placeholder {
+  color: var(--muted-2, #746d82) !important;
+  opacity: 1;
 }
 .password-toggle {
   position: relative;
