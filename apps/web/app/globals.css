@@ -1029,13 +1029,13 @@ select:focus-visible {
   --surface: #1d1a29;
   --card: #1d1a29;
   --surface-2: #29243a;
-  --text: #f7f4ff;
-  --ink: #f7f4ff;
-  --muted: #c1b9d2;
-  --muted-2: #c1b9d2;
+  --text: #f2f4f7;
+  --ink: #f2f4f7;
+  --muted: #b9bec8;
+  --muted-2: #b9bec8;
   --line: #403752;
-  --purple: #b3a6ff;
-  --purple-strong: #b8aaff;
+  --purple: #a99be8;
+  --purple-strong: #c7bdf0;
   --purple-soft: #30294a;
   --purple-line: #5b4e83;
   --purple-border: #5b4e83;
@@ -1102,6 +1102,17 @@ select:focus-visible {
 [data-theme="dark"] .planner-transaction small,
 [data-theme="dark"] .logout {
   color: var(--muted-2);
+}
+
+/* Accent colors are reserved for actions; normal copy stays neutral and crisp. */
+[data-theme="dark"] .page a:not(.quick-actions a):not(.planner-actions a),
+[data-theme="dark"] .section-heading a,
+[data-theme="dark"] .eyebrow {
+  color: #c7cbd3;
+}
+[data-theme="dark"] .form-grid label,
+[data-theme="dark"] .auth-card form label {
+  color: #e1e4e9;
 }
 
 [data-theme="dark"] input,
@@ -1504,6 +1515,34 @@ button:hover:not(:disabled) {
   border-color: #51466d;
   color: #fff;
 }
+[data-theme="dark"] .auth-card-checkin .auth-heading h1 {
+  color: #f2f4f7;
+}
+[data-theme="dark"] .auth-card-checkin .auth-heading p {
+  color: #b9bec8;
+}
+[data-theme="dark"] .auth-card-checkin .field-control {
+  background: #ffffff;
+  border-color: #d7d1e4;
+}
+[data-theme="dark"] .auth-card-checkin .field-control > span,
+[data-theme="dark"] .auth-card-checkin .password-toggle {
+  color: #4b4658;
+}
+[data-theme="dark"] .auth-card-checkin .auth-field > span:first-child {
+  color: #211d2b;
+}
+[data-theme="dark"] .auth-card-checkin .field-control input {
+  color: #17141f !important;
+  -webkit-text-fill-color: #17141f;
+  caret-color: #17141f;
+}
+[data-theme="dark"] .auth-card-checkin .field-control input:-webkit-autofill,
+[data-theme="dark"] .auth-card-checkin .field-control input:-webkit-autofill:hover,
+[data-theme="dark"] .auth-card-checkin .field-control input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #17141f !important;
+}
 [data-theme="dark"] .auth-switch {
   color: #b8afca;
 }
@@ -1695,7 +1734,7 @@ button:hover:not(:disabled) {
   box-shadow: 0 0 0 4px #9b8afb22;
 }
 .field-control > span {
-  color: var(--purple-strong);
+  color: #4b4658;
   font-size: 1.05rem;
   font-weight: 800;
 }
@@ -1724,11 +1763,13 @@ button:hover:not(:disabled) {
   outline: 0;
   box-shadow: none !important;
   background: transparent !important;
-  color: var(--text, #29243a) !important;
-  -webkit-text-fill-color: currentColor;
+  color: #17141f !important;
+  -webkit-text-fill-color: #17141f;
+  caret-color: #17141f;
 }
 .field-control input::placeholder {
-  color: var(--muted-2, #746d82) !important;
+  color: #e8e3f5 !important;
+  -webkit-text-fill-color: #e8e3f5;
   opacity: 1;
 }
 .password-toggle {

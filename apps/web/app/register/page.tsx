@@ -33,8 +33,12 @@ export default function Register() {
         body: JSON.stringify({ username: e, password: p }),
       });
       router.replace("/login?registered=1");
-    } catch {
-      setError("Không thể tạo tài khoản.");
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "";
+      setError(code === "username already exists" || code === "CONFLICT"
+        ? "Tên tài khoản đã tồn tại."
+        : code === "REQUEST_FAILED" ? "Không thể kết nối máy chủ. Hãy kiểm tra cấu hình API trên Vercel."
+        : "Không thể tạo tài khoản. Vui lòng thử lại.");
     }
   }
   return (

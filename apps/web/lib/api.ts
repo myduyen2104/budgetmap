@@ -24,6 +24,8 @@ export async function api<T = unknown>(
         ? "UNAUTHORIZED"
         : r.status === 404
           ? "NOT_FOUND"
+          : r.status === 409
+            ? "CONFLICT"
           : "REQUEST_FAILED";
     if (data && typeof data === "object") {
       if (
@@ -37,7 +39,7 @@ export async function api<T = unknown>(
       else if (
         "message" in data &&
         typeof data.message === "string" &&
-        /^[A-Z_]+$/.test(data.message)
+        (/^[A-Z_]+$/.test(data.message) || data.message === "username already exists")
       )
         code = data.message;
     }
