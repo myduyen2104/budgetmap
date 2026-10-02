@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsightsService = void 0;
 const common_1 = require("@nestjs/common");
@@ -20,8 +23,6 @@ const zero = () => new client_1.Prisma.Decimal(0);
 const s = (d) => d.toFixed(2);
 const previous = (y, m) => { const d = new Date(Date.UTC(y, m - 2, 1)); return { year: d.getUTCFullYear(), month: d.getUTCMonth() + 1 }; };
 let InsightsService = class InsightsService {
-    db;
-    plans;
     constructor(db, plans) {
         this.db = db;
         this.plans = plans;
@@ -40,5 +41,7 @@ let InsightsService = class InsightsService {
 exports.InsightsService = InsightsService;
 exports.InsightsService = InsightsService = __decorate([
     (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)(prisma_service_js_1.PrismaService)),
+    __param(1, (0, common_1.Inject)(monthly_plans_service_js_1.MonthlyPlansService)),
     __metadata("design:paramtypes", [prisma_service_js_1.PrismaService, monthly_plans_service_js_1.MonthlyPlansService])
 ], InsightsService);

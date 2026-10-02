@@ -15,16 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_js_1 = require("./prisma.service.js");
+const categories_js_1 = require("../../../packages/shared/src/categories.js");
 let CategoriesService = class CategoriesService {
-    db;
     constructor(db) {
         this.db = db;
     }
-    list(userId, includeArchived = false) { return this.db.category.findMany({ where: { userId, ...(includeArchived ? {} : { archivedAt: null }) }, orderBy: [{ type: 'asc' }, { name: 'asc' }] }); }
-    create(userId, b) { if (!b.name.trim())
-        throw new common_1.ConflictException(); return this.db.category.create({ data: { ...b, name: b.name.trim(), userId } }); }
-    async update(userId, id, b) { if (!await this.db.category.findFirst({ where: { id, userId } }))
-        throw new common_1.NotFoundException(); return this.db.category.update({ where: { id }, data: b }); }
+    async list(userId, includeArchived = false) { const rows = await this.db.category.findMany({ where: { userId, ...(includeArchived ? {} : { archivedAt: null }) }, orderBy: [{ type: 'asc' }, { name: 'asc' }] }); return rows.map((c) => { const fallback = (0, categories_js_1.defaultCategory)(c.name, c.type); return { ...c, icon: c.icon ?? fallback.icon, color: c.color ?? fallback.color }; }); }
+    normalize(b) { const name = b.name.trim(); if (!name)
+        throw new common_1.ConflictException('CATEGORY_NAME_REQUIRED'); if (b.icon && !categories_js_1.CATEGORY_ICONS.includes(b.icon))
+        throw new common_1.BadRequestException('INVALID_CATEGORY_ICON'); if (b.color && !categories_js_1.CATEGORY_COLORS.includes(b.color))
+        throw new common_1.BadRequestException('INVALID_CATEGORY_COLOR'); const fallback = (0, categories_js_1.defaultCategory)(name, b.type); return { name, type: b.type, icon: b.icon ?? fallback.icon, color: b.color ?? fallback.color }; }
+    async create(userId, b) { const data = this.normalize(b); const duplicate = await this.db.category.findFirst({ where: { userId, type: data.type, name: { equals: data.name, mode: 'insensitive' }, archivedAt: null } }); if (duplicate)
+        throw new common_1.ConflictException('CATEGORY_DUPLICATE'); return this.db.category.create({ data: { ...data, userId } }); }
+    async update(userId, id, b) { const old = await this.db.category.findFirst({ where: { id, userId } }); if (!old)
+        throw new common_1.NotFoundException(); const data = this.normalize({ name: b.name ?? old.name, type: b.type ?? old.type, icon: b.icon ?? old.icon ?? undefined, color: b.color ?? old.color ?? undefined }); const duplicate = await this.db.category.findFirst({ where: { userId, type: data.type, name: { equals: data.name, mode: 'insensitive' }, archivedAt: null, NOT: { id } } }); if (duplicate)
+        throw new common_1.ConflictException('CATEGORY_DUPLICATE'); return this.db.category.update({ where: { id }, data }); }
     async archive(userId, id) { if (!await this.db.category.findFirst({ where: { id, userId } }))
         throw new common_1.NotFoundException(); return this.db.category.update({ where: { id }, data: { archivedAt: new Date() } }); }
 };

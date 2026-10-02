@@ -18,8 +18,6 @@ const auth_service_js_1 = require("./auth.service.js");
 const monthly_plans_dto_js_1 = require("./monthly-plans.dto.js");
 const monthly_plans_service_js_1 = require("./monthly-plans.service.js");
 let MonthlyPlansController = class MonthlyPlansController {
-    auth;
-    service;
     constructor(auth, service) {
         this.auth = auth;
         this.service = service;

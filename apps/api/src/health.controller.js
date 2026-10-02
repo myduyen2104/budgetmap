@@ -16,7 +16,6 @@ exports.HealthController = void 0;
 const common_1 = require("@nestjs/common");
 const health_service_js_1 = require("./health.service.js");
 let HealthController = class HealthController {
-    health;
     constructor(health) {
         this.health = health;
     }

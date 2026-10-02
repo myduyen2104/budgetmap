@@ -9,70 +9,63 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TransactionUpdateDto = exports.TransactionCreateDto = void 0;
+exports.TransferUpdateDto = exports.TransferCreateDto = void 0;
 const class_validator_1 = require("class-validator");
-class TransactionCreateDto {
+class TransferCreateDto {
 }
-exports.TransactionCreateDto = TransactionCreateDto;
+exports.TransferCreateDto = TransferCreateDto;
 __decorate([
-    (0, class_validator_1.IsIn)(['INCOME', 'EXPENSE']),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
-], TransactionCreateDto.prototype, "type", void 0);
+], TransferCreateDto.prototype, "sourceWalletId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    __metadata("design:type", String)
+], TransferCreateDto.prototype, "destinationWalletId", void 0);
 __decorate([
     (0, class_validator_1.Matches)(/^\d+(\.\d{1,2})?$/),
     __metadata("design:type", String)
-], TransactionCreateDto.prototype, "amount", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
-    __metadata("design:type", String)
-], TransactionCreateDto.prototype, "walletId", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(1),
-    __metadata("design:type", String)
-], TransactionCreateDto.prototype, "categoryId", void 0);
+], TransferCreateDto.prototype, "amount", void 0);
 __decorate([
     (0, class_validator_1.Matches)(/^\d{4}-\d{2}-\d{2}$/),
     __metadata("design:type", String)
-], TransactionCreateDto.prototype, "transactionDate", void 0);
+], TransferCreateDto.prototype, "transferDate", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(500),
     __metadata("design:type", String)
-], TransactionCreateDto.prototype, "note", void 0);
-class TransactionUpdateDto {
+], TransferCreateDto.prototype, "note", void 0);
+class TransferUpdateDto {
 }
-exports.TransactionUpdateDto = TransactionUpdateDto;
+exports.TransferUpdateDto = TransferUpdateDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsIn)(['INCOME', 'EXPENSE']),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
     __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "type", void 0);
+], TransferUpdateDto.prototype, "sourceWalletId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    __metadata("design:type", String)
+], TransferUpdateDto.prototype, "destinationWalletId", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.Matches)(/^\d+(\.\d{1,2})?$/),
     __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "amount", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "walletId", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "categoryId", void 0);
+], TransferUpdateDto.prototype, "amount", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.Matches)(/^\d{4}-\d{2}-\d{2}$/),
     __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "transactionDate", void 0);
+], TransferUpdateDto.prototype, "transferDate", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(500),
     __metadata("design:type", String)
-], TransactionUpdateDto.prototype, "note", void 0);
+], TransferUpdateDto.prototype, "note", void 0);

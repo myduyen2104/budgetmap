@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MonthlyPlansService = void 0;
 const common_1 = require("@nestjs/common");
@@ -21,7 +24,6 @@ const period = (y, m) => { if (!Number.isInteger(y) || y < 1 || !Number.isIntege
     throw new common_1.BadRequestException('INVALID_DATE'); return { from: new Date(Date.UTC(y, m - 1, 1)), to: new Date(Date.UTC(y, m, 1)) }; };
 const text = (d) => d.toFixed(2);
 let MonthlyPlansService = class MonthlyPlansService {
-    db;
     constructor(db) {
         this.db = db;
     }
@@ -39,5 +41,6 @@ let MonthlyPlansService = class MonthlyPlansService {
 exports.MonthlyPlansService = MonthlyPlansService;
 exports.MonthlyPlansService = MonthlyPlansService = __decorate([
     (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)(prisma_service_js_1.PrismaService)),
     __metadata("design:paramtypes", [prisma_service_js_1.PrismaService])
 ], MonthlyPlansService);

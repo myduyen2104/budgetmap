@@ -14,14 +14,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_js_1 = require("./prisma.service.js");
 const client_1 = require("@prisma/client");
+const prisma_service_js_1 = require("./prisma.service.js");
 let WalletsService = class WalletsService {
-    db;
     constructor(db) {
         this.db = db;
     }
-    async list(userId, includeArchived = false) { const rows = await this.db.wallet.findMany({ where: { userId, ...(includeArchived ? {} : { archivedAt: null }) }, include: { transactions: { where: { deletedAt: null }, select: { type: true, amount: true } } }, orderBy: { name: 'asc' } }); return rows.map(w => { const currentBalance = w.transactions.reduce((b, t) => t.type === 'INCOME' ? b.plus(t.amount) : b.minus(t.amount), new client_1.Prisma.Decimal(w.initialBalance)); return { ...w, initialBalance: w.initialBalance.toFixed(2), currentBalance: currentBalance.toFixed(2), transactions: undefined }; }); }
+    async list(userId, includeArchived = false) { const rows = await this.db.wallet.findMany({ where: { userId, ...(includeArchived ? {} : { archivedAt: null }) }, include: { transactions: { where: { deletedAt: null }, select: { type: true, amount: true } }, outgoingTransfers: { where: { deletedAt: null }, select: { amount: true } }, incomingTransfers: { where: { deletedAt: null }, select: { amount: true } } }, orderBy: { name: 'asc' } }); return rows.map(w => { const currentBalance = w.transactions.reduce((b, t) => t.type === 'INCOME' ? b.plus(t.amount) : b.minus(t.amount), new client_1.Prisma.Decimal(w.initialBalance)).minus(w.outgoingTransfers.reduce((b, t) => b.plus(t.amount), new client_1.Prisma.Decimal(0))).plus(w.incomingTransfers.reduce((b, t) => b.plus(t.amount), new client_1.Prisma.Decimal(0))); return { ...w, initialBalance: w.initialBalance.toFixed(2), currentBalance: currentBalance.toFixed(2), totalIncome: w.transactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum.plus(t.amount), new client_1.Prisma.Decimal(0)).toFixed(2), totalExpense: w.transactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum.plus(t.amount), new client_1.Prisma.Decimal(0)).toFixed(2), incomingTransferAmount: w.incomingTransfers.reduce((sum, t) => sum.plus(t.amount), new client_1.Prisma.Decimal(0)).toFixed(2), outgoingTransferAmount: w.outgoingTransfers.reduce((sum, t) => sum.plus(t.amount), new client_1.Prisma.Decimal(0)).toFixed(2), transactions: undefined, outgoingTransfers: undefined, incomingTransfers: undefined }; }); }
     create(userId, b) { if (!b.name.trim())
         throw new common_1.ConflictException(); return this.db.wallet.create({ data: { userId, name: b.name.trim(), type: b.type, initialBalance: b.initialBalance } }).then(w => ({ ...w, initialBalance: w.initialBalance.toFixed(2) })); }
     async update(userId, id, b) { if (!await this.db.wallet.findFirst({ where: { id, userId } }))

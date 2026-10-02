@@ -17,16 +17,16 @@ const common_1 = require("@nestjs/common");
 const auth_service_js_1 = require("./auth.service.js");
 const dtos_js_1 = require("./dtos.js");
 let AuthController = class AuthController {
-    auth;
     constructor(auth) {
         this.auth = auth;
     }
     token(r) { return r.cookies?.budgetmap_session; }
-    register(b) { return this.auth.register(b.email, b.password, b.displayName); }
-    async login(r, b, res) { const x = await this.auth.login(b.email, b.password, r.ip); res.cookie('budgetmap_session', x.token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 604800000 }); return x.user; }
-    async logout(r, res) { await this.auth.logout(this.token(r)); res.clearCookie('budgetmap_session', { path: '/' }); return res.send(); }
-    async me(r) { return this.auth.publicUser(await this.auth.fromToken(this.token(r))); }
-    async update(r, b) { const u = await this.auth.fromToken(this.token(r)); return this.auth.updateProfile(u.id, b); }
+    register(body) { return this.auth.register(body.username, body.password, body.displayName); }
+    async login(req, body, res) { const result = await this.auth.login(body.username, body.password, req.ip); res.cookie('budgetmap_session', result.token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 604800000 }); return result.user; }
+    async logout(req, res) { await this.auth.logout(this.token(req)); res.clearCookie('budgetmap_session', { path: '/' }); return res.send(); }
+    async me(req) { return this.auth.publicUser(await this.auth.fromToken(this.token(req))); }
+    async update(req, body) { const user = await this.auth.fromToken(this.token(req)); return this.auth.updateProfile(user.id, body); }
+    async changePassword(req, body) { const user = await this.auth.fromToken(this.token(req)); await this.auth.changePassword(user.id, body.currentPassword, body.newPassword); }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -69,6 +69,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, dtos_js_1.ProfileDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "update", null);
+__decorate([
+    (0, common_1.Patch)('password'),
+    (0, common_1.HttpCode)(204),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, dtos_js_1.ChangePasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "changePassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __param(0, (0, common_1.Inject)(auth_service_js_1.AuthService)),

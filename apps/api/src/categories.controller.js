@@ -18,8 +18,6 @@ const auth_service_js_1 = require("./auth.service.js");
 const categories_service_js_1 = require("./categories.service.js");
 const dtos_js_1 = require("./dtos.js");
 let CategoriesController = class CategoriesController {
-    auth;
-    service;
     constructor(auth, service) {
         this.auth = auth;
         this.service = service;

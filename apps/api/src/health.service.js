@@ -16,7 +16,6 @@ exports.HealthService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_js_1 = require("./prisma.service.js");
 let HealthService = class HealthService {
-    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }

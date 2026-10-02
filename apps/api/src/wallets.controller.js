@@ -18,8 +18,6 @@ const auth_service_js_1 = require("./auth.service.js");
 const wallets_service_js_1 = require("./wallets.service.js");
 const dtos_js_1 = require("./dtos.js");
 let WalletsController = class WalletsController {
-    auth;
-    service;
     constructor(auth, service) {
         this.auth = auth;
         this.service = service;

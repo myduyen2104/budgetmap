@@ -17,8 +17,6 @@ const common_1 = require("@nestjs/common");
 const auth_service_js_1 = require("./auth.service.js");
 const insights_service_js_1 = require("./insights.service.js");
 let InsightsController = class InsightsController {
-    auth;
-    service;
     constructor(auth, service) {
         this.auth = auth;
         this.service = service;

@@ -12,9 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AllocationsDto = exports.AllocationItemDto = exports.PlanDto = void 0;
 const class_validator_1 = require("class-validator");
 class PlanDto {
-    plannedIncome;
-    carryOver;
-    plannedSaving;
 }
 exports.PlanDto = PlanDto;
 __decorate([
@@ -31,8 +28,6 @@ __decorate([
     __metadata("design:type", String)
 ], PlanDto.prototype, "plannedSaving", void 0);
 class AllocationItemDto {
-    categoryId;
-    plannedAmount;
 }
 exports.AllocationItemDto = AllocationItemDto;
 __decorate([
@@ -44,7 +39,6 @@ __decorate([
     __metadata("design:type", String)
 ], AllocationItemDto.prototype, "plannedAmount", void 0);
 class AllocationsDto {
-    allocations;
 }
 exports.AllocationsDto = AllocationsDto;
 __decorate([
