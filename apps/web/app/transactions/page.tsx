@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 import { formatVnd } from "../../lib/money";
 import {
@@ -9,6 +9,7 @@ import {
   Kind,
   PageData,
   today,
+  formatDate,
   Transaction,
   Transfer,
   WalletRef,
@@ -71,6 +72,7 @@ export default function Transactions() {
     [revision, setRevision] = useState(0);
   const [wallets, setWallets] = useState<WalletRef[]>([]),
     [categories, setCategories] = useState<CategoryRef[]>([]);
+  const [usedCategoryIds, setUsedCategoryIds] = useState<Set<string>>(new Set());
   const [transactions, setTransactions] =
       useState<PageData<Transaction> | null>(null),
     [transfers, setTransfers] = useState<PageData<Transfer> | null>(null);
@@ -83,7 +85,6 @@ export default function Transactions() {
   const [deleting, setDeleting] = useState<Editing | null>(null),
     [busy, setBusy] = useState(false),
     [deleteError, setDeleteError] = useState("");
-  const addButton = useRef<HTMLButtonElement>(null);
   const showTransfers = !categoryId && (kind === "" || kind === "TRANSFER");
   const showTransactions = kind !== "TRANSFER";
   const visibleTransactions = transactions?.items.filter((t) => !search.trim() || `${t.note ?? ""} ${t.category.name}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ?? [];
@@ -104,13 +105,14 @@ export default function Transactions() {
     const q = new URLSearchParams({
       month,
       page: String(page),
-      pageSize: "20",
+      pageSize: search.trim() ? "100" : "20",
     });
     const tq = new URLSearchParams({
       month,
       page: String(transferPage),
       pageSize: "20",
     });
+    const usageQ = new URLSearchParams({ month, page: "1", pageSize: "1000" });
     if (kind && kind !== "TRANSFER") q.set("type", kind);
     if (walletId) {
       q.set("walletId", walletId);
@@ -126,13 +128,15 @@ export default function Transactions() {
         : Promise.resolve(null),
       api<{ items: WalletRef[] }>("/wallets?includeArchived=true"),
       api<{ items: CategoryRef[] }>("/categories?includeArchived=true"),
+      api<PageData<Transaction>>("/transactions?" + usageQ),
     ])
-      .then(([t, tr, w, c]) => {
+      .then(([t, tr, w, c, usage]) => {
         if (!live) return;
         setTransactions(t);
         setTransfers(tr);
         setWallets(w.items);
         setCategories(c.items);
+        setUsedCategoryIds(new Set(usage.items.map((item) => item.category.id)));
         if (t && page > 1 && t.items.length === 0)
           setPage(Math.max(1, Math.ceil(t.total / 20)));
         if (tr && transferPage > 1 && tr.items.length === 0)
@@ -157,6 +161,7 @@ export default function Transactions() {
     revision,
     showTransactions,
     showTransfers,
+    search,
   ]);
   function filter(change: () => void) {
     change();
@@ -166,7 +171,6 @@ export default function Transactions() {
   function closeEditor() {
     setEditor(false);
     setEditing(null);
-    addButton.current?.focus();
   }
   function edit(value: Editing) {
     setEditing(value);
@@ -191,9 +195,10 @@ export default function Transactions() {
         { method: "DELETE" },
       );
       setDeleting(null);
+      setEditor(false);
+      setEditing(null);
       setToast("Đã xóa giao dịch và cập nhật số dư ví.");
       setRevision((r) => r + 1);
-      addButton.current?.focus();
     } catch (e) {
       setDeleteError(errorMessage(e));
     } finally {
@@ -211,17 +216,9 @@ export default function Transactions() {
         title="Giao dịch"
         description="Thu nhập, chi tiêu và chuyển tiền giữa các ví."
         actions={
-          <button
-            ref={addButton}
-            disabled={loading || !!error}
-            onClick={() => {
-              setEditing(null);
-              setEditor(true);
-              setInitialKind(kind === "TRANSFER" ? "TRANSFER" : "EXPENSE");
-            }}
-          >
-            Thêm giao dịch
-          </button>
+          <div className="planner-month transactions-month-picker">
+            <MonthPicker value={month} onChange={(value) => filter(() => setMonth(value))} />
+          </div>
         }
       />
       {toast && (
@@ -239,13 +236,6 @@ export default function Transactions() {
       )}
       <section className="movement-filters card" aria-label="Bộ lọc">
         <label>
-          Tháng
-          <MonthPicker
-            value={month}
-            onChange={(value) => filter(() => setMonth(value))}
-          />
-        </label>
-        <label>
           Loại
           <SelectField ariaLabel="Loại" value={kind} options={[{value:"",label:"Tất cả"},{value:"INCOME",label:"Thu nhập"},{value:"EXPENSE",label:"Chi tiêu"},{value:"TRANSFER",label:"Chuyển tiền"}]} onChange={(value) =>
               filter(() => {
@@ -255,16 +245,16 @@ export default function Transactions() {
             } />
         </label>
         <label>
-          Ví lọc
-          <SelectField ariaLabel="Ví lọc" value={walletId} options={[{value:"",label:"Tất cả ví"}, ...wallets.map((w) => ({value:w.id,label:w.name + (w.archivedAt ? " (đã lưu trữ)" : "")}))]} onChange={(value) => filter(() => setWalletId(value))} />
+          Ví
+          <SelectField ariaLabel="Ví" value={walletId} options={[{value:"",label:"Tất cả"}, ...wallets.map((w) => ({value:w.id,label:w.name + (w.archivedAt ? " (đã lưu trữ)" : "")}))]} onChange={(value) => filter(() => setWalletId(value))} />
         </label>
         {kind !== "TRANSFER" && (
           <label>
-            Danh mục lọc
-            <SelectField ariaLabel="Danh mục lọc" value={categoryId} options={[{value:"",label:"Tất cả danh mục"}, ...categories.filter((c) => !kind || c.type === kind).map((c) => ({value:c.id,label:c.name}))]} onChange={(value) => filter(() => setCategoryId(value))} />
+            Danh mục
+            <SelectField ariaLabel="Danh mục" value={categoryId} options={[{value:"",label:"Tất cả"}, ...categories.filter((c) => usedCategoryIds.has(c.id) && (!kind || c.type === kind)).map((c) => ({value:c.id,label:c.name}))]} onChange={(value) => filter(() => setCategoryId(value))} />
           </label>
         )}
-        {kind !== "TRANSFER" && <label className="transaction-search">Tìm giao dịch<input aria-label="Tìm giao dịch" placeholder="Theo ghi chú hoặc danh mục..." value={search} onChange={(e) => setSearch(e.target.value)} /></label>}
+        {kind !== "TRANSFER" && <label className="transaction-search">Tìm giao dịch<input aria-label="Tìm giao dịch" placeholder="Theo ghi chú hoặc danh mục..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} /></label>}
       </section>
       {loading ? (
         <LoadingSkeleton label="Đang tải lịch sử giao dịch…" />
@@ -273,6 +263,7 @@ export default function Transactions() {
       ) : (
         <>
           {editor && (
+            <div className="movement-edit-modal" role="dialog" aria-modal="true" aria-labelledby="movement-heading">
             <MovementForm
               key={editing ? editing.kind + editing.item.id : "new"}
               wallets={wallets}
@@ -280,12 +271,14 @@ export default function Transactions() {
               editing={editing}
               initialKind={initialKind}
               onCancel={closeEditor}
+              onDelete={editing ? () => askDelete(editing) : undefined}
               onSaved={(message) => {
                 closeEditor();
                 setToast(message);
                 setRevision((r) => r + 1);
               }}
             />
+            </div>
           )}
           {transactions && (
             <section
@@ -310,13 +303,13 @@ export default function Transactions() {
                       <th scope="col">Ví</th>
                       <th scope="col">Số tiền</th>
                       <th scope="col">Ghi chú</th>
-                      <th scope="col">Thao tác</th>
+                      <th scope="col"><span className="sr-only">Thao tác</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     {visibleTransactions.map((t) => (
                       <tr key={t.id}>
-                        <td data-label="Ngày">{t.transactionDate}</td>
+                        <td data-label="Ngày">{formatDate(t.transactionDate)}</td>
                         <td className="movement-kind-cell" data-label="Loại / Danh mục"><div className="movement-kind-stack">
                           <span
                             className={
@@ -336,24 +329,7 @@ export default function Transactions() {
                         </td>
                         <td data-label="Ghi chú">{t.note || "—"}</td>
                         <td data-label="Thao tác">
-                          <div className="row-actions">
-                            <button
-                              className="secondary"
-                              onClick={() =>
-                                edit({ kind: "TRANSACTION", item: t })
-                              }
-                            >
-                              Sửa
-                            </button>
-                            <button
-                              className="danger"
-                              onClick={() =>
-                                askDelete({ kind: "TRANSACTION", item: t })
-                              }
-                            >
-                              Xóa
-                            </button>
-                          </div>
+                          <div className="row-actions"><button type="button" className="icon-action-button" aria-label="Sửa giao dịch" title="Sửa giao dịch" onClick={() => edit({ kind: "TRANSACTION", item: t })}><span className="pencil-icon" aria-hidden="true" /></button></div>
                         </td>
                       </tr>
                     ))}
@@ -363,7 +339,7 @@ export default function Transactions() {
               <Pagination
                 name="Phân trang thu chi"
                 page={page}
-                total={transactions.total}
+                total={search.trim() ? visibleTransactions.length : transactions.total}
                 onChange={setPage}
               />
             </section>
@@ -395,7 +371,7 @@ export default function Transactions() {
                       <th scope="col">Ví nguồn → Ví nhận</th>
                       <th scope="col">Số tiền</th>
                       <th scope="col">Ghi chú</th>
-                      <th scope="col">Thao tác</th>
+                      <th scope="col"><span className="sr-only">Thao tác</span></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -413,24 +389,7 @@ export default function Transactions() {
                         <td data-label="Số tiền">{formatVnd(t.amount)}</td>
                         <td data-label="Ghi chú">{t.note || "—"}</td>
                         <td data-label="Thao tác">
-                          <div className="row-actions">
-                            <button
-                              className="secondary"
-                              onClick={() =>
-                                edit({ kind: "TRANSFER", item: t })
-                              }
-                            >
-                              Sửa
-                            </button>
-                            <button
-                              className="danger"
-                              onClick={() =>
-                                askDelete({ kind: "TRANSFER", item: t })
-                              }
-                            >
-                              Xóa
-                            </button>
-                          </div>
+                          <div className="row-actions"><button type="button" className="icon-action-button" aria-label="Sửa chuyển tiền" title="Sửa chuyển tiền" onClick={() => edit({ kind: "TRANSFER", item: t })}><span className="pencil-icon" aria-hidden="true" /></button></div>
                         </td>
                       </tr>
                     ))}
