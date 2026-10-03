@@ -11,7 +11,7 @@ export class ChangePasswordDto {
   @IsString() @MinLength(8) @MaxLength(128) currentPassword!: string;
   @IsString() @MinLength(8) @MaxLength(128) newPassword!: string;
 }
-export class CategoryDto { @IsString() @Length(1, 120) name!: string; @IsIn(['INCOME', 'EXPENSE']) type!: 'INCOME' | 'EXPENSE'; @IsOptional() @IsString() @MaxLength(64) icon?: string; @IsOptional() @IsString() @MaxLength(32) color?: string; }
-export class CategoryUpdateDto { @IsOptional() @IsString() @Length(1, 120) name?: string; @IsOptional() @IsIn(['INCOME', 'EXPENSE']) type?: 'INCOME' | 'EXPENSE'; @IsOptional() @IsString() @MaxLength(64) icon?: string; @IsOptional() @IsString() @MaxLength(32) color?: string; }
+export class CategoryDto { @IsString() @Length(1, 120) name!: string; @IsIn(['INCOME', 'EXPENSE']) type!: 'INCOME' | 'EXPENSE'; @IsOptional() @IsString() @MaxLength(64) groupId?: string; @IsOptional() @IsString() @MaxLength(64) icon?: string; @IsOptional() @IsString() @MaxLength(32) color?: string; }
+export class CategoryUpdateDto { @IsOptional() @IsString() @Length(1, 120) name?: string; @IsOptional() @IsIn(['INCOME', 'EXPENSE']) type?: 'INCOME' | 'EXPENSE'; @IsOptional() @IsString() @MaxLength(64) groupId?: string; @IsOptional() @IsString() @MaxLength(64) icon?: string; @IsOptional() @IsString() @MaxLength(32) color?: string; }
 export class WalletDto { @IsString() @Length(1, 120) name!: string; @IsString() @MaxLength(64) type!: string; @Matches(/^\d+(\.\d{1,2})?$/) initialBalance!: string; }
 export class WalletUpdateDto { @IsOptional() @IsString() @Length(1, 120) name?: string; @IsOptional() @IsString() @MaxLength(64) type?: string; }

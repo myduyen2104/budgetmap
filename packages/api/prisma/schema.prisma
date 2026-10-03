@@ -67,6 +67,7 @@ model Category {
   userId       String
   name         String
   type         CategoryType
+  groupId      String?
   icon         String?
   color        String?
   archivedAt   DateTime?

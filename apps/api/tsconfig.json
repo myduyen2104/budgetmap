@@ -1,1 +1,15 @@
-{"extends":"../../tsconfig.json","compilerOptions":{"outDir":"dist","rootDir":"../..","module":"CommonJS","moduleResolution":"Node","experimentalDecorators":true,"emitDecoratorMetadata":true,"esModuleInterop":true,"allowSyntheticDefaultImports":true,"useDefineForClassFields":false},"include":["src/**/*.ts"]}
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "../..",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false
+  },
+  "include": ["src/**/*.ts"]
+}

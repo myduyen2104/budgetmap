@@ -9,7 +9,7 @@ type Kind = "INCOME" | "EXPENSE";
 type Category = { id: string; name: string; type: Kind; icon?: string | null; color?: string | null; archivedAt?: string | null };
 
 export default function Categories() {
-  const [items, setItems] = useState<Category[]>([]), [tab, setTab] = useState<Kind>("EXPENSE"), [editing, setEditing] = useState<string | null>(null), [name, setName] = useState(""), [type, setType] = useState<Kind>("EXPENSE"), [icon, setIcon] = useState<CategoryIcon>("tag"), [color, setColor] = useState<CategoryColor>("slate"), [error, setError] = useState(""), [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<Category[]>([]), [tab, setTab] = useState<Kind>("EXPENSE"), [editing, setEditing] = useState<string | null>(null), [name, setName] = useState(""), [type, setType] = useState<Kind>("EXPENSE"), [typeOpen, setTypeOpen] = useState(false), [icon, setIcon] = useState<CategoryIcon>("tag"), [color, setColor] = useState<CategoryColor>("slate"), [error, setError] = useState(""), [loading, setLoading] = useState(true);
   const load = () => { setLoading(true); api<{ items: Category[] }>("/categories?includeArchived=true").then((x) => setItems(x.items)).catch(() => setError("Không thể tải danh mục.")).finally(() => setLoading(false)); };
   useEffect(load, []);
   const reset = () => { setEditing(null); setName(""); setIcon("tag"); setColor("slate"); };
@@ -22,7 +22,7 @@ export default function Categories() {
         <h2>{editing ? "Sửa danh mục" : "Tạo danh mục"}</h2>
         <form className="form-grid" onSubmit={save}>
           <label>Tên danh mục<input required maxLength={120} value={name} onChange={(e) => setName(e.target.value)} placeholder="Ví dụ: Mua iPhone" /></label>
-          <label>Loại<select value={type} onChange={(e) => { const next = e.target.value as Kind; setType(next); const f = defaultCategory(name, next); if (!editing) { setIcon(f.icon); setColor(f.color); } }}><option value="EXPENSE">Chi tiêu</option><option value="INCOME">Thu nhập</option></select></label>
+          <label>Loại<div className="select-field category-type-select"><button type="button" className="select-trigger" aria-expanded={typeOpen} onClick={() => setTypeOpen(!typeOpen)}><span>{type === "EXPENSE" ? "Chi tiêu" : "Thu nhập"}</span><i className={typeOpen ? "fi-rr-angle-small-up" : "fi-rr-angle-small-down"} aria-hidden="true" /></button>{typeOpen && <div className="select-menu" role="listbox" aria-label="Chọn loại danh mục"><button type="button" className={type === "EXPENSE" ? "selected" : ""} role="option" aria-selected={type === "EXPENSE"} onClick={() => { const next: Kind = "EXPENSE"; setType(next); setTypeOpen(false); const f = defaultCategory(name, next); if (!editing) { setIcon(f.icon); setColor(f.color); } }}>Chi tiêu</button><button type="button" className={type === "INCOME" ? "selected" : ""} role="option" aria-selected={type === "INCOME"} onClick={() => { const next: Kind = "INCOME"; setType(next); setTypeOpen(false); const f = defaultCategory(name, next); if (!editing) { setIcon(f.icon); setColor(f.color); } }}>Thu nhập</button></div>}</div></label>
           <CategoryPicker icon={icon} color={color} onIconChange={setIcon} onColorChange={setColor} />
           <div className="actions"><button>{editing ? "Cập nhật" : "Thêm danh mục"}</button>{editing && <button type="button" className="secondary" onClick={reset}>Hủy</button>}</div>
         </form>

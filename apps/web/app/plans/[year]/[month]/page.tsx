@@ -3,6 +3,7 @@ import { Fragment, use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
 import { CategoryBadge, CategoryPicker } from "../../../../components/category";
+import { MonthPicker } from "../../../../components/month-picker";
 type Budget = {
   category: { id: string; name: string; icon?: string | null; color?: string | null };
   plannedAmount: string;
@@ -11,7 +12,7 @@ type Budget = {
   usagePercentage: number | null;
   status: string;
 };
-type Category = { id: string; name: string; type: "INCOME" | "EXPENSE"; icon?: string | null; color?: string | null };
+type Category = { id: string; name: string; type: "INCOME" | "EXPENSE"; groupId?: string | null; icon?: string | null; color?: string | null };
 type CategoryGroupDefinition = {
   id: string;
   name: string;
@@ -100,7 +101,9 @@ export default function PlanPage({
     [toast, setToast] = useState(""),
 
     [showCategoryPicker, setShowCategoryPicker] = useState(false),
+    [showCustomCategory, setShowCustomCategory] = useState(false),
     [newCategoryName, setNewCategoryName] = useState(""),
+    [newCategoryGroup, setNewCategoryGroup] = useState("other"),
     [newCategoryIcon, setNewCategoryIcon] = useState("tag"),
     [newCategoryColor, setNewCategoryColor] = useState("slate"),
     [categoryError, setCategoryError] = useState("");
@@ -169,7 +172,7 @@ export default function PlanPage({
     const assigned = new Set<string>();
     const groups = CATEGORY_GROUPS.map((group) => {
       const categories = visibleCats.filter((category) => {
-        const matched = group.names.includes(category.name);
+        const matched = category.groupId === group.id || (!category.groupId && group.names.includes(category.name));
         if (matched) assigned.add(category.id);
         return matched;
       }).sort((a, b) => group.names.indexOf(a.name) - group.names.indexOf(b.name));
@@ -186,10 +189,6 @@ export default function PlanPage({
 
   const availableCats = cats.filter((category) => !visibleCats.some((selected) => selected.id === category.id));
 
-  const nav = (delta: number) => {
-    const n = month(Number(r.year), Number(r.month) + delta);
-    router.push(`/plans/${n.year}/${n.month}`);
-  };
   const removeCategory = (category: Category) => {
     if (window.confirm("Bỏ " + category.name + " khỏi kế hoạch tháng này? Các giao dịch thực tế vẫn được giữ nguyên.")) {
       const next = { ...draft };
@@ -201,18 +200,21 @@ export default function PlanPage({
   const addCategory = (categoryId: string) => {
     setDraft({ ...draft, [categoryId]: "0.00" });
     setShowCategoryPicker(false);
+    setShowCustomCategory(false);
   };
   const createCustomCategory = async () => {
     const name = newCategoryName.trim();
     if (!name) { setCategoryError("Nhập tên danh mục trước khi tạo."); return; }
     try {
-      const created = await api<Category>("/categories", { method: "POST", body: JSON.stringify({ name, type: "EXPENSE", icon: newCategoryIcon, color: newCategoryColor }) });
+      const created = await api<Category>("/categories", { method: "POST", body: JSON.stringify({ name, type: "EXPENSE", groupId: newCategoryGroup, icon: newCategoryIcon, color: newCategoryColor }) });
       setCats([...cats, created]);
       setDraft({ ...draft, [created.id]: "0.00" });
       setInitial({ ...initial, [created.id]: "0.00" });
       setNewCategoryName("");
+      setNewCategoryGroup("other");
       setCategoryError("");
       setShowCategoryPicker(false);
+      setShowCustomCategory(false);
     } catch (e) {
       setCategoryError(e instanceof Error && e.message === "CATEGORY_DUPLICATE" ? "Danh mục này đã tồn tại." : "Không thể tạo danh mục.");
     }
@@ -272,22 +274,20 @@ export default function PlanPage({
     );
   return (
     <main>
-      <nav className="month-nav">
-        <button onClick={() => nav(-1)}>Tháng trước</button>
-        <button
-          onClick={() =>
-            router.push(
-              `/plans/${new Date().getFullYear()}/${String(new Date().getMonth() + 1).padStart(2, "0")}`,
-            )
-          }
-        >
-          Tháng hiện tại
-        </button>
-        <button onClick={() => nav(1)}>Tháng sau</button>
-      </nav>
-      <div className="plan-intro"><h1>
-        Kế hoạch tháng {r.month}/{r.year}
-      </h1><p className="muted">Đặt dự định trước, rồi quay lại xem thực tế đang đi gần hay xa kế hoạch.</p></div>
+      <div className="plan-page-header">
+        <div className="plan-intro"><h1>
+          Kế hoạch tháng {r.month}/{r.year}
+        </h1><p className="muted">Đặt dự định trước, rồi quay lại xem thực tế đang đi gần hay xa kế hoạch.</p></div>
+        <div className="planner-month plan-month-picker">
+          <MonthPicker
+            value={`${r.year}-${r.month}`}
+            onChange={(value) => {
+              const [year, selectedMonth] = value.split("-");
+              router.push(`/plans/${year}/${selectedMonth}`);
+            }}
+          />
+        </div>
+      </div>
       {error && <p role="alert">{error}</p>}
       {toast && <p role="status" className="feedback-toast">{toast}</p>}
       {missing && !plan ? (
@@ -354,17 +354,18 @@ export default function PlanPage({
             </div>
           </div>
           {showCategoryPicker && <div className="category-budget-picker" role="dialog" aria-modal="true" aria-label="Thêm danh mục vào kế hoạch">
-            <div className="category-budget-picker-head"><div><strong>Thêm khoản chi vào kế hoạch</strong><span>Chọn một mục có sẵn hoặc tạo mục riêng cho bạn.</span></div><button type="button" className="category-budget-picker-close" aria-label="Đóng" onClick={() => setShowCategoryPicker(false)}>×</button></div>
+            <div className="category-budget-picker-head"><div>{showCustomCategory && <button type="button" className="category-budget-picker-back" onClick={() => setShowCustomCategory(false)}>← Danh sách danh mục</button>}<strong>{showCustomCategory ? "Tạo danh mục riêng" : "Thêm khoản chi vào kế hoạch"}</strong><span>{showCustomCategory ? "Danh mục này chỉ xuất hiện khi bạn chọn thêm vào kế hoạch." : "Chọn một mục có sẵn hoặc tạo mục riêng cho bạn."}</span></div><div className="category-budget-picker-actions">{!showCustomCategory && <button type="button" className="category-budget-create-custom" onClick={() => setShowCustomCategory(true)}>＋ Tạo danh mục riêng</button>}<button type="button" className="category-budget-picker-close" aria-label="Đóng" onClick={() => { setShowCategoryPicker(false); setShowCustomCategory(false); }}>×</button></div></div>
+            {!showCustomCategory ? <>
             <div className="category-budget-options">
               {CATEGORY_GROUPS.map((group) => {
                 const options = availableCats.filter((category) => group.names.includes(category.name));
                 if (!options.length) return null;
                 return <div className="category-budget-option-group" key={group.id}><strong>{group.name}</strong><div>{options.map((category) => <button type="button" className="category-budget-option" key={category.id} onClick={() => addCategory(category.id)}><CategoryBadge category={category} compact /><span>＋</span></button>)}</div></div>;
               })}
-              {availableCats.filter((category) => !CATEGORY_GROUPS.some((group) => group.names.includes(category.name))).map((category) => <button type="button" className="category-budget-option" key={category.id} onClick={() => addCategory(category.id)}><CategoryBadge category={category} compact /><span>＋</span></button>)}
+              {availableCats.filter((category) => !CATEGORY_GROUPS.some((group) => group.names.includes(category.name))).length > 0 && <div className="category-budget-custom-options">{availableCats.filter((category) => !CATEGORY_GROUPS.some((group) => group.names.includes(category.name))).map((category) => <button type="button" className="category-budget-option" key={category.id} onClick={() => addCategory(category.id)}><CategoryBadge category={category} compact /><span>＋</span></button>)}</div>}
               {!availableCats.length && <p className="muted">Bạn đã thêm tất cả danh mục hiện có.</p>}
             </div>
-            <div className="category-budget-custom"><strong>Tạo danh mục riêng</strong><span>Danh mục này chỉ xuất hiện khi bạn chọn thêm vào kế hoạch.</span><ol className="category-budget-guide"><li>Nhập tên khoản chi dễ nhớ.</li><li>Chọn icon và màu để nhận biết nhanh.</li><li>Bấm Tạo và thêm vào kế hoạch, sau đó nhập ngân sách.</li></ol><input aria-label="Tên danh mục chi mới" placeholder="Ví dụ: Tiền cho thú cưng" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} /><CategoryPicker icon={newCategoryIcon} color={newCategoryColor} onIconChange={setNewCategoryIcon} onColorChange={setNewCategoryColor} />{categoryError && <p className="form-error" role="alert">{categoryError}</p>}<button type="button" onClick={createCustomCategory}>Tạo và thêm vào kế hoạch</button></div>
+            </> : <div className="category-budget-custom"><ol className="category-budget-guide"><li>Nhập tên khoản chi dễ nhớ.</li><li>Chọn icon và màu để nhận biết nhanh.</li><li>Chọn nhóm để dễ quản lý trong kế hoạch.</li></ol><input aria-label="Tên danh mục chi mới" placeholder="Ví dụ: Tiền cho thú cưng" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)} /><label className="category-budget-group-field">Nhóm danh mục<select value={newCategoryGroup} onChange={(e) => setNewCategoryGroup(e.target.value)}>{CATEGORY_GROUPS.map((group) => <option value={group.id} key={group.id}>{group.name}</option>)}</select></label><CategoryPicker name={newCategoryName} icon={newCategoryIcon} color={newCategoryColor} onIconChange={setNewCategoryIcon} onColorChange={setNewCategoryColor} />{categoryError && <p className="form-error" role="alert">{categoryError}</p>}<button type="button" onClick={createCustomCategory}>Tạo và thêm vào kế hoạch</button></div>}
           </div>}
 
           {visibleCats.length > 0 && <div className="allocation-columns" aria-hidden="true">
