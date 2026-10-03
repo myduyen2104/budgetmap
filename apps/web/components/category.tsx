@@ -41,11 +41,11 @@ export function CategoryBadge({ category, compact = false }: { category: Categor
   </span>;
 }
 
-export function CategoryPicker({ icon, color, onIconChange, onColorChange }: { icon: string; color: string; onIconChange: (value: CategoryIcon) => void; onColorChange: (value: CategoryColor) => void }) {
+export function CategoryPicker({ icon, color, name, onIconChange, onColorChange }: { icon: string; color: string; name?: string; onIconChange: (value: CategoryIcon) => void; onColorChange: (value: CategoryColor) => void }) {
   const [showAll, setShowAll] = useState(false);
   const icons = useMemo(() => showAll ? CATEGORY_ICONS : CATEGORY_ICONS.slice(0, 24), [showAll]);
   return <div className="category-picker">
-    <div className="category-preview"><CategoryBadge category={{ name: "Xem trước", icon, color }} /></div>
+    <div className="category-preview"><CategoryBadge category={{ name: name?.trim() || "Xem trước", icon, color }} /></div>
     <span className="picker-label">Biểu tượng</span>
     <div className="icon-grid" role="radiogroup" aria-label="Biểu tượng danh mục">
       {icons.map((x) => <button type="button" key={x} className={icon === x ? "selected" : ""} aria-label={`Chọn biểu tượng ${x}`} aria-pressed={icon === x} onClick={() => onIconChange(x)}><i className={categoryIconClass(x)} aria-hidden="true" /></button>)}

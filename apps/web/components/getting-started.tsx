@@ -23,6 +23,7 @@ type Step = {
 
 export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: GettingStartedProps) {
   const [year, monthNumber] = month.split("-");
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [tourIndex, setTourIndex] = useState(0);
 
@@ -70,7 +71,10 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
   ];
 
   useEffect(() => {
-    if (window.localStorage.getItem("budgetmap-tour-seen") !== "1") setShowTour(true);
+    if (window.localStorage.getItem("budgetmap-tour-seen") !== "1") {
+      setShowGettingStarted(true);
+      setShowTour(true);
+    }
   }, []);
 
   const openTour = () => {
@@ -80,6 +84,7 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
 
   const closeTour = () => {
     window.localStorage.setItem("budgetmap-tour-seen", "1");
+    setShowGettingStarted(false);
     setShowTour(false);
   };
 
@@ -87,7 +92,7 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
 
   return (
     <>
-      <section className="card getting-started" aria-labelledby="getting-started-title">
+      {showGettingStarted && <section className="card getting-started" aria-labelledby="getting-started-title">
         <div className="getting-started-header">
           <div>
             <p className="eyebrow">BẮT ĐẦU NHANH</p>
@@ -119,7 +124,7 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
             </Link>
           ))}
         </div>
-      </section>
+      </section>}
 
       {showTour && (
         <div className="tour-backdrop" role="presentation" onClick={closeTour}>

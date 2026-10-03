@@ -20,6 +20,7 @@ export function MovementForm({
   initialKind,
   onSaved,
   onCancel,
+  onDelete,
 }: {
   wallets: WalletRef[];
   categories: CategoryRef[];
@@ -27,6 +28,7 @@ export function MovementForm({
   initialKind: Kind;
   onSaved: (message: string) => void;
   onCancel: () => void;
+  onDelete?: () => void;
 }) {
   const old = editing?.item;
   const [kind, setKind] = useState<Kind>(
@@ -294,6 +296,7 @@ export function MovementForm({
                   ? "Chuyển tiền"
                   : "Lưu giao dịch"}
           </button>
+          {editing && onDelete && <button type="button" className="danger" disabled={busy} onClick={onDelete}>Xóa giao dịch</button>}
           <button
             type="button"
             className="secondary"

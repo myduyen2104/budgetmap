@@ -120,11 +120,6 @@ export function MonthPicker({
               );
             })}
           </div>
-          <div className="month-picker-foot">
-            <button type="button" onClick={() => { setYear(today.getFullYear()); onChange(todayValue); setOpen(false); }}>
-              Hôm nay
-            </button>
-          </div>
         </div>
       )}
     </div>
