@@ -1,0 +1,1138 @@
+/*
+ * Responsive layout contract for BudgetMap
+ * - phone: <= 767px (drawer + bottom navigation)
+ * - tablet: 768px–1023px (compact icon rail + tablet canvas)
+ * - desktop: >= 1024px (full sidebar + desktop workspace)
+ * Large iPad Pro landscape viewports intentionally use the desktop layout.
+ */
+
+html,
+body,
+.shell,
+.content,
+.page,
+main {
+  min-width: 0;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .shell > .sidebar {
+    width: 84px;
+    flex: 0 0 84px;
+    align-items: stretch;
+    padding: 20px 10px;
+  }
+
+  .sidebar > .brand {
+    justify-content: center;
+    padding: 4px 0 30px;
+  }
+
+  .sidebar > .brand > span {
+    display: none;
+  }
+
+  .sidebar nav,
+  .sidebar-bottom {
+    width: 100%;
+  }
+
+  .sidebar nav a,
+  .sidebar-bottom > a,
+  .sidebar-bottom > .logout {
+    justify-content: center;
+    gap: 0;
+    min-height: 50px;
+    padding-inline: 0;
+    font-size: 0;
+  }
+
+  .sidebar nav a > span,
+  .sidebar-bottom > a > span,
+  .sidebar-bottom > .logout > i {
+    flex: 0 0 auto;
+    font-size: 18px;
+  }
+
+  .sidebar-bottom > .logout > span {
+    display: none;
+  }
+
+  .page {
+    max-width: 1440px;
+    padding: 28px clamp(18px, 3vw, 34px) 48px;
+  }
+
+  .card,
+  .panel,
+  .stat-card,
+  .movement-editor,
+  .history-section {
+    min-width: 0;
+  }
+
+  .wallet-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .movement-filters {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: 12px;
+  }
+
+  .movement-filters .transaction-search {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+
+  .movement-table {
+    width: 100%;
+    table-layout: auto;
+  }
+
+  .movement-table th:nth-child(2),
+  .movement-table td:nth-child(2),
+  .movement-table th:nth-child(3),
+  .movement-table td:nth-child(3),
+  .movement-table th:nth-child(4),
+  .movement-table td:nth-child(4) {
+    transform: none;
+  }
+
+  .movement-table th:nth-child(5),
+  .movement-table td:nth-child(5) {
+    width: auto;
+    min-width: 96px;
+    max-width: 240px;
+    padding-right: 12px;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 359px) {
+  .transactions-page .transactions-mobile-controls,
+  .transactions-page .transaction-quick-filters,
+  .transactions-page .transaction-mobile-actions {
+    gap: 3px;
+  }
+
+  .transactions-page .transaction-quick-filters button {
+    min-height: 32px;
+    padding-inline: 7px;
+    font-size: 0.65rem;
+  }
+
+  .transactions-page .transaction-mobile-month-picker .month-picker-trigger,
+  .transactions-page .transaction-mobile-add,
+  .transactions-page .transaction-mobile-actions > .transaction-filter-toggle {
+    flex-basis: 32px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    border-radius: 10px;
+  }
+
+  .transactions-page > .page-header .header-actions {
+    display: none;
+  }
+
+  .topbar > div:last-of-type {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .topbar strong {
+    display: block;
+    overflow: hidden;
+    font-size: 0.84rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Transaction page: compact filter rail on touch screens and date-grouped
+   cards on phones; tablets retain a readable comparison table. */
+.transactions-mobile-controls,
+.transaction-filter-toggle,
+.transaction-mobile-list {
+  display: none;
+}
+
+.transactions-page .tablet-wallet-note,
+.transactions-page .tablet-wallet-note-header {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  .transactions-page > .page-header > .header-actions:has(.transactions-header-actions) {
+    display: none;
+  }
+
+  .transactions-page > .page-header .transactions-header-actions {
+    display: none;
+  }
+
+  .transactions-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .transaction-mobile-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .transaction-mobile-search {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    background: var(--theme-surface);
+    color: var(--theme-muted);
+  }
+
+  .transactions-page .transaction-mobile-search {
+    overflow: hidden;
+  }
+
+  .transaction-mobile-search i {
+    flex: 0 0 auto;
+    font-size: 0.9rem;
+  }
+
+  .transactions-page .transaction-mobile-search input,
+  .transactions-page .transaction-mobile-search input:hover,
+  .transactions-page .transaction-mobile-search input:focus,
+  .transactions-page .transaction-mobile-search input:focus-visible {
+    appearance: none;
+    display: block;
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--theme-text) !important;
+    font: inherit !important;
+    line-height: 1.2;
+  }
+
+  .transaction-mobile-search input::placeholder {
+    color: var(--theme-muted);
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger,
+  .transaction-mobile-add,
+  .transaction-mobile-actions > .transaction-filter-toggle {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    background: var(--theme-surface);
+    color: var(--theme-text);
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger i,
+  .transaction-mobile-add i,
+  .transaction-mobile-actions > .transaction-filter-toggle i {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .transaction-mobile-filter-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .transaction-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-self: end;
+    gap: 5px;
+    width: max-content;
+    min-height: 32px;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: var(--theme-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  .transaction-mobile-actions > .transaction-filter-toggle {
+    flex: 0 0 40px;
+    width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    background: var(--theme-surface);
+    color: var(--theme-text);
+  }
+
+  .transactions-page > .movement-filters:not(.filters-expanded) {
+    display: none !important;
+  }
+
+  .transactions-page > .movement-filters.filters-expanded {
+    display: grid !important;
+  }
+
+  .transactions-page > .movement-filters .transaction-search {
+    display: none;
+  }
+
+  .transactions-page > .movement-history > h2 {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .transactions-page {
+    row-gap: 12px;
+  }
+
+  .transactions-page > .page-header {
+    display: block;
+    margin-bottom: 0;
+  }
+
+  .transactions-page > .page-header .muted {
+    display: none;
+  }
+
+  .transactions-mobile-controls {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .transaction-mobile-actions {
+    gap: 5px;
+  }
+
+  .transaction-mobile-search {
+    flex: 1 1 0;
+    height: 36px;
+    min-width: 0;
+    padding-inline: 10px;
+    border-radius: 11px;
+    font-size: 0.76rem;
+  }
+
+  .transaction-mobile-actions > .transaction-mobile-month-picker {
+    flex: 0 0 36px;
+    width: 36px;
+    min-width: 36px;
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger,
+  .transaction-mobile-add,
+  .transaction-mobile-actions > .transaction-filter-toggle {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    border-radius: 11px;
+  }
+
+  .transactions-page .transaction-mobile-month-picker .month-picker-trigger {
+    justify-content: center;
+  }
+
+  .transactions-page .transactions-mobile-controls button > :is(i, svg) {
+    display: block;
+    flex: 0 0 auto;
+    align-self: center;
+    justify-self: center;
+    margin: 0;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  .transaction-mobile-actions > .transaction-filter-toggle {
+    flex-basis: 36px;
+    width: 36px;
+    min-height: 36px;
+  }
+
+  .transactions-page > .movement-filters.filters-expanded {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .transactions-page > .movement-filters.filters-expanded label {
+    min-width: 0;
+    font-size: 0.72rem;
+  }
+
+  .transactions-page > .movement-filters.filters-expanded .transaction-search {
+    grid-column: 1 / -1;
+  }
+
+  .transactions-page > .movement-history {
+    padding: 12px;
+  }
+
+  .transactions-page > .movement-history .movement-mobile-list {
+    display: none;
+  }
+
+  .transactions-page > .movement-history > .transaction-mobile-list {
+    display: grid;
+    gap: 14px;
+  }
+
+  .transactions-page > .movement-history > .movement-table {
+    display: none;
+  }
+
+  .transaction-date-group {
+    display: grid;
+    gap: 8px;
+  }
+
+  .transaction-date-group > h3 {
+    margin: 2px 2px 0;
+    color: var(--theme-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1.2;
+  }
+
+  .transaction-mobile-card {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto 36px;
+    grid-template-areas:
+      "category category kind action"
+      "meta meta amount amount";
+    align-items: center;
+    gap: 0 7px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    background: var(--theme-surface);
+
+    > .category-badge {
+      grid-area: category;
+      display: flex;
+      min-width: 0;
+      max-width: 100%;
+      gap: 8px;
+      overflow: hidden;
+
+      .category-icon {
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+
+        i {
+          font-size: 1rem;
+        }
+      }
+
+      > span:last-child {
+        align-self: flex-end;
+        margin-bottom: 1px;
+        transform: translateY(-12px);
+        overflow: hidden;
+        font-size: 0.9rem;
+        font-weight: 750;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    > .movement-income,
+    > .movement-expense {
+      grid-area: kind;
+      justify-self: end;
+      min-height: 23px;
+      padding: 4px 8px;
+      font-size: 0.67rem;
+      border-left-width: 1px;
+      white-space: nowrap;
+    }
+
+    > .icon-action-button {
+      grid-area: action;
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      min-height: 36px;
+      border-radius: 11px;
+    }
+
+    > .transaction-mobile-meta {
+      grid-area: meta;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-width: 0;
+      overflow: hidden;
+      margin-top: -12px;
+      padding-left: 48px;
+      color: var(--theme-muted);
+      font-size: 0.7rem;
+      line-height: 1.3;
+
+      .transaction-mobile-wallet {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .transaction-mobile-note {
+        display: -webkit-box;
+        max-width: 100%;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+    }
+
+    .transaction-mobile-amount {
+      grid-area: amount;
+      justify-self: end;
+      color: var(--theme-text);
+      font-size: 0.91rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      white-space: nowrap;
+
+      &.is-income {
+        color: var(--success);
+      }
+
+      &.is-expense {
+        color: var(--theme-primary);
+      }
+    }
+  }
+
+  .transactions-page > .movement-history .pagination {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .transactions-page > .movement-history {
+    padding: 16px;
+  }
+
+  .transaction-mobile-actions > .transaction-mobile-month-picker {
+    flex: 0 0 148px;
+    width: 148px;
+    min-width: 148px;
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger {
+    display: flex;
+    justify-content: space-between;
+    width: 148px;
+    min-width: 148px;
+    padding: 0 11px;
+  }
+
+  .transaction-mobile-month-picker .month-picker-trigger span {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    font-size: 0.76rem;
+    white-space: nowrap;
+  }
+
+  .transactions-page > .movement-history .movement-table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    white-space: normal;
+  }
+
+  .transactions-page > .movement-history .movement-table thead {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  .transactions-page > .movement-history .movement-table tbody {
+    display: table-row-group;
+  }
+
+  .transactions-page > .movement-history .movement-table tbody tr {
+    display: table-row;
+    padding: 0;
+    border: 0;
+  }
+
+  .transactions-page > .movement-history .movement-table th,
+  .transactions-page > .movement-history .movement-table td,
+  .transactions-page > .movement-history .movement-table td:last-child {
+    display: table-cell;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--theme-border);
+    transform: none;
+    vertical-align: middle;
+  }
+
+  .transactions-page > .movement-history .movement-table td::before {
+    display: none !important;
+    content: none;
+  }
+
+  .transactions-page > .movement-history .movement-table th:nth-child(1),
+  .transactions-page > .movement-history .movement-table td:nth-child(1) { width: 88px; white-space: nowrap; }
+  .transactions-page > .movement-history .movement-table th:nth-child(2),
+  .transactions-page > .movement-history .movement-table td:nth-child(2) { width: 150px; }
+  .transactions-page > .movement-history .movement-table .tablet-wallet-note-header,
+  .transactions-page > .movement-history .movement-table .tablet-wallet-note { width: 150px; display: table-cell !important; }
+  .transactions-page > .movement-history .movement-table th:nth-child(5),
+  .transactions-page > .movement-history .movement-table td[data-label="Số tiền"] { width: 112px; }
+  .transactions-page > .movement-history .movement-table th:nth-child(7),
+  .transactions-page > .movement-history .movement-table td[data-label="Thao tác"] { width: 42px; }
+
+  .transactions-page > .movement-history .movement-table th:nth-child(3),
+  .transactions-page > .movement-history .movement-table td[data-label="Ví"],
+  .transactions-page > .movement-history .movement-table th:nth-child(6),
+  .transactions-page > .movement-history .movement-table td[data-label="Ghi chú"] {
+    display: none !important;
+  }
+
+  .transactions-page > .movement-history .tablet-wallet-note > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .transactions-page > .movement-history .tablet-wallet-note > span:first-child {
+    color: var(--theme-text);
+    font-size: 0.76rem;
+  }
+
+  .transactions-page > .movement-history .tablet-wallet-note > span:last-child {
+    color: var(--theme-muted);
+    font-size: 0.68rem;
+  }
+
+  .transactions-page > .movement-history .movement-table td:nth-child(3),
+  .transactions-page > .movement-history .movement-table td:nth-child(5) {
+    overflow: hidden;
+    color: var(--theme-muted);
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .transactions-page > .movement-history .movement-kind-stack {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .transactions-page > .movement-history .movement-kind-stack .category-badge {
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .transactions-page > .movement-history .movement-kind-stack .category-badge > span:last-child {
+    overflow: hidden;
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .transactions-page > .movement-history .movement-kind-stack .category-icon {
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .transactions-page > .movement-history .movement-kind-stack > .movement-expense,
+  .transactions-page > .movement-history .movement-kind-stack > .movement-income {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .shell > .sidebar {
+    width: 238px;
+    flex: 0 0 238px;
+  }
+}
+
+@media (max-width: 640px) {
+  .transactions-page .transaction-mobile-month-picker .month-picker-popover {
+    position: fixed !important;
+    inset: auto !important;
+    top: var(--mobile-popover-top) !important;
+    left: var(--mobile-popover-left) !important;
+    right: auto !important;
+    width: var(--mobile-popover-width) !important;
+    max-width: var(--mobile-popover-width) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .page {
+    min-width: 0;
+    padding: 20px 14px calc(112px + env(safe-area-inset-bottom));
+  }
+
+  main,
+  .page-header,
+  .card,
+  .panel,
+  .stat-card,
+  .movement-editor,
+  .history-section,
+  .profile-layout,
+  .analysis-page {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .card,
+  .panel,
+  .stat-card,
+  .history-section {
+    padding: 16px;
+  }
+
+  .page h1,
+  .page-header h1,
+  .plan-intro h1,
+  .planner-welcome h1 {
+    font-size: clamp(1.55rem, 6.4vw, 2rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .movement-table th:nth-child(2),
+  .movement-table td:nth-child(2),
+  .movement-table th:nth-child(3),
+  .movement-table td:nth-child(3),
+  .movement-table th:nth-child(4),
+  .movement-table td:nth-child(4) {
+    transform: none;
+  }
+
+  .movement-table th:nth-child(5),
+  .movement-table td:nth-child(5) {
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    padding-right: 8px;
+    overflow-wrap: anywhere;
+  }
+
+  .movement-table td {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .mobile-nav.no-active::before {
+    visibility: hidden;
+  }
+
+  .wallet-type-select .wallet-type-menu {
+    position: absolute !important;
+    z-index: 40 !important;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: min(220px, 32dvh);
+    overflow-y: auto;
+    margin: 0;
+  }
+
+  .topbar .menu:focus-visible {
+    outline: 3px solid var(--theme-primary-strong) !important;
+    outline-offset: 2px;
+  }
+}
+
+/* Extend the established phone navigation through the full phone breakpoint.
+   The legacy drawer and bottom-nav rules stop at 640px, leaving 641–767px
+   with a narrow content column and no bottom navigation. */
+@media (min-width: 641px) and (max-width: 767px) {
+  .shell > .sidebar {
+    display: flex;
+    position: fixed;
+    z-index: 30;
+    inset: 0 auto 0 0;
+    width: min(82vw, 320px);
+    max-height: 100dvh;
+    transform: translateX(-105%);
+    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .shell > .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .topbar .menu {
+    display: grid !important;
+    place-items: center;
+  }
+
+  .mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    position: fixed;
+    z-index: 10;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: 10px;
+    padding: 8px 4px;
+    border: 1px solid var(--theme-border);
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--theme-surface) 94%, transparent);
+    box-shadow: var(--theme-shadow);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-nav a {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 7px 2px;
+    border-radius: 13px;
+    color: var(--theme-muted);
+  }
+
+  .mobile-nav a span {
+    font-size: 1.1rem;
+  }
+
+  .mobile-nav a small {
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav::before,
+  .sidebar,
+  .topbar {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Transactions become compact, scannable records instead of labeled tables. */
+@media (max-width: 767px) {
+  .history-section .movement-table {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .history-section .movement-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .history-section .movement-table tbody {
+    display: grid;
+    gap: 8px;
+  }
+
+  .history-section .movement-table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 40px;
+    grid-template-areas:
+      "date date action"
+      "kind amount amount"
+      "wallet wallet wallet"
+      "note note note";
+    position: relative;
+    align-items: center;
+    gap: 7px 8px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    background: var(--theme-surface);
+  }
+
+  .history-section .movement-table td,
+  .history-section .movement-table td:last-child {
+    display: block;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    transform: none;
+  }
+
+  .history-section .movement-table td::before {
+    display: none;
+    content: none;
+  }
+
+  .history-section .movement-table td[data-label="Ngày"] {
+    grid-area: date;
+    color: var(--theme-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  .history-section .movement-table td[data-label="Loại / Danh mục"],
+  .history-section .movement-table td[data-label="Loại"] {
+    grid-area: kind;
+    min-width: 0;
+  }
+
+  .history-section .movement-table .movement-kind-stack {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .history-section .movement-table .movement-kind-stack > .movement-expense,
+  .history-section .movement-table .movement-kind-stack > .movement-income {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .history-section .movement-table .movement-kind-stack .category-badge {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    order: 0;
+  }
+
+  .history-section .movement-table .movement-kind-stack .category-badge > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .history-section .movement-table .movement-kind-stack > .movement-expense,
+  .history-section .movement-table .movement-kind-stack > .movement-income {
+    order: 1;
+  }
+
+  .history-section .movement-table td[data-label="Ví"],
+  .history-section .movement-table td[data-label="Ví nguồn → Ví nhận"] {
+    grid-area: wallet;
+    overflow: hidden;
+    color: var(--theme-muted);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .history-section .movement-table td[data-label="Số tiền"] {
+    grid-area: amount;
+    justify-self: end;
+    color: var(--theme-text);
+    font-size: 0.98rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .history-section .movement-table td[data-label="Ghi chú"] {
+    grid-area: note;
+    overflow: hidden;
+    color: var(--theme-muted);
+    font-size: 0.76rem;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .history-section .movement-table td[data-label="Thao tác"] {
+    grid-area: action;
+    justify-self: end;
+  }
+
+  .history-section .movement-table td[data-label="Thao tác"] .row-actions {
+    justify-content: flex-end;
+    width: 40px;
+  }
+
+  .history-section .movement-table td[data-label="Thao tác"] .icon-action-button {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 11px;
+  }
+}
+
+/* iPad portrait: full-width two-line records retain a quick comparison rhythm. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .history-section .movement-table {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .history-section .movement-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .history-section .movement-table tbody {
+    display: grid;
+    gap: 0;
+  }
+
+  .history-section .movement-table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(78px, 0.7fr) minmax(0, 1.3fr) minmax(116px, 0.95fr) 40px;
+    grid-template-areas:
+      "date kind amount action"
+      "wallet note amount action";
+    align-items: center;
+    gap: 3px 12px;
+    min-width: 0;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .history-section .movement-table td,
+  .history-section .movement-table td:last-child {
+    display: block;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    transform: none;
+  }
+
+  .history-section .movement-table td[data-label="Ngày"] { grid-area: date; }
+  .history-section .movement-table td[data-label="Loại / Danh mục"],
+  .history-section .movement-table td[data-label="Loại"] { grid-area: kind; }
+  .history-section .movement-table td[data-label="Số tiền"] {
+    grid-area: amount;
+    align-self: stretch;
+    display: grid;
+    align-content: center;
+    justify-items: end;
+    color: var(--theme-text);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .history-section .movement-table td[data-label="Ví"],
+  .history-section .movement-table td[data-label="Ví nguồn → Ví nhận"] { grid-area: wallet; }
+  .history-section .movement-table td[data-label="Ghi chú"] { grid-area: note; }
+  .history-section .movement-table td[data-label="Thao tác"] {
+    grid-area: action;
+    align-self: stretch;
+    display: grid;
+    align-items: center;
+    justify-items: end;
+  }
+
+  .history-section .movement-table td[data-label="Ví"]::before,
+  .history-section .movement-table td[data-label="Ví nguồn → Ví nhận"]::before {
+    content: "Ví";
+  }
+  .history-section .movement-table td[data-label="Ghi chú"]::before {
+    content: "Ghi chú";
+  }
+  .history-section .movement-table td[data-label="Ví"]::before,
+  .history-section .movement-table td[data-label="Ví nguồn → Ví nhận"]::before,
+  .history-section .movement-table td[data-label="Ghi chú"]::before {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--theme-muted);
+    font-size: 0.68rem;
+    line-height: 1.2;
+  }
+
+  .history-section .movement-table .movement-kind-stack {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .history-section .movement-table .movement-kind-stack .category-badge {
+    order: 0;
+  }
+
+  .history-section .movement-table .movement-kind-stack > .movement-expense,
+  .history-section .movement-table .movement-kind-stack > .movement-income {
+    order: 1;
+  }
+
+  .history-section .movement-table td[data-label="Thao tác"] .row-actions,
+  .history-section .movement-table td[data-label="Thao tác"] .icon-action-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+  }
+}

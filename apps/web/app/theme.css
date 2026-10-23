@@ -4,25 +4,28 @@
   --theme-surface: #ffffff;
   --theme-surface-muted: #f5f1ff;
   --theme-text: #29243a;
-  --theme-muted: #746d82;
+  --theme-muted: #70697e;
   --theme-border: #ddd5ff;
   --theme-primary: #806fe5;
   --theme-primary-strong: #5b4bb7;
+  --theme-on-primary: #ffffff;
   --theme-primary-soft: #eee9ff;
   --theme-shadow: 0 10px 30px rgba(88, 65, 128, 0.08);
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --theme-bg: #12101a;
-  --theme-surface: #1d1a29;
-  --theme-surface-muted: #29243a;
+  --theme-bg: #111315;
+  --theme-surface: #1a1d21;
+  --theme-surface-muted: #23272c;
   --theme-text: #f2f4f7;
   --theme-muted: #b9bec8;
-  --theme-border: #5b4e83;
+  --theme-border: #3b424a;
   --theme-primary: #a99be8;
   --theme-primary-strong: #c7bdf0;
-  --theme-primary-soft: #30294a;
+  --theme-primary-soft: #262b31;
   --theme-shadow: 0 18px 50px #00000045;
+  color-scheme: dark;
 }
 
 body,
@@ -67,6 +70,26 @@ body,
   color: #fff;
 }
 
+/* The mobile hamburger is an icon-only control. Keep its hit area, but remove
+   the decorative surface and border so only the SVG/icon is visible. */
+.topbar .menu,
+.topbar .menu:hover,
+.topbar .menu:focus-visible,
+.topbar .menu:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--theme-primary-strong) !important;
+  outline: none;
+}
+.topbar .menu i,
+.topbar .menu svg {
+  color: inherit !important;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
 .sidebar nav a.active:hover,
 .mobile-nav a.active:hover {
   background: var(--theme-primary-strong) !important;
@@ -83,6 +106,16 @@ body,
 .theme-toggle:focus-visible {
   background: var(--theme-primary);
   border-color: var(--theme-primary);
+}
+
+/* Theme changes should commit in one paint instead of animating every
+   surface at once, which is especially noticeable when entering dark mode. */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
+  animation: none !important;
 }
 
 input,
@@ -103,36 +136,36 @@ button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(
 .planner-actions a:first-child,
 .quick-actions a:first-child,
 .sidebar nav a.active,
-.mobile-nav a.active { background: var(--theme-primary-strong); color: #fff; }
+.mobile-nav a.active { background: var(--theme-primary-strong); color: var(--theme-on-primary); }
 
 button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 .sidebar nav a:hover,
 .mobile-nav a:hover,
 .section-heading a:hover { color: var(--theme-primary-strong); }
 
-/* Dark mode uses the same solid purple as the monthly-plan actions. */
+/* Dark mode keeps the active palette for all primary actions. */
 [data-theme="dark"] button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
 [data-theme="dark"] .quick-actions a,
 [data-theme="dark"] .planner-actions a,
 [data-theme="dark"] .month-nav button {
-  background: #6f5bc9 !important;
-  color: #fff !important;
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
 }
 
 [data-theme="dark"] button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 [data-theme="dark"] .quick-actions a:hover,
 [data-theme="dark"] .planner-actions a:hover,
 [data-theme="dark"] .month-nav button:hover {
-  background: #806fe5 !important;
-  color: #fff !important;
+  background: var(--theme-primary) !important;
+  color: var(--theme-on-primary) !important;
 }
 
 [data-theme="dark"] .sidebar nav a.active,
 [data-theme="dark"] .sidebar nav a.active:hover,
 [data-theme="dark"] .mobile-nav a.active,
 [data-theme="dark"] .mobile-nav a.active:hover {
-  background: #6f5bc9 !important;
-  color: #fff !important;
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
 }
 
 .theme-palette-option,
@@ -190,6 +223,28 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
   min-width: 195px;
 }
 @media (max-width: 640px) {
+  .plan-page-header {
+    display: block;
+  }
+
+  .plan-page-header .plan-intro {
+    margin-bottom: 16px;
+  }
+
+  .plan-month-picker {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .plan-month-picker .month-picker {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .plan-month-picker .month-picker-trigger {
+    white-space: nowrap;
+  }
+
   .planner-welcome .month-picker,
   .transactions-month-picker .month-picker,
   .plan-month-picker .month-picker {
@@ -203,7 +258,173 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
   color: #fff !important;
 }
 .movement-edit-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgb(20 15 32 / 42%); }
-.movement-edit-modal .movement-editor { width: min(100%, 920px); max-height: calc(100vh - 48px); overflow: auto; box-shadow: var(--theme-shadow); }
+.movement-edit-modal .movement-editor { width: min(100%, 920px); min-height: min(620px, calc(100vh - 48px)); max-height: calc(100vh - 32px); overflow: visible; box-shadow: var(--theme-shadow); }
+.transaction-date-picker { position: relative; width: 100%; min-width: 0; }
+.date-picker-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 7px;
+  border: 1px solid var(--theme-border, var(--purple-line));
+  border-radius: 12px;
+  background: var(--theme-surface, var(--surface));
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.date-picker-control:focus-within,
+.date-picker-control:has(.date-picker-trigger[aria-expanded="true"]) {
+  border-color: var(--theme-primary, var(--purple));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary, var(--purple)) 16%, transparent);
+}
+.date-picker-control input,
+html[data-theme-color] .date-picker-control input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0 !important;
+  border-radius: inherit;
+  outline: none;
+  background: transparent !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: var(--theme-text, var(--text, var(--ink)));
+  font: inherit;
+  box-shadow: none !important;
+}
+.date-picker-mask {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font: inherit;
+  white-space: pre;
+}
+.date-mask-digit { color: var(--theme-text, var(--text, var(--ink))); }
+.date-mask-placeholder,
+.date-mask-separator { color: var(--theme-muted, var(--muted, #96939e)); }
+.date-picker-trigger {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  min-height: 42px;
+  margin: 0 2px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text, var(--ink));
+  cursor: pointer;
+}
+.date-picker-trigger:hover,
+.date-picker-trigger[aria-expanded="true"] {
+  background: var(--theme-primary-soft, var(--purple-soft));
+}
+.date-picker-trigger,
+html[data-theme-color] .date-picker-trigger { background: transparent; }
+.date-picker-trigger:hover,
+html[data-theme-color] .date-picker-trigger:hover,
+html[data-theme-color] .date-picker-trigger[aria-expanded="true"] { background: var(--theme-primary-soft, var(--purple-soft)); }
+html[data-theme-color] .date-picker-control .date-picker-trigger { border: 0 !important; background: transparent !important; color: var(--theme-primary-strong) !important; }
+html[data-theme-color] .date-picker-control .date-picker-trigger:hover,
+html[data-theme-color] .date-picker-control .date-picker-trigger[aria-expanded="true"] { background: var(--theme-primary-soft) !important; }
+.date-picker-trigger i { color: var(--theme-primary-strong, var(--purple-strong)); font-size: 1rem; }
+.transaction-date-popover {
+  position: absolute;
+  z-index: 1200;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(340px, calc(100vw - 40px));
+  max-height: min(390px, calc(100vh - 32px));
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--theme-border, var(--purple-line));
+  border-radius: 18px;
+  background: var(--theme-surface, var(--surface));
+  color: var(--text, var(--ink));
+  box-shadow: var(--theme-shadow, 0 16px 42px rgb(35 27 66 / 18%));
+}
+.transaction-calendar-header,
+.calendar-month-year { display: flex; align-items: center; gap: 8px; }
+.transaction-calendar-header { justify-content: space-between; margin-bottom: 14px; }
+.calendar-month-year .calendar-select:first-child { flex: 1; min-width: 0; }
+.calendar-month-year .calendar-select:last-child { flex: 0 0 88px; width: 88px; }
+.calendar-month-year .calendar-select .select-trigger {
+  min-height: 38px;
+  padding: 0 9px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+.calendar-month-year .calendar-select .select-menu {
+  z-index: 1300;
+  max-height: 220px;
+  padding: 5px;
+  scrollbar-gutter: stable;
+}
+.calendar-month-year .calendar-select .select-option { min-height: 34px; padding: 7px 8px; font-size: 0.82rem; }
+.calendar-nav,
+.calendar-today {
+  display: inline-grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--theme-border, var(--purple-line));
+  border-radius: 10px;
+  background: var(--theme-primary-soft, var(--purple-soft));
+  color: var(--theme-primary-strong, var(--purple-strong));
+  cursor: pointer;
+}
+.calendar-nav:hover,
+.calendar-today:hover { border-color: var(--theme-primary, var(--purple)); background: var(--theme-primary, var(--purple)); color: #fff; }
+.calendar-nav i { font-size: 1rem; }
+html[data-theme-color] .transaction-date-popover .calendar-nav,
+html[data-theme-color] .transaction-date-popover .calendar-today { background: var(--theme-primary-soft) !important; color: var(--theme-primary-strong) !important; }
+html[data-theme-color] .transaction-date-popover .calendar-nav:hover,
+html[data-theme-color] .transaction-date-popover .calendar-today:hover { background: var(--theme-primary) !important; color: var(--theme-on-primary, #fff) !important; }
+.transaction-calendar-weekdays,
+.transaction-calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.transaction-calendar-weekdays { margin-bottom: 5px; }
+.transaction-calendar-weekdays span { display: grid; place-items: center; min-height: 28px; color: var(--muted-2); font-size: 0.72rem; font-weight: 750; }
+.calendar-day {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text, var(--ink));
+  font: inherit;
+  font-size: 0.83rem;
+  cursor: pointer;
+}
+.calendar-day:hover,
+.calendar-day:focus-visible { border-color: var(--theme-border, var(--purple-line)); background: var(--theme-primary-soft, var(--purple-soft)); color: var(--theme-primary-strong, var(--purple-strong)); outline: none; }
+.calendar-day.outside-month { color: var(--muted-2); opacity: 0.55; }
+.calendar-day.today:not(.selected) { border-color: var(--theme-primary, var(--purple)); color: var(--theme-primary-strong, var(--purple-strong)); font-weight: 800; }
+.calendar-day.selected,
+html[data-theme-color] .transaction-date-popover .calendar-day.selected { border-color: var(--theme-primary-strong, var(--purple-strong)); background: var(--theme-primary-strong, var(--purple-strong)); color: var(--theme-on-primary, #fff); font-weight: 800; }
+html[data-theme-color] .transaction-date-popover .calendar-day:not(.selected) { background: transparent !important; color: var(--text); }
+html[data-theme-color] .transaction-date-popover .calendar-day:not(.selected):hover,
+html[data-theme-color] .transaction-date-popover .calendar-day:not(.selected):focus-visible { background: var(--theme-primary-soft) !important; color: var(--theme-primary-strong) !important; }
+html[data-theme-color] .transaction-date-popover .calendar-day.selected { background: var(--theme-primary-strong) !important; color: var(--theme-on-primary, #fff) !important; }
+.transaction-calendar-footer { display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--theme-border, var(--purple-line)); }
+.calendar-today { display: inline-flex; min-height: 34px; padding: 0 12px; font: inherit; font-size: 0.8rem; font-weight: 750; }
+@media (max-width: 700px) {
+  .movement-edit-modal .movement-editor { min-height: 0; max-height: calc(100vh - 32px); overflow: auto; }
+  .transaction-date-popover { max-height: min(360px, calc(100vh - 32px)); }
+}
 .icon-action-button { display: inline-grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--theme-border) !important; border-radius: 10px; background: var(--theme-primary-soft) !important; color: var(--theme-primary-strong) !important; }
 .icon-action-button:hover { background: var(--theme-primary) !important; color: #fff !important; }
 .pencil-icon { width: 18px; height: 18px; display: block; background: currentColor; mask: center / contain no-repeat url('/icons/attribution-pencil.svg'); -webkit-mask: center / contain no-repeat url('/icons/attribution-pencil.svg'); }
@@ -262,7 +483,7 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 }
 .movement-table th:nth-child(2),
 .movement-table td:nth-child(2) {
-  transform: translateX(-30px);
+  transform: none;
 }
 .movement-table th:nth-child(3),
 .movement-table td:nth-child(3) {
@@ -289,6 +510,125 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 [data-theme="dark"] .planner-period { color: var(--theme-muted); }
 @media (max-width: 700px) {
   .page-header .transactions-month-picker { margin-top: 0; }
+}
+
+/* Keep category-menu hover light; this must come after the generic menu rules. */
+html[data-theme-color] .category-select-menu > button:hover {
+  background: #eff8f0 !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Monthly-plan panels must use the active palette instead of legacy purple
+   surface tokens. */
+html[data-theme-color] .plan-actual-summary > div,
+html[data-theme-color] .plan-availability,
+html[data-theme-color] .allocation-list li:hover {
+  background: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme-color] .plan-inputs,
+html[data-theme-color] .allocation-metric {
+  background: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Available budget is a key status panel; give it a distinct tint derived
+   from the active palette instead of reusing the same neutral surface. */
+html[data-theme-color] .plan-availability,
+html[data-theme="dark"] .plan-availability {
+  background: color-mix(in srgb, var(--theme-primary) 16%, var(--theme-surface)) !important;
+  border-color: color-mix(in srgb, var(--theme-primary) 48%, var(--theme-border)) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .plan-availability strong,
+html[data-theme="dark"] .plan-availability strong {
+  color: var(--theme-primary-strong) !important;
+}
+
+.plan-available-amount {
+  color: var(--theme-primary-strong) !important;
+  font-weight: 850;
+}
+
+html[data-theme-color] .allocation-metric strong {
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .allocation-usage progress,
+html[data-theme-color] .allocation-progress {
+  background: color-mix(in srgb, var(--theme-primary) 16%, var(--theme-surface)) !important;
+}
+
+/* Wallet metric cards should follow the selected palette as well. */
+html[data-theme-color] .wallet-metrics > div {
+  background: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme-color] .wallet-metrics .balance {
+  background: linear-gradient(135deg, var(--theme-primary-soft), var(--theme-surface)) !important;
+}
+
+html[data-theme-color] .wallet-metrics dd {
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .wallet-delete,
+html[data-theme-color] .wallet-delete:hover,
+html[data-theme-color] .wallet-delete:focus-visible {
+  background: color-mix(in srgb, var(--danger) 14%, var(--theme-surface)) !important;
+  border-color: color-mix(in srgb, var(--danger) 32%, var(--theme-border)) !important;
+  color: var(--danger) !important;
+}
+
+html[data-theme-color] .category-delete,
+html[data-theme-color] .category-delete:hover,
+html[data-theme-color] .category-delete:focus-visible {
+  background: color-mix(in srgb, var(--danger) 14%, var(--theme-surface)) !important;
+  border-color: color-mix(in srgb, var(--danger) 32%, var(--theme-border)) !important;
+  color: var(--danger) !important;
+}
+
+html[data-theme-color] .category-type-select .select-trigger,
+html[data-theme-color] .category-type-select .select-trigger:hover,
+html[data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] {
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .category-type-select .select-trigger i,
+html[data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] i {
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .category-type-select .select-trigger > span {
+  color: var(--theme-on-primary) !important;
+  -webkit-text-fill-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .category-type-select .select-menu button:hover,
+html[data-theme-color] .category-type-select .select-menu button:hover span {
+  color: var(--theme-on-primary) !important;
+  -webkit-text-fill-color: var(--theme-on-primary) !important;
+}
+
+@media (min-width: 981px) {
+  .category-list-card {
+    height: min(760px, calc(100vh - 220px));
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .category-list-card .category-card-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-gutter: stable;
+  }
 }
 [data-theme="dark"] .planner-budget-card strong,
 [data-theme="dark"] .planner-budget-card .planner-metrics strong {
@@ -323,6 +663,915 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 }
 .category-budget-option > span {
   color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="dark"] .category-budget-option,
+html[data-theme="dark"] .category-budget-option:hover,
+html[data-theme="dark"] .category-budget-option:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .category-budget-option:hover,
+html[data-theme="dark"] .category-budget-option:focus-visible {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="dark"] .category-budget-option > span {
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="dark"] .category-budget-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+html[data-theme="dark"] .category-budget-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover,
+html[data-theme="dark"] .category-budget-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .category-budget-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Category picker options stay transparent in every interactive state.
+   Hover/focus only changes the outline so the category colors remain readable. */
+html[data-theme="dark"] .category-budget-picker .category-budget-option,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:hover,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:focus,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:focus-visible,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:active {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .category-budget-picker .category-budget-option:hover,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:focus-visible,
+html[data-theme="dark"] .category-budget-picker .category-budget-option:active {
+  border-color: var(--theme-primary) !important;
+}
+
+/* Custom category-group dropdown: outline-only options in dark mode. */
+html[data-theme="dark"] .category-group-menu button,
+html[data-theme="dark"] .category-group-menu button:hover,
+html[data-theme="dark"] .category-group-menu button:focus,
+html[data-theme="dark"] .category-group-menu button:focus-visible,
+html[data-theme="dark"] .category-group-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .category-group-menu button:hover,
+html[data-theme="dark"] .category-group-menu button:focus-visible,
+html[data-theme="dark"] .category-group-menu button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Wallet dropdown expands in the form flow so it cannot cover the next field. */
+html[data-theme] .wallet-type-select {
+  position: relative;
+  z-index: 1;
+}
+html[data-theme] .wallet-type-select:has(.wallet-type-trigger[aria-expanded="true"]) {
+  z-index: 30;
+}
+html[data-theme] .wallet-type-select .wallet-type-trigger,
+html[data-theme] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] {
+  background: var(--theme-surface-muted) !important;
+  background-color: var(--theme-surface-muted) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  box-shadow: none !important;
+}
+html[data-theme] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] {
+  border-color: var(--theme-primary) !important;
+}
+html[data-theme] .wallet-type-select .wallet-type-menu {
+  position: static;
+  z-index: auto;
+  width: 100%;
+  max-height: none;
+  margin-top: 6px;
+  isolation: isolate;
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-text) 18%, transparent) !important;
+}
+html[data-theme] .wallet-type-select .wallet-type-menu > button,
+html[data-theme] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme] .wallet-type-select .wallet-type-menu > button:focus-visible,
+html[data-theme] .wallet-type-select .wallet-type-menu > button.selected {
+  min-height: 40px;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+  box-shadow: none !important;
+}
+html[data-theme] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme] .wallet-type-select .wallet-type-menu > button:focus-visible,
+html[data-theme] .wallet-type-select .wallet-type-menu > button.selected {
+  background: var(--theme-surface-muted) !important;
+  background-color: var(--theme-surface-muted) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Responsive layout contract: mobile <=767px, tablet 768-1023px, desktop
+   (including iPad Pro landscape) >=1024px. */
+@media (max-width: 767px) {
+  html.mobile-menu-open,
+  body.mobile-menu-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+
+  .shell > .sidebar {
+    display: flex !important;
+    position: fixed;
+    z-index: 30;
+    inset: 0 auto 0 0;
+    width: min(82vw, 320px);
+    max-height: 100dvh;
+    transform: translateX(-105%);
+    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shell > .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .shell > .scrim {
+    display: block;
+    position: fixed;
+    z-index: 29;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 12%) !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(2px);
+  }
+
+  .topbar {
+    min-height: 64px;
+    padding: 10px 16px;
+  }
+
+  .topbar .eyebrow {
+    display: none;
+  }
+
+  .menu {
+    display: grid !important;
+    place-items: center;
+  }
+
+  .page {
+    min-width: 0;
+    padding: 24px 16px 100px;
+  }
+
+  .grid-2,
+  .grid-3,
+  .stat-grid,
+  .wallet-overview-grid,
+  .plan-actual-summary,
+  .planner-grid,
+  .planner-alerts {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .panel,
+  .stat-card,
+  .movement-editor,
+  .history-section {
+    min-width: 0;
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .page h1,
+  .page-header h1,
+  .plan-intro h1,
+  .planner-welcome h1 {
+    font-size: clamp(1.65rem, 7vw, 2.35rem);
+    line-height: 1.12;
+  }
+
+  .balance-spotlight > div:first-child > strong {
+    font-size: clamp(1.75rem, 8vw, 2.8rem);
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .month-picker-trigger {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .month-picker-popover,
+  .select-menu,
+  .category-select-menu,
+  .category-group-menu,
+  .wallet-type-menu {
+    max-height: min(320px, calc(100dvh - 24px));
+    max-width: calc(100vw - 24px);
+  }
+
+  .movement-edit-modal,
+  .password-sheet-backdrop,
+  .category-create-overlay {
+    padding: 12px;
+  }
+
+  .movement-edit-modal .movement-editor,
+  .password-sheet,
+  .category-create-popover {
+    min-height: 0;
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+  }
+
+  .feedback-toast {
+    left: 12px;
+    right: 12px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    max-width: none;
+  }
+
+  .feedback-toast > *,
+  .toast > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-nav {
+    display: grid !important;
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    max-width: calc(100vw - 16px);
+  }
+
+  .plan-page-header {
+    display: block;
+  }
+
+  .plan-month-picker,
+  .plan-month-picker .month-picker {
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 359px) {
+  .page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .card,
+  .panel,
+  .stat-card,
+  .movement-editor,
+  .history-section {
+    padding: 14px;
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .mobile-nav a small {
+    font-size: 0.62rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page {
+    min-width: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .grid-3,
+  .wallet-overview-grid,
+  .plan-actual-summary,
+  .planner-alerts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-2,
+  .planner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .movement-edit-modal .movement-editor {
+    min-height: 0;
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+  }
+
+  .month-picker-popover,
+  .select-menu,
+  .category-select-menu,
+  .category-group-menu,
+  .wallet-type-menu {
+    max-height: min(360px, calc(100dvh - 32px));
+  }
+
+  .allocation-list,
+  .allocation-body,
+  .allocation-details {
+    min-width: 0;
+  }
+}
+
+/* Active navigation uses the same color for its label and icon. Remove the
+   mobile drawer's decorative white left rail and avoid a focus ring changing
+   the active item's shape. */
+.sidebar nav a.active,
+.sidebar nav a.active:hover,
+.sidebar nav a.active:focus,
+.sidebar nav a.active:focus-visible,
+.sidebar.open a.active {
+  border-left: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.sidebar nav a.active,
+.sidebar nav a.active span,
+.sidebar nav a.active i,
+.sidebar nav a.active svg,
+.mobile-nav a.active,
+.mobile-nav a.active span,
+.mobile-nav a.active i,
+.mobile-nav a.active svg {
+  color: inherit !important;
+}
+
+.sidebar nav a.active svg,
+.sidebar nav a.active svg *,
+.mobile-nav a.active svg,
+.mobile-nav a.active svg * {
+  stroke: currentColor !important;
+}
+
+.sidebar nav a.active svg [fill]:not([fill="none"]),
+.mobile-nav a.active svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+/* The utility links below the main navigation are navigation items too; keep
+   their active state identical to the main links (settings/profile included). */
+.sidebar-bottom > a.active,
+.sidebar-bottom > a.active:hover,
+.sidebar-bottom > a.active:focus,
+.sidebar-bottom > a.active:focus-visible {
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-weight: 700;
+  transform: none !important;
+}
+
+.sidebar-bottom > a.active span,
+.sidebar-bottom > a.active i,
+.sidebar-bottom > a.active svg,
+.sidebar-bottom > a.active svg * {
+  color: var(--theme-on-primary) !important;
+  stroke: currentColor !important;
+}
+
+.sidebar-bottom > a.active svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.sidebar-bottom .logout,
+.sidebar-bottom .logout:hover,
+.sidebar-bottom .logout:focus,
+.sidebar-bottom .logout:focus-visible {
+  transform: none !important;
+}
+
+/* Restore the original active navigation ink: the theme accent, not white.
+   Keep this limited to navigation links; primary buttons retain their
+   contrast color. */
+.sidebar nav a.active,
+.sidebar nav a.active:hover,
+.sidebar nav a.active:focus,
+.sidebar nav a.active:focus-visible,
+.sidebar nav a.active span,
+.sidebar nav a.active i,
+.sidebar nav a.active svg,
+.sidebar nav a.active svg * {
+  color: var(--theme-primary-strong) !important;
+}
+
+.sidebar-bottom > a.active,
+.sidebar-bottom > a.active:hover,
+.sidebar-bottom > a.active:focus,
+.sidebar-bottom > a.active:focus-visible,
+.sidebar-bottom > a.active span,
+.sidebar-bottom > a.active i,
+.sidebar-bottom > a.active svg,
+.sidebar-bottom > a.active svg * {
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Active navigation uses white text/icon for contrast on the theme surface. */
+.sidebar nav a.active,
+.sidebar nav a.active:hover,
+.sidebar nav a.active:focus,
+.sidebar nav a.active:focus-visible,
+.sidebar nav a.active span,
+.sidebar nav a.active i,
+.sidebar nav a.active svg,
+.sidebar nav a.active svg *,
+.sidebar-bottom > a.active,
+.sidebar-bottom > a.active:hover,
+.sidebar-bottom > a.active:focus,
+.sidebar-bottom > a.active:focus-visible,
+.sidebar-bottom > a.active span,
+.sidebar-bottom > a.active i,
+.sidebar-bottom > a.active svg,
+.sidebar-bottom > a.active svg * {
+  color: #fff !important;
+}
+
+.sidebar nav a.active svg [fill]:not([fill="none"]),
+.sidebar-bottom > a.active svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.sidebar nav a.active svg [stroke]:not([stroke="none"]),
+.sidebar-bottom > a.active svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
+}
+
+.mobile-nav a.active,
+.mobile-nav a.active:hover,
+.mobile-nav a.active:focus,
+.mobile-nav a.active:focus-visible,
+.mobile-nav a.active span,
+.mobile-nav a.active i,
+.mobile-nav a.active svg,
+.mobile-nav a.active svg * {
+  color: #fff !important;
+}
+
+.mobile-nav a.active svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.mobile-nav a.active svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
+}
+
+/* One shared active surface glides between bottom-nav items on route change. */
+@media (max-width: 767px) {
+  .mobile-nav {
+    position: fixed;
+    isolation: isolate;
+  }
+
+  .mobile-nav::before {
+    position: absolute;
+    z-index: 0;
+    top: 8px;
+    bottom: 8px;
+    left: 4px;
+    width: calc((100% - 8px) / 5);
+    border-radius: 13px;
+    background: var(--theme-primary-strong);
+    box-shadow: 0 6px 16px rgb(91 75 183 / 20%);
+    content: "";
+    transform: translateX(calc(var(--active-index, 0) * 100%));
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mobile-nav a,
+  .mobile-nav a.active,
+  .mobile-nav a.active:hover {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+    box-shadow: none !important;
+    transition: color 180ms ease;
+  }
+}
+
+.sidebar nav a.active svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.sidebar nav a.active svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
+}
+
+/* The mobile drawer scrim is a translucent veil, not a themed button. Keep
+   the page visible underneath while the body lock prevents background scroll. */
+@media (max-width: 640px) {
+  html[data-theme-color] .shell > button.scrim,
+  html[data-theme-color][data-theme-color] .shell > button.scrim,
+  html[data-theme-color] .shell > button.scrim:hover,
+  html[data-theme-color] .shell > button.scrim:focus,
+  html[data-theme-color] .shell > button.scrim:focus-visible,
+  html[data-theme="dark"] .shell > button.scrim,
+  html[data-theme="dark"][data-theme="dark"] .shell > button.scrim,
+  html[data-theme="dark"] .shell > button.scrim:hover,
+  html[data-theme="dark"] .shell > button.scrim:focus,
+  html[data-theme="dark"] .shell > button.scrim:focus-visible,
+  .shell > .scrim,
+  .shell > button.scrim,
+  .shell > .scrim:hover,
+  .shell > .scrim:focus,
+  .shell > .scrim:focus-visible {
+    background: rgb(0 0 0 / 12%) !important;
+    background-color: rgb(0 0 0 / 12%) !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  html[data-theme-color] button.scrim,
+  html[data-theme="dark"] button.scrim {
+    background: rgb(0 0 0 / 12%) !important;
+    background-color: rgb(0 0 0 / 12%) !important;
+    background-image: none !important;
+    border-color: transparent !important;
+  }
+
+  html[data-theme-color][data-theme-color] .shell > button.scrim:hover,
+  html[data-theme-color][data-theme-color] .shell > button.scrim:focus,
+  html[data-theme-color][data-theme-color] .shell > button.scrim:focus-visible,
+  html[data-theme="dark"][data-theme="dark"] .shell > button.scrim:hover,
+  html[data-theme="dark"][data-theme="dark"] .shell > button.scrim:focus,
+  html[data-theme="dark"][data-theme="dark"] .shell > button.scrim:focus-visible {
+    background: rgb(0 0 0 / 12%) !important;
+    background-color: rgb(0 0 0 / 12%) !important;
+    background-image: none !important;
+    border-color: transparent !important;
+  }
+
+  html.mobile-menu-open,
+  body.mobile-menu-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+}
+
+/* Directly override the selected wallet option shown as
+   <button class="selected">. */
+html[data-theme-color] .wallet-type-menu > button.selected,
+html[data-theme-color] .wallet-type-menu > button.selected:hover,
+html[data-theme-color] .wallet-type-menu > button.selected:focus,
+html[data-theme-color] .wallet-type-menu > button.selected:focus-visible,
+html[data-theme-color] .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-menu > button:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Highest-specificity wallet option override. The global theme button rule
+   also targets generic buttons with a long :not(...) selector. */
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close),
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus,
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus-visible,
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus-visible,
+html[data-theme-color] .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Wallet type dropdown: dark mode uses the same outline-only treatment. */
+html[data-theme-color] .wallet-type-select .wallet-type-trigger,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:focus,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-menu,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:focus,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button.selected,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:focus,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:focus,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:focus-visible,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .wallet-type-select .wallet-type-trigger,
+html[data-theme-color] .wallet-type-select .wallet-type-menu,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button.selected,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:focus-visible,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Last cascade rule for wallet-type-select: no filled surfaces. */
+html[data-theme-color] .wallet-type-select .wallet-type-trigger,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-menu,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu button.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+/* Final cascade override for the wallet type dropdown. */
+html[data-theme="dark"] .wallet-type-trigger,
+html[data-theme="dark"] .wallet-type-trigger:hover,
+html[data-theme="dark"] .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-menu,
+html[data-theme="dark"] .wallet-type-menu button,
+html[data-theme="dark"] .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-menu button.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+/* wallet-type-select follows the same outline-only dropdown pattern. */
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu button.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+/* data-theme-color also applies the generic filled-button hover rule. Keep
+   category-group-menu options outline-only in every themed mode. */
+html[data-theme-color] .category-group-menu button,
+html[data-theme-color] .category-group-menu button:hover,
+html[data-theme-color] .category-group-menu button:focus,
+html[data-theme-color] .category-group-menu button:focus-visible,
+html[data-theme-color] .category-group-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .category-group-menu button:hover,
+html[data-theme-color] .category-group-menu button:focus-visible,
+html[data-theme-color] .category-group-menu button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Match the global button selector's specificity so it cannot refill these
+   options with the primary green background. */
+html[data-theme="dark"] .category-group-menu button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close),
+html[data-theme="dark"] .category-group-menu button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme="dark"] .category-group-menu button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="dark"] .category-group-menu button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme="dark"] .category-group-menu button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  border-color: var(--theme-primary) !important;
+}
+
+/* Category preview text follows the selected recognition color in dark mode. */
+html[data-theme="dark"] .category-preview .category-badge,
+html[data-theme-color] .category-preview .category-badge {
+  color: var(--category-color) !important;
+}
+
+html[data-theme="dark"] .category-preview .category-badge > span:last-child,
+html[data-theme-color] .category-preview .category-badge > span:last-child {
+  color: color-mix(in srgb, var(--category-color) 55%, var(--theme-text, #29243a) 45%) !important;
+}
+
+/* Recognition colors: keep the swatch shell transparent so the actual color
+   sample remains visible; use the active theme only for the outline. */
+html[data-theme="dark"] .color-grid .color-swatch,
+html[data-theme="dark"] .color-grid .color-swatch:hover,
+html[data-theme="dark"] .color-grid .color-swatch.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .color-grid .color-swatch:hover,
+html[data-theme="dark"] .color-grid .color-swatch.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+html[data-theme="dark"] .color-grid .color-swatch.selected {
+  outline: 1px solid var(--theme-primary) !important;
+  outline-offset: 2px;
+}
+
+/* Match the global themed-button specificity so the swatch shell remains
+   the page background instead of turning green. */
+html[data-theme="dark"] .color-grid .color-swatch:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close),
+html[data-theme="dark"] .color-grid .color-swatch:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme="dark"] .color-grid .color-swatch:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .color-grid .color-swatch:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme="dark"] .color-grid .color-swatch:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  border-color: var(--theme-primary) !important;
+}
+
+/* Wallet type control: outline-only themed dropdown. */
+html[data-theme="dark"] .wallet-type-trigger,
+html[data-theme="dark"] .wallet-type-trigger:hover,
+html[data-theme="dark"] .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-menu,
+html[data-theme="dark"] .wallet-type-menu button,
+html[data-theme="dark"] .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-menu button:hover,
+html[data-theme="dark"] .wallet-type-menu button.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+html[data-theme="dark"] .wallet-type-menu {
+  border-color: var(--theme-primary) !important;
+}
+
+/* Analysis table uses the same dark surface as its containing card. */
+html[data-theme="dark"] .analysis-table-card,
+html[data-theme="dark"] .analysis-table-card table,
+html[data-theme="dark"] .analysis-table-card thead,
+html[data-theme="dark"] .analysis-table-card tbody,
+html[data-theme="dark"] .analysis-table-card tbody tr {
+  background: var(--theme-surface) !important;
+}
+
+html[data-theme="dark"] .analysis-table-card th,
+html[data-theme="dark"] .analysis-table-card td {
+  border-color: var(--theme-border) !important;
+}
+
+/* Wallet type dropdown uses the same themed menu language as other custom
+   selectors instead of the browser's native option popup. */
+.wallet-type-select {
+  position: relative;
+}
+.wallet-type-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--theme-border);
+  border-radius: 10px;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  text-align: left;
+}
+.wallet-type-trigger:hover,
+.wallet-type-trigger[aria-expanded="true"] {
+  border-color: var(--theme-primary);
+}
+.wallet-type-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+}
+.wallet-type-menu button {
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--theme-text);
+  text-align: left;
+}
+.wallet-type-menu button:hover,
+.wallet-type-menu button.selected {
+  border-color: var(--theme-primary);
+  background: transparent;
+  color: var(--theme-primary-strong);
+}
+
+/* Monthly-plan allocation rail: make the accent line easier to see in dark
+   mode while keeping it tied to the active theme. */
+html[data-theme="dark"] .allocation-list .allocation-child .allocation-header {
+  border-left: 3px solid var(--theme-primary) !important;
+}
+
+/* The status badge in the uncategorized group gets its own line. */
+html[data-theme="dark"] .allocation-child-other .allocation-header {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 5px;
 }
 .category-budget-picker-close {
   background: var(--theme-primary-soft) !important;
@@ -409,6 +1658,31 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
   border-color: var(--theme-border) !important;
   color: var(--theme-primary-strong) !important;
 }
+.movement-filters .select-menu {
+  padding: 6px;
+  scrollbar-gutter: auto;
+}
+.movement-filters .select-menu .select-option {
+  width: 100%;
+  margin: 0;
+  text-align: left;
+}
+.movement-filters .select-menu .select-option:hover,
+.movement-filters .select-menu .select-option:focus-visible {
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary, #fff) !important;
+  -webkit-text-fill-color: var(--theme-on-primary, #fff) !important;
+}
+.movement-filters .select-menu .select-option.selected {
+  background: var(--theme-primary-soft) !important;
+  color: var(--theme-text) !important;
+  -webkit-text-fill-color: var(--theme-text) !important;
+}
+.movement-filters .select-menu .select-option.selected:hover {
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary, #fff) !important;
+  -webkit-text-fill-color: var(--theme-on-primary, #fff) !important;
+}
 .movement-filters .select-trigger,
 .movement-filters .select-trigger:hover,
 .movement-filters .select-trigger[aria-expanded="true"] {
@@ -448,6 +1722,53 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
 .category-type-select .select-trigger { min-height: 46px; font-size: .95rem; font-weight: 700; }
 .category-type-select .select-menu { padding: 7px; gap: 4px; }
 .category-type-select .select-menu button { min-height: 40px; padding: 9px 12px; border-radius: 9px; font-size: .94rem; font-weight: 650; }
+
+/* Category type options: keep the menu surface neutral and show only the
+   theme-colored outline for the current/hovered option in dark mode. */
+html[data-theme="dark"] .category-type-select .select-menu > button,
+html[data-theme="dark"] .category-type-select .select-menu > button:hover,
+html[data-theme="dark"] .category-type-select .select-menu > button:focus,
+html[data-theme="dark"] .category-type-select .select-menu > button:focus-visible,
+html[data-theme="dark"] .category-type-select .select-menu > button.selected {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .category-type-select .select-menu > button:hover,
+html[data-theme="dark"] .category-type-select .select-menu > button:focus-visible,
+html[data-theme="dark"] .category-type-select .select-menu > button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Match the dark dropdown frame used by the other pages. */
+html[data-theme="dark"] .category-type-select .select-menu {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: var(--theme-shadow) !important;
+}
+
+/* Match the category-group dropdown: transparent rows, thin accent outline
+   only on hover/selected. */
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close),
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus,
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus-visible,
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover,
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):focus-visible,
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.password-toggle):not(.sheet-close).selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
 
 /* Category dropdown items keep the original neutral menu treatment. */
 .category-select-trigger,
@@ -594,6 +1915,7 @@ html[data-theme="dark"] .expense-detail-table td.is-exceeded-amount {
 .bar-actual { background: var(--theme-primary-strong) !important; }
 .chart-legend .legend-exceeded::before,
 .bar-actual.exceeded { background: #d94f5c !important; }
+.bar-actual:not(.exceeded) { background: var(--category-color, var(--theme-primary-strong)) !important; }
 .chart-legend .legend-exceeded { color: #c94755 !important; }
 html[data-theme="dark"] .chart-legend .legend-exceeded::before,
 html[data-theme="dark"] .bar-actual.exceeded { background: #ff6b76 !important; }
@@ -621,9 +1943,1391 @@ html[data-theme="dark"] .chart-row.is-exceeded::before {
 .planner-chart.card,
 .planner-chart .chart-scroll { overflow: visible; }
 @media (max-width: 700px) {
-  .expense-budget-heading { align-items: flex-start; flex-direction: column; }
-  .expense-view-toggle { width: 100%; }
-  .expense-view-toggle button { flex: 1; }
+  .expense-budget-heading {
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+  }
+  .expense-budget-heading h2 {
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(1rem, 4.2vw, 1.2rem);
+    line-height: 1.2;
+  }
+  .expense-view-toggle {
+    flex: 0 0 auto;
+    width: auto;
+    gap: 2px;
+    padding: 2px;
+  }
+  .expense-view-toggle button {
+    flex: 0 0 30px !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    aspect-ratio: 1;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    line-height: 1;
+  }
   .planner-chart .chart-scroll { overflow-x: auto; }
-  .chart-row.is-exceeded::before { inset: 0; }
+  .chart-row.is-exceeded::before {
+    inset: 0 0 0 4px;
+    border-radius: 0 10px 10px 0;
+  }
+  .chart-row.is-exceeded .bars {
+    padding-left: 16px;
+  }
+}
+
+@media (max-width: 359px) {
+  .expense-budget-heading { gap: 6px; }
+  .expense-budget-heading h2 { font-size: 1rem; }
+  .expense-view-toggle button {
+    flex: 0 0 28px !important;
+    width: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    height: 28px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .expense-view-toggle .expense-view-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+  }
+}
+
+/* Category trigger stays neutral on hover; only menu items use the theme
+   highlight. Keep this after generic button hover rules. */
+html[data-theme-color] .category-select-trigger,
+html[data-theme-color] .category-select-trigger:hover,
+html[data-theme-color] .category-select-trigger:active,
+html[data-theme-color] .category-select-trigger[aria-expanded="true"] {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Transaction editor dropdowns use one shared, theme-aware menu treatment. */
+html[data-theme-color] .movement-editor .select-trigger,
+html[data-theme-color] .movement-editor .select-trigger:hover,
+html[data-theme-color] .movement-editor .select-trigger[aria-expanded="true"] {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+html[data-theme-color] .movement-editor .select-menu {
+  background: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--theme-shadow) !important;
+  padding: 6px !important;
+  gap: 4px !important;
+  scrollbar-color: var(--theme-primary) transparent;
+}
+html[data-theme-color] .movement-editor .select-menu button,
+html[data-theme-color] .movement-editor .select-menu button:hover,
+html[data-theme-color] .movement-editor .select-menu button.selected {
+  min-height: 38px;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  font-weight: 650;
+}
+html[data-theme-color] .movement-editor .select-menu button:hover,
+html[data-theme-color] .movement-editor .select-menu button.selected {
+  background: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+}
+html[data-theme-color] .movement-editor .select-menu::-webkit-scrollbar-track {
+  margin: 8px 0;
+  background: transparent;
+}
+html[data-theme-color] .movement-editor .select-menu::-webkit-scrollbar-thumb {
+  min-height: 24px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--theme-primary) !important;
+  background-clip: padding-box !important;
+}
+
+/* The global palette paints generic buttons as solid primary actions. Keep
+   the transaction calendar controls quiet, with only selected/hovered dates
+   using the active theme accent. */
+html[data-theme-color] .transaction-date-popover button.calendar-day {
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: var(--theme-text) !important;
+  -webkit-text-fill-color: var(--theme-text) !important;
+}
+html[data-theme-color] .transaction-date-popover button.calendar-day.outside-month {
+  color: var(--theme-muted) !important;
+  -webkit-text-fill-color: var(--theme-muted) !important;
+}
+html[data-theme-color] .transaction-date-popover button.calendar-day.today:not(.selected),
+html[data-theme-color] .transaction-date-popover button.calendar-day:hover,
+html[data-theme-color] .transaction-date-popover button.calendar-day:focus-visible {
+  border-color: var(--theme-border) !important;
+  background: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+html[data-theme-color] .transaction-date-popover button.calendar-day.selected {
+  border-color: var(--theme-primary-strong) !important;
+  background: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary, #fff) !important;
+  -webkit-text-fill-color: var(--theme-on-primary, #fff) !important;
+}
+html[data-theme-color] .transaction-date-popover button.calendar-nav,
+html[data-theme-color] .transaction-date-popover button.calendar-today {
+  border: 1px solid var(--theme-border) !important;
+  background: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+html[data-theme-color] .transaction-date-popover button.calendar-nav:hover,
+html[data-theme-color] .transaction-date-popover button.calendar-today:hover {
+  border-color: var(--theme-primary) !important;
+  background: var(--theme-primary) !important;
+  color: var(--theme-on-primary, #fff) !important;
+  -webkit-text-fill-color: var(--theme-on-primary, #fff) !important;
+}
+html[data-theme-color] .movement-editor .calendar-select .select-option:hover,
+html[data-theme-color] .movement-editor .calendar-select .select-option:focus-visible {
+  border-color: var(--theme-primary) !important;
+  background: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/*
+ * Compatibility aliases for the older stylesheet.
+ *
+ * A large part of the UI still uses names such as --surface-2, --paper and
+ * --purple-soft. Those names used to point at the lavender palette directly,
+ * which made dark mode purple even after the semantic theme tokens had been
+ * introduced. Keep the old selectors working, but make them consume the
+ * active theme instead of owning another colour system.
+ */
+html[data-theme="dark"] {
+  --bg: var(--theme-bg) !important;
+  --paper: var(--theme-bg) !important;
+  --surface: var(--theme-surface) !important;
+  --surface-2: var(--theme-surface-2, var(--theme-surface-muted)) !important;
+  --card: var(--theme-surface) !important;
+  --text: var(--theme-text) !important;
+  --ink: var(--theme-text) !important;
+  --muted: var(--theme-muted) !important;
+  --muted-2: var(--theme-muted) !important;
+  --line: var(--theme-border) !important;
+  --purple: var(--theme-primary) !important;
+  --purple-strong: var(--theme-primary-strong) !important;
+  --purple-soft: var(--theme-primary-soft) !important;
+  --purple-line: var(--theme-border) !important;
+  --purple-border: var(--theme-border) !important;
+  --brand: var(--theme-primary) !important;
+  --brand-strong: var(--theme-primary-strong) !important;
+  --brand-soft: var(--theme-primary-soft) !important;
+  --brand-border: var(--theme-border) !important;
+  --brand-gradient: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-strong)) !important;
+  --shadow: var(--theme-shadow) !important;
+}
+
+html[data-theme="dark"] .empty,
+html[data-theme="dark"] .wallet-metrics > div,
+html[data-theme="dark"] .plan-actual-summary > div,
+html[data-theme="dark"] .planner-budget-card,
+html[data-theme="dark"] .category-preview,
+html[data-theme="dark"] .movement-history,
+html[data-theme="dark"] .history-section,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel {
+  background: var(--theme-surface-muted) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Theme switcher follows the selected accent in both colour modes. */
+html[data-theme] .theme-toggle {
+  background: var(--theme-primary-soft) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] .theme-toggle .theme-toggle-icon {
+  background-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme] .theme-toggle:hover,
+html[data-theme] .theme-toggle:focus-visible {
+  background: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+html[data-theme] .theme-toggle:hover .theme-toggle-icon,
+html[data-theme] .theme-toggle:focus-visible .theme-toggle-icon {
+  background-color: var(--theme-on-primary) !important;
+}
+
+/* Dashboard budget progress uses the active palette in dark mode too. */
+html[data-theme="dark"] .planner-progress {
+  background: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .planner-progress span {
+  background: var(--theme-primary) !important;
+}
+
+/* Keep transaction tables on one neutral dark surface instead of mixing
+   legacy gray/purple layers between the page, card, header and rows. */
+html[data-theme="dark"] .page,
+html[data-theme="dark"] .content {
+  background: var(--theme-bg) !important;
+}
+
+html[data-theme="dark"] .history-section,
+html[data-theme="dark"] .movement-history {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-history table,
+html[data-theme="dark"] .history-section table,
+html[data-theme="dark"] .movement-table {
+  background: var(--theme-surface) !important;
+}
+
+html[data-theme="dark"] .movement-table thead,
+html[data-theme="dark"] .movement-table th {
+  background: var(--theme-surface-muted) !important;
+  color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-table tbody tr,
+html[data-theme="dark"] .movement-table tbody td {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-table tbody tr:hover {
+  background: var(--theme-primary-soft) !important;
+}
+
+/* Icons inside dark transaction controls need the same contrast as their
+   labels; category colours remain semantic in the table itself. */
+html[data-theme="dark"] .movement-editor .category-badge,
+html[data-theme="dark"] .movement-editor .category-badge > span:last-child {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-badge .category-icon {
+  background: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-trigger > i,
+html[data-theme="dark"] .movement-editor .select-trigger svg,
+html[data-theme="dark"] .movement-editor .select-trigger .select-arrow-icon {
+  color: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  stroke: var(--theme-primary-strong) !important;
+}
+
+/* Category picker: do not let the generic primary-button rule paint every
+   option green. Category identity stays visible through its own colour. */
+html[data-theme="dark"] .movement-editor .category-select-trigger,
+html[data-theme="dark"] .movement-editor .category-select-trigger:hover,
+html[data-theme="dark"] .movement-editor .category-select-trigger[aria-expanded="true"] {
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-menu {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-menu > button,
+html[data-theme="dark"] .movement-editor .category-select-menu > button:hover,
+html[data-theme="dark"] .movement-editor .category-select-menu > button:focus-visible {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-menu > button:hover,
+html[data-theme="dark"] .movement-editor .category-select-menu > button:focus-visible,
+html[data-theme="dark"] .movement-editor .category-select-menu > button[aria-selected="true"] {
+  background: transparent !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-menu .category-badge,
+html[data-theme="dark"] .movement-editor .category-select-menu .category-badge > span:last-child {
+  color: var(--category-color) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-menu .category-icon {
+  background: color-mix(in srgb, var(--category-color) 18%, var(--theme-surface)) !important;
+  color: var(--category-color) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-trigger .category-badge,
+html[data-theme="dark"] .movement-editor .category-select-trigger .category-badge > span:last-child {
+  color: var(--category-color) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-trigger .category-icon {
+  background: color-mix(in srgb, var(--category-color) 18%, var(--theme-surface)) !important;
+  color: var(--category-color) !important;
+}
+
+/* Match the specificity of the global dark primary-button selector so it
+   cannot reintroduce a filled green background on category options. */
+html[data-theme="dark"] .movement-editor .category-select-menu > button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+html[data-theme="dark"] .movement-editor .category-select-menu > button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover,
+html[data-theme="dark"] .movement-editor .category-select-menu > button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):focus-visible,
+html[data-theme="dark"] .movement-editor .category-select-menu > button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option)[aria-selected="true"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-trigger:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+html[data-theme="dark"] .movement-editor .category-select-trigger:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover,
+html[data-theme="dark"] .movement-editor .category-select-trigger:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option)[aria-expanded="true"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* The type and wallet SelectField controls use the same outline-only
+   treatment as the category picker in dark mode. */
+html[data-theme="dark"] .movement-editor .select-field .select-trigger,
+html[data-theme="dark"] .movement-editor .select-field .select-trigger:hover,
+html[data-theme="dark"] .movement-editor .select-field .select-trigger[aria-expanded="true"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-field .select-menu {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-field .select-option,
+html[data-theme="dark"] .movement-editor .select-field .select-option:hover,
+html[data-theme="dark"] .movement-editor .select-field .select-option:focus-visible,
+html[data-theme="dark"] .movement-editor .select-field .select-option.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-field .select-option:hover,
+html[data-theme="dark"] .movement-editor .select-field .select-option:focus-visible,
+html[data-theme="dark"] .movement-editor .select-field .select-option.selected {
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-field .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+html[data-theme="dark"] .movement-editor .select-field .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover,
+html[data-theme="dark"] .movement-editor .select-field .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):focus-visible,
+html[data-theme="dark"] .movement-editor .select-field .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Date icon: no filled colour at rest; show the theme accent only on hover
+   or while the calendar is open. */
+html[data-theme="dark"] .movement-editor .date-picker-control .date-picker-trigger,
+html[data-theme="dark"] .movement-editor .date-picker-control .date-picker-trigger:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .date-picker-control .date-picker-trigger:hover {
+  background: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .date-picker-control .date-picker-trigger:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .date-picker-control .date-picker-trigger:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover {
+  background: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+/* Make today's date readable without filling the calendar cell. */
+html[data-theme="dark"] .movement-editor .transaction-date-popover .calendar-day.today:not(.selected) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-on-primary) !important;
+  -webkit-text-fill-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .transaction-date-popover .calendar-day.today:not(.selected):hover,
+html[data-theme="dark"] .movement-editor .transaction-date-popover .calendar-day.today:not(.selected):focus-visible {
+  background: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  color: var(--theme-on-primary) !important;
+  -webkit-text-fill-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .transaction-date-popover .calendar-nav i,
+html[data-theme="dark"] .movement-editor .transaction-date-popover .calendar-nav svg {
+  color: var(--theme-on-primary) !important;
+  fill: var(--theme-on-primary) !important;
+  stroke: var(--theme-on-primary) !important;
+}
+
+/* Transaction page filters: outline-only controls in dark mode. */
+html[data-theme="dark"] .movement-filters .select-trigger,
+html[data-theme="dark"] .movement-filters .select-trigger:hover,
+html[data-theme="dark"] .movement-filters .select-trigger[aria-expanded="true"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-filters .select-trigger .select-arrow-icon {
+  background-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-filters .select-menu {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme="dark"] .movement-filters .select-menu .select-option,
+html[data-theme="dark"] .movement-filters .select-menu .select-option:hover,
+html[data-theme="dark"] .movement-filters .select-menu .select-option:focus-visible,
+html[data-theme="dark"] .movement-filters .select-menu .select-option.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .movement-filters .select-menu .select-option:hover,
+html[data-theme="dark"] .movement-filters .select-menu .select-option:focus-visible,
+html[data-theme="dark"] .movement-filters .select-menu .select-option.selected {
+  border-color: var(--theme-primary) !important;
+}
+
+html[data-theme="dark"] .movement-filters .select-menu .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+html[data-theme="dark"] .movement-filters .select-menu .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):hover,
+html[data-theme="dark"] .movement-filters .select-menu .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):focus-visible,
+html[data-theme="dark"] .movement-filters .select-menu .select-option:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option).selected {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"] .movement-editor .select-field .select-option.selected,
+html[data-theme="dark"] .movement-editor .category-select-menu > button[aria-selected="true"] {
+  border-color: var(--theme-primary) !important;
+  box-shadow: inset 0 0 0 1px var(--theme-primary) !important;
+}
+
+/* The transaction-type arrow sits on the filled primary control, so keep it
+   white for contrast in dark mode. */
+html[data-theme="dark"] .movement-editor .movement-fields > label:first-child .select-arrow-icon {
+  background-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] .movement-editor .category-select-trigger .select-arrow-icon,
+html[data-theme="dark"] .movement-editor .select-field .select-arrow-icon {
+  background-color: var(--theme-on-primary) !important;
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .select-trigger,
+html[data-theme="dark"] .select-menu {
+  background: var(--theme-surface-muted) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Final cascade guard for category-group-menu options. */
+html[data-theme-color] .category-group-menu button,
+html[data-theme-color] .category-group-menu button:hover,
+html[data-theme-color] .category-group-menu button:focus,
+html[data-theme-color] .category-group-menu button:focus-visible,
+html[data-theme-color] .category-group-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .category-group-menu button:hover,
+html[data-theme-color] .category-group-menu button:focus-visible,
+html[data-theme-color] .category-group-menu button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Final dark-mode override: category-group options are outline-only. */
+/* Wallet dropdown final override follows below. */
+html[data-theme-color] .wallet-type-menu > button.selected,
+html[data-theme-color] .wallet-type-menu > button.selected:hover,
+html[data-theme-color] .wallet-type-menu > button.selected:focus,
+html[data-theme-color] .wallet-type-menu > button.selected:focus-visible,
+html[data-theme-color] .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-menu > button:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+html[data-theme-color] .wallet-type-menu > button.selected:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close),
+html[data-theme-color] .wallet-type-menu > button.selected:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.sheet-close):hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: var(--theme-primary) !important;
+}
+html[data-theme="dark"] .category-group-menu button,
+html[data-theme="dark"] .category-group-menu button:hover,
+html[data-theme="dark"] .category-group-menu button:focus,
+html[data-theme="dark"] .category-group-menu button:focus-visible,
+html[data-theme="dark"] .category-group-menu button.selected {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .category-group-menu button:hover,
+html[data-theme="dark"] .category-group-menu button:focus-visible,
+html[data-theme="dark"] .category-group-menu button.selected {
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Wallet type menu must stay opaque and in-flow after legacy dropdown rules. */
+html[data-theme-color] .wallet-type-select {
+  position: relative;
+  z-index: 1;
+}
+html[data-theme-color] .wallet-type-select:has(.wallet-type-trigger[aria-expanded="true"]) {
+  z-index: 2;
+}
+.wallet-create .movement-fields {
+  align-items: start;
+}
+html[data-theme-color] .wallet-type-select .wallet-type-trigger,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] {
+  background: var(--theme-surface-muted) !important;
+  background-color: var(--theme-surface-muted) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  box-shadow: none !important;
+}
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] {
+  border-color: var(--theme-primary) !important;
+}
+html[data-theme-color] .wallet-type-select .wallet-type-menu {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  width: 100% !important;
+  max-height: none !important;
+  margin-top: 6px !important;
+  isolation: isolate;
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-text) 18%, transparent) !important;
+}
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button {
+  min-height: 40px;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--theme-text) !important;
+  box-shadow: none !important;
+}
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:focus-visible,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected {
+  background: var(--theme-surface-muted) !important;
+  background-color: var(--theme-surface-muted) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Align the month picker to its trigger on narrow screens; right-aligning a
+   296px panel to a narrow filter control pushed most of it off-screen. */
+@media (max-width: 640px) {
+  .month-picker-popover {
+    left: 0 !important;
+    right: auto !important;
+    width: min(296px, calc(100vw - 32px)) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+/* One month-picker size and responsive alignment across every route. */
+.month-picker,
+.planner-welcome .month-picker,
+.transactions-header-actions .month-picker,
+.header-actions .month-picker,
+.movement-filters .month-picker,
+.plan-month-picker .month-picker {
+  width: 195px;
+  min-width: 195px;
+}
+
+.transactions-header-actions {
+  justify-content: flex-end;
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .plan-month-picker {
+    margin-top: 0;
+  }
+}
+
+/* Keep the usable page width stable when some routes need a scrollbar and
+   others do not, so full-width month controls align consistently. */
+@media (max-width: 1100px) {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  .transactions-header-actions > .month-picker {
+    order: -1;
+  }
+}
+
+@media (max-width: 760px) {
+  main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .month-picker,
+  .planner-welcome .month-picker,
+  .transactions-header-actions .month-picker,
+  .header-actions .month-picker,
+  .movement-filters .month-picker,
+  .plan-month-picker .month-picker {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .planner-month,
+  .plan-month-picker,
+  .page-header > .header-actions {
+    width: 100%;
+  }
+
+  .page-header > .header-actions {
+    margin-top: 14px;
+  }
+
+  .page-header > .header-actions > label {
+    width: 100%;
+  }
+
+  .plan-page-header {
+    display: block;
+  }
+
+  .plan-page-header .plan-intro {
+    margin-bottom: 14px;
+  }
+
+  .plan-month-picker {
+    margin-top: 0;
+  }
+
+  .transactions-header-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    justify-content: start;
+    width: 100%;
+  }
+
+  .transactions-header-actions > .month-picker {
+    width: 100%;
+  }
+
+  .month-picker-trigger {
+    width: 100%;
+  }
+
+  .month-picker-popover {
+    left: 0 !important;
+    right: auto !important;
+    width: min(296px, calc(100vw - 32px)) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+/* Side-by-side monthly comparison, with compact paired rows on small screens. */
+.analysis-page > .page-header {
+  margin-bottom: 20px;
+}
+
+.analysis-compare,
+.analysis-category-comparison {
+  padding: 24px;
+}
+
+.analysis-page > .analysis-compare.card {
+  padding: 8px 0 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.analysis-page > .analysis-compare .month-picker-option.today:not(.selected) {
+  border-color: transparent !important;
+}
+
+.analysis-period-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+}
+
+.analysis-period {
+  position: relative;
+  min-width: 0;
+  padding: 8px 28px 16px;
+  background: transparent;
+}
+
+.analysis-period-b {
+  border-left: 1px solid var(--theme-border);
+}
+
+.analysis-period-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.analysis-period-heading .eyebrow {
+  margin: 0;
+  color: var(--theme-muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.analysis-period .month-picker {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.analysis-period .month-picker-trigger {
+  width: auto;
+  min-height: 40px;
+  padding-inline: 16px;
+  border-radius: 999px;
+  background: var(--theme-surface);
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.analysis-period .month-picker-trigger:hover,
+.analysis-period .month-picker-trigger[aria-expanded="true"] {
+  background: var(--theme-primary-soft);
+  box-shadow: none;
+}
+
+.analysis-period-total-label {
+  margin: 22px 0 4px;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.analysis-period-total {
+  display: block;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.analysis-loading-note {
+  margin: 12px 0 0;
+  color: var(--theme-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.analysis-difference {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 12px;
+  max-width: 100%;
+  margin: 24px 28px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--theme-border);
+  border-radius: 16px;
+  background: var(--theme-surface-muted);
+}
+
+.analysis-difference > span,
+.analysis-difference > small {
+  color: var(--theme-muted);
+}
+
+.analysis-difference > strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.analysis-difference > small {
+  font-size: 0.78rem;
+}
+
+.analysis-difference .is-increase,
+.analysis-comparison-delta.is-increase {
+  color: var(--danger, #cf465e);
+}
+
+.analysis-difference .is-decrease,
+.analysis-comparison-delta.is-decrease {
+  color: var(--success, #24825c);
+}
+
+.analysis-page > .analysis-category-comparison.card {
+  margin-top: 12px;
+  padding: 24px;
+  border: 1px solid var(--theme-border);
+  border-radius: 22px;
+  background: var(--theme-surface);
+  box-shadow: var(--theme-shadow);
+}
+
+.analysis-category-comparison .section-heading {
+  align-items: center;
+}
+
+.analysis-category-count {
+  flex: 0 0 auto;
+  color: var(--theme-muted);
+  font-size: 0.82rem;
+}
+
+.analysis-comparison-columns,
+.analysis-comparison-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 1.3fr) repeat(2, minmax(110px, 0.8fr)) minmax(120px, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.analysis-comparison-columns {
+  padding: 0 14px 10px;
+  color: var(--theme-muted);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.analysis-comparison-columns > :not(:first-child) {
+  text-align: right;
+}
+
+.analysis-comparison-row {
+  min-width: 0;
+  padding: 14px;
+  border-top: 1px solid var(--theme-border);
+}
+
+.analysis-comparison-category,
+.analysis-comparison-value {
+  min-width: 0;
+}
+
+.analysis-comparison-value,
+.analysis-comparison-delta {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.analysis-comparison-value strong {
+  overflow-wrap: anywhere;
+}
+
+.analysis-comparison-delta {
+  font-weight: 750;
+}
+
+@media (max-width: 1100px) {
+  .analysis-period {
+    padding-inline: 20px;
+  }
+
+  .analysis-comparison-columns,
+  .analysis-comparison-row {
+    grid-template-columns: minmax(110px, 1.2fr) repeat(2, minmax(82px, 0.8fr)) minmax(92px, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .analysis-page > .analysis-compare .analysis-period-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analysis-page > .analysis-compare.card {
+    padding: 4px 0 18px;
+  }
+
+  .analysis-period-grid {
+    gap: 0;
+  }
+
+  .analysis-period {
+    padding: 8px 10px 14px;
+  }
+
+  .analysis-period-heading {
+    margin-bottom: 8px;
+  }
+
+  .analysis-period-heading .eyebrow {
+    font-size: 0.62rem;
+  }
+
+  .analysis-period .month-picker-trigger {
+    justify-content: space-between;
+    gap: 6px;
+    min-height: 38px;
+    padding-inline: 11px;
+    font-size: 0.78rem;
+  }
+
+  .analysis-period .month-picker-trigger i {
+    font-size: 0.9rem;
+  }
+
+  .analysis-period-b .month-picker-popover {
+    right: 0 !important;
+    left: auto !important;
+  }
+
+  .analysis-period-total-label {
+    margin-top: 18px;
+    font-size: 0.72rem;
+  }
+
+  .analysis-period-total {
+    font-size: clamp(0.98rem, 4.2vw, 1.22rem);
+  }
+
+  .analysis-difference {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    margin: 12px 10px 0;
+    padding: 11px 13px;
+    text-align: center;
+  }
+
+  .analysis-difference > span {
+    font-size: 0.8rem;
+  }
+
+  .analysis-difference > strong {
+    grid-column: auto;
+    grid-row: auto;
+    font-size: 0.95rem;
+  }
+
+  .analysis-difference > small {
+    font-size: 0.7rem;
+  }
+
+  .analysis-page > .analysis-category-comparison.card {
+    margin-top: 8px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .analysis-category-comparison .section-heading {
+    gap: 8px;
+  }
+
+  .analysis-category-comparison .section-heading h2 {
+    font-size: 1rem;
+  }
+
+  .analysis-category-comparison .section-heading p {
+    font-size: 0.82rem;
+  }
+
+  .analysis-comparison-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px 0 8px;
+    border-bottom: 1px solid var(--theme-border);
+    text-align: center;
+  }
+
+  .analysis-comparison-columns > :first-child,
+  .analysis-comparison-columns > :last-child {
+    display: none;
+  }
+
+  .analysis-comparison-columns > :not(:first-child) {
+    text-align: center;
+  }
+
+  .analysis-comparison-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .analysis-comparison-category {
+    grid-column: 1;
+    grid-row: 1;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .analysis-comparison-delta {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+    padding-top: 0;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .analysis-comparison-value {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+  }
+
+  .analysis-comparison-value:nth-of-type(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .analysis-comparison-value:nth-of-type(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .analysis-comparison-value::before {
+    display: none;
+  }
+
+  .analysis-comparison-value strong {
+    font-size: 0.86rem;
+    overflow-wrap: anywhere;
+  }
+
+  .analysis-comparison-delta {
+    text-align: right;
+  }
+}
+
+@media (max-width: 359px) {
+  .analysis-period-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .analysis-period-b {
+    border-top: 1px solid var(--theme-border);
+    border-left: 0;
+    margin-top: 10px;
+    padding-top: 16px;
+  }
+
+}
+
+/* Mobile analysis: editorial summary with consistently paired month values. */
+@media (max-width: 760px) {
+  .analysis-page > .analysis-compare.card {
+    margin: 0 0 14px;
+    padding: 18px 12px 14px;
+    overflow: visible;
+    border: 1px solid var(--theme-border);
+    border-radius: 22px;
+    background: linear-gradient(145deg, var(--theme-primary-soft), var(--theme-surface));
+    box-shadow: var(--theme-shadow);
+    color: var(--theme-text);
+  }
+
+  .analysis-page > .analysis-compare .analysis-period {
+    padding: 6px 8px 12px;
+  }
+
+  .analysis-page > .analysis-compare .analysis-period-b {
+    margin-top: 0;
+    padding-top: 6px;
+    border-left-color: var(--theme-border);
+    border-top: 0;
+  }
+
+  .analysis-page > .analysis-compare .analysis-period-heading .eyebrow,
+  .analysis-page > .analysis-compare .analysis-period-total-label {
+    color: var(--theme-muted);
+  }
+
+  .analysis-page > .analysis-compare .month-picker-trigger,
+  .analysis-page > .analysis-compare .month-picker-trigger:hover,
+  .analysis-page > .analysis-compare .month-picker-trigger[aria-expanded="true"] {
+    min-height: 38px;
+    padding-inline: 9px;
+    border: 1px solid var(--theme-border) !important;
+    border-radius: 12px;
+    background: var(--theme-surface) !important;
+    box-shadow: none;
+    color: var(--theme-primary-strong) !important;
+    font-size: 0.74rem;
+  }
+
+  .analysis-page > .analysis-compare .month-picker-trigger i {
+    color: var(--theme-primary-strong) !important;
+  }
+
+  .analysis-page > .analysis-compare .analysis-period-total-label {
+    margin: 13px 0 4px;
+    font-size: 0.7rem;
+  }
+
+  .analysis-page > .analysis-compare .analysis-period-total {
+    color: var(--theme-text);
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    white-space: nowrap;
+  }
+
+  .analysis-page > .analysis-compare .analysis-difference {
+    margin: 8px 2px 0;
+    padding: 10px 12px;
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    background: var(--theme-surface);
+    text-align: left;
+  }
+
+  .analysis-page > .analysis-compare .analysis-difference > span,
+  .analysis-page > .analysis-compare .analysis-difference > strong,
+  .analysis-page > .analysis-compare .analysis-difference > small {
+    color: var(--theme-text);
+  }
+
+  .analysis-page > .analysis-category-comparison.card {
+    margin-top: 0;
+    padding: 16px 14px;
+    border-radius: 20px;
+    overflow: visible;
+  }
+
+  .analysis-category-comparison .section-heading {
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .analysis-comparison-columns {
+    position: sticky;
+    top: calc(64px + env(safe-area-inset-top, 0px));
+    z-index: 9;
+    gap: 0;
+    padding: 10px 0;
+    border: 1px solid var(--theme-border);
+    border-radius: 13px;
+    background: var(--theme-primary-soft);
+    box-shadow: 0 6px 14px color-mix(in srgb, var(--theme-text) 10%, transparent);
+    color: var(--theme-primary-strong);
+  }
+
+  .analysis-comparison-columns > :nth-child(2) {
+    border-right: 1px solid var(--theme-border);
+  }
+
+  .analysis-comparison-row {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 0;
+    margin-top: 10px;
+    padding: 11px 0 9px;
+    border: 1px solid var(--theme-border);
+    border-radius: 15px;
+    background: var(--theme-surface);
+  }
+
+  .analysis-comparison-category {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    padding: 0 11px 8px;
+  }
+
+  .analysis-comparison-value:nth-of-type(2),
+  .analysis-comparison-value:nth-of-type(3) {
+    grid-row: 2;
+    min-height: 45px;
+    justify-content: center;
+    padding: 4px 3px;
+    background: var(--theme-surface-muted);
+  }
+
+  .analysis-comparison-value:nth-of-type(2) {
+    grid-column: 1;
+    border-radius: 0 0 0 13px;
+  }
+
+  .analysis-comparison-value:nth-of-type(3) {
+    grid-column: 2;
+    border-left: 1px solid var(--theme-border);
+    border-radius: 0 0 13px;
+  }
+
+  .analysis-comparison-value strong {
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .analysis-comparison-delta {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: end;
+    margin: 0 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--theme-primary-soft);
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .topbar {
+    transition: transform 220ms cubic-bezier(0.2, 0.75, 0.25, 1);
+    will-change: transform;
+  }
+
+  .topbar.is-scroll-hidden {
+    transform: translateY(-110%);
+    pointer-events: none;
+  }
+
+  html.app-header-hidden .analysis-comparison-columns {
+    top: env(safe-area-inset-top, 0px);
+  }
+}
+
+@media (max-width: 760px) {
+  .analysis-sticky-sentinel {
+    height: 1px;
+    margin-top: -1px;
+    pointer-events: none;
+  }
+
+  .analysis-comparison-columns {
+    transform: scale(1);
+    transform-origin: center top;
+    transition:
+      transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1),
+      padding 320ms cubic-bezier(0.2, 0.75, 0.25, 1),
+      font-size 320ms ease,
+      box-shadow 320ms ease,
+      border-radius 320ms ease;
+  }
+
+  .analysis-comparison-columns.is-stuck {
+    transform: scale(1.035);
+    padding: 15px 8px;
+    border-radius: 16px;
+    font-size: 0.82rem;
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--theme-text) 20%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar {
+    transition: none !important;
+  }
+
+  .analysis-comparison-columns {
+    transition: none !important;
+  }
+}
+
+/* Loading surfaces use the active theme instead of flashing to pure white. */
+.loading-skeleton,
+.card.loading-skeleton,
+html[data-theme-color] .card.loading-skeleton {
+  color: var(--theme-muted, var(--muted));
+  border-color: var(--theme-border, var(--line));
+  background: linear-gradient(
+    90deg,
+    color-mix(
+      in srgb,
+      var(--theme-surface, #ffffff) 92%,
+      var(--theme-primary, #806fe5) 8%
+    ),
+    color-mix(
+      in srgb,
+      var(--theme-surface, #ffffff) 84%,
+      var(--theme-primary, #806fe5) 16%
+    ),
+    color-mix(
+      in srgb,
+      var(--theme-surface, #ffffff) 92%,
+      var(--theme-primary, #806fe5) 8%
+    )
+  );
 }
