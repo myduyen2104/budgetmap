@@ -23,7 +23,7 @@ type Month = {
 
 const months: Month[] = [
   {
-    month: "2026-07", income: 32_000_000, salary: 32_000_000, carry: 0, saving: 4_000_000, transfer: 6_000_000,
+    month: "2026-07", income: 36_000_000, salary: 32_000_000, freelance: 4_000_000, carry: 0, saving: 4_000_000, transfer: 6_000_000,
     budgets: {
       "Tiền trọ": 6_000_000, "Cho ba mẹ": 3_000_000, "Gửi xe": 500_000, "Điện nước": 1_800_000,
       Internet: 300_000, "Điện thoại": 100_000, "Gói 4G": 100_000, "Ăn uống": 5_000_000,
@@ -48,7 +48,7 @@ const months: Month[] = [
     ],
   },
   {
-    month: "2026-08", income: 33_000_000, salary: 32_000_000, freelance: 2_000_000,
+    month: "2026-08", income: 35_000_000, salary: 32_000_000, freelance: 3_000_000,
     carry: 11_100_000, saving: 5_000_000, transfer: 7_000_000,
     budgets: {
       "Tiền trọ": 6_000_000, "Cho ba mẹ": 3_000_000, "Gửi xe": 500_000, "Điện nước": 1_800_000,
@@ -74,7 +74,7 @@ const months: Month[] = [
     ],
   },
   {
-    month: "2026-09", income: 32_000_000, salary: 32_000_000, carry: 21_250_000,
+    month: "2026-09", income: 37_000_000, salary: 32_000_000, freelance: 5_000_000, carry: 21_250_000,
     saving: 6_000_000, transfer: 6_000_000,
     budgets: {
       "Tiền trọ": 6_000_000, "Cho ba mẹ": 3_000_000, "Gửi xe": 500_000, "Điện nước": 1_800_000,
@@ -96,6 +96,30 @@ const months: Month[] = [
       { category: "Mua sắm", total: 2_750_000, wallet: "bank", day: 16, note: "Mua giày và đồ dùng cá nhân" },
       { category: "Sửa xe", total: 720_000, wallet: "bank", day: 19, note: "Thay nhớt và kiểm tra phanh" },
       { category: "Khác", total: 450_000, wallet: "cash", day: 12, count: 2, label: "Đồ lặt vặt", note: "Chi tiêu lặt vặt" },
+    ],
+  },
+  {
+    month: "2026-10", income: 36_000_000, salary: 32_000_000, freelance: 4_000_000, carry: 21_250_000,
+    saving: 6_000_000, transfer: 6_000_000,
+    budgets: {
+      "Tiền trọ": 6_000_000, "Cho ba mẹ": 3_000_000, "Gửi xe": 500_000, "Điện nước": 1_800_000,
+      Internet: 300_000, "Điện thoại": 100_000, "Gói 4G": 100_000, "Ăn uống": 5_000_000,
+      "Mua sắm": 1_500_000, "Di chuyển": 600_000, "Cà phê": 500_000, "Sức khỏe": 500_000,
+      Khác: 300_000,
+    },
+    expenses: [
+      { category: "Tiền trọ", total: 6_000_000, wallet: "bank", day: 2, note: "Tiền trọ tháng 10" },
+      { category: "Cho ba mẹ", total: 3_000_000, wallet: "bank", day: 3, note: "Gửi ba mẹ tháng 10" },
+      { category: "Gửi xe", total: 240_000, wallet: "cash", day: 4, count: 8, label: "Gửi xe", note: "Gửi xe tháng 10" },
+      { category: "Điện nước", total: 1_650_000, wallet: "bank", day: 6, note: "Điện nước tháng 9" },
+      { category: "Internet", total: 300_000, wallet: "bank", day: 8, note: "Cước internet tháng 10" },
+      { category: "Điện thoại", total: 100_000, wallet: "bank", day: 10, note: "Nạp điện thoại" },
+      { category: "Gói 4G", total: 90_000, wallet: "bank", day: 11, note: "Gói data 4G tháng 10" },
+      { category: "Ăn uống", total: 2_600_000, wallet: "cash", day: 2, count: 10, label: "Bữa ăn", note: "Ăn uống" },
+      { category: "Di chuyển", total: 360_000, wallet: "cash", day: 5, count: 4, label: "Xe công nghệ", note: "Đi lại" },
+      { category: "Cà phê", total: 240_000, wallet: "cash", day: 7, count: 3, label: "Cà phê với đồng nghiệp", note: "Cà phê" },
+      { category: "Mua sắm", total: 890_000, wallet: "bank", day: 12, note: "Đồ dùng cá nhân" },
+      { category: "Khác", total: 180_000, wallet: "cash", day: 14, note: "Đồ lặt vặt" },
     ],
   },
 ];
@@ -178,7 +202,8 @@ async function main(): Promise<void> {
     });
     if (month.freelance) transactions.push({
       userId: user.id, walletId: walletIds.bank, categoryId: categoryId("Freelance", "INCOME"),
-      type: "INCOME", amount: String(month.freelance), transactionDate: dateFor(month.month, 16),
+      type: "INCOME", amount: String(month.freelance),
+      transactionDate: dateFor(month.month, month.month === "2026-10" ? 12 : 16),
       note: "Thu nhập dự án ngoài",
     });
     for (const expense of month.expenses) {
@@ -206,7 +231,7 @@ async function main(): Promise<void> {
   }
 
   await prisma.transaction.createMany({ data: transactions });
-  console.log("Seeded " + username + ": " + transactions.length + " transactions, 3 monthly plans.");
+  console.log("Seeded " + username + ": " + transactions.length + " transactions, 4 monthly plans.");
 }
 
 main().catch((error: unknown) => {

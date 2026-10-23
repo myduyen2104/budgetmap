@@ -34,7 +34,7 @@ export const DEFAULT_CATEGORIES: readonly DefaultCategory[] = [
   { name: "Điện nước", type: "EXPENSE", icon: "lightbulb", color: "amber" },
   { name: "Internet", type: "EXPENSE", icon: "wifi", color: "blue" },
   { name: "Điện thoại", type: "EXPENSE", icon: "phone", color: "teal" },
-  { name: "Gia dụng", type: "EXPENSE", icon: "home", color: "violet" },
+  { name: "Gia dụng", type: "EXPENSE", icon: "house", color: "violet" },
   { name: "Di chuyển", type: "EXPENSE", icon: "car", color: "blue" },
   { name: "Gửi xe", type: "EXPENSE", icon: "parking", color: "slate" },
   { name: "Taxi / xe công nghệ", type: "EXPENSE", icon: "taxi", color: "indigo" },
@@ -78,7 +78,7 @@ export const DEFAULT_CATEGORIES: readonly DefaultCategory[] = [
 ];
 
 export const CATEGORY_ICONS: readonly CategoryIcon[] = [
-  "utensils", "house", "home", "lightbulb", "wifi", "phone", "car", "parking", "taxi",
+  "utensils", "house", "lightbulb", "wifi", "phone", "car", "parking", "taxi",
   "shopping-bag", "shirt", "laptop", "gamepad", "film", "heart-pulse", "pill",
   "book", "graduation-cap", "shield", "credit-card", "receipt",
   "chart-line", "piggy-bank", "users", "gift", "paw", "plane", "repeat",
@@ -94,7 +94,7 @@ export const CATEGORY_ICONS: readonly CategoryIcon[] = [
 ];
 
 export const CATEGORY_COLORS: readonly CategoryColor[] = [
-  "purple", "orange", "blue", "pink", "violet", "red", "indigo", "green", "teal", "amber", "slate",
+  "red", "orange", "amber", "pink", "purple", "violet", "indigo", "blue", "teal", "green", "slate",
 ];
 
 export function defaultCategory(name: string, type: CategoryType): DefaultCategory {
