@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 const MONTHS = [
   "Tháng 1",
@@ -22,11 +22,15 @@ const parseMonth = (value: string) => {
   const now = new Date();
   return {
     year: Number.isFinite(year) ? year : now.getFullYear(),
-    month: Number.isFinite(month) && month >= 1 && month <= 12 ? month - 1 : now.getMonth(),
+    month:
+      Number.isFinite(month) && month >= 1 && month <= 12
+        ? month - 1
+        : now.getMonth(),
   };
 };
 
-const monthValue = (year: number, month: number) => `${year}-${String(month + 1).padStart(2, "0")}`;
+const monthValue = (year: number, month: number) =>
+  `${year}-${String(month + 1).padStart(2, "0")}`;
 
 export function MonthPicker({
   value,
@@ -45,8 +49,51 @@ export function MonthPicker({
   const selected = useMemo(() => parseMonth(value), [value]);
   const [open, setOpen] = useState(false);
   const [year, setYear] = useState(selected.year);
+  const [mobilePopoverPosition, setMobilePopoverPosition] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const today = new Date();
   const todayValue = monthValue(today.getFullYear(), today.getMonth());
+
+  useLayoutEffect(() => {
+    if (!open || !className.split(/\s+/).includes("transaction-mobile-month-picker")) {
+      return;
+    }
+
+    const reposition = () => {
+      if (!window.matchMedia("(max-width: 640px)").matches) {
+        setMobilePopoverPosition(null);
+        return;
+      }
+      const trigger = rootRef.current?.querySelector(".month-picker-trigger");
+      if (!trigger) return;
+
+      const bounds = trigger.getBoundingClientRect();
+      const width = Math.min(296, window.innerWidth - 24);
+      const left = Math.max(12, Math.min(bounds.right - width, window.innerWidth - width - 12));
+      const height = Math.min(320, window.innerHeight - 24);
+      const below = bounds.bottom + 8;
+      const top = below + height <= window.innerHeight - 12
+        ? below
+        : Math.max(12, bounds.top - height - 8);
+
+      setMobilePopoverPosition((previous) =>
+        previous?.top === top && previous.left === left && previous.width === width
+          ? previous
+          : { top, left, width },
+      );
+    };
+
+    reposition();
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, true);
+    return () => {
+      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", reposition, true);
+    };
+  }, [className, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -85,26 +132,46 @@ export function MonthPicker({
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <span>{MONTHS[selected.month]} {selected.year}</span>
+        <span>
+          {MONTHS[selected.month]} {selected.year}
+        </span>
         <i className="fi-rr-calendar" aria-hidden="true" />
       </button>
       {open && (
-        <div className="month-picker-popover" role="dialog" aria-label="Chọn tháng">
+        <div
+          className="month-picker-popover"
+          role="dialog"
+          aria-label="Chọn tháng"
+          style={mobilePopoverPosition ? {
+            "--mobile-popover-top": `${mobilePopoverPosition.top}px`,
+            "--mobile-popover-left": `${mobilePopoverPosition.left}px`,
+            "--mobile-popover-width": `${mobilePopoverPosition.width}px`,
+          } as CSSProperties : undefined}
+        >
           <div className="month-picker-head">
             <span className="month-picker-caption">Chọn tháng</span>
             <div className="month-picker-year-control">
-              <button type="button" aria-label="Năm trước" onClick={() => setYear((current) => current - 1)}>
+              <button
+                type="button"
+                aria-label="Năm trước"
+                onClick={() => setYear((current) => current - 1)}
+              >
                 <i className="fi-rr-angle-small-left" aria-hidden="true" />
               </button>
               <strong>{year}</strong>
-              <button type="button" aria-label="Năm sau" onClick={() => setYear((current) => current + 1)}>
+              <button
+                type="button"
+                aria-label="Năm sau"
+                onClick={() => setYear((current) => current + 1)}
+              >
                 <i className="fi-rr-angle-small-right" aria-hidden="true" />
               </button>
             </div>
           </div>
           <div className="month-picker-grid">
             {MONTHS.map((label, month) => {
-              const isSelected = selected.year === year && selected.month === month;
+              const isSelected =
+                selected.year === year && selected.month === month;
               const isToday = todayValue === monthValue(year, month);
               return (
                 <button

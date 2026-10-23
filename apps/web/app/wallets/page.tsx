@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { api } from "../../lib/api";
 import { formatMoneyInput, formatVnd, normalizeMoneyInput } from "../../lib/money";
 import { errorMessage } from "../../lib/movements";
@@ -27,8 +27,11 @@ export default function Wallets() {
     [name, setName] = useState(""),
     [type, setType] = useState("CASH"),
     [initial, setInitial] = useState("0");
-  const [editing, setEditing] = useState<string | null>(null),
-    [showArchived, setShowArchived] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
+  const walletTypeRef = useRef<HTMLDivElement>(null);
+  const walletTypeTriggerRef = useRef<HTMLButtonElement>(null);
+  const walletTypeMenuRef = useRef<HTMLDivElement>(null);
+  const [editing, setEditing] = useState<string | null>(null);
   const [error, setError] = useState(""),
     [saveError, setSaveError] = useState(""),
     [toast, setToast] = useState(""),
@@ -40,9 +43,7 @@ export default function Wallets() {
     try {
       setWallets(
         (
-          await api<{ items: Wallet[] }>(
-            "/wallets?includeArchived=" + showArchived,
-          )
+          await api<{ items: Wallet[] }>("/wallets")
         ).items,
       );
     } catch (e) {
@@ -50,7 +51,7 @@ export default function Wallets() {
     } finally {
       setLoading(false);
     }
-  }, [showArchived]);
+  }, []);
   useEffect(() => {
     void load();
     const refresh = () => {
@@ -59,6 +60,26 @@ export default function Wallets() {
     window.addEventListener("focus", refresh);
     return () => window.removeEventListener("focus", refresh);
   }, [load]);
+  useEffect(() => {
+    if (!typeOpen) return;
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!walletTypeRef.current?.contains(event.target as Node)) setTypeOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setTypeOpen(false);
+      walletTypeTriggerRef.current?.focus();
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    document.addEventListener("keydown", closeOnEscape);
+    walletTypeMenuRef.current
+      ?.querySelector<HTMLButtonElement>("[aria-selected='true']")
+      ?.focus();
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [typeOpen]);
   async function save(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -81,16 +102,16 @@ export default function Wallets() {
       setSaving(false);
     }
   }
-  async function archive(w: Wallet) {
+  async function removeWallet(w: Wallet) {
     if (
       !window.confirm(
-        "Lưu trữ ví " + w.name + "? Lịch sử giao dịch vẫn được giữ lại.",
+        "Xóa ví " + w.name + "? Lịch sử giao dịch vẫn được giữ lại.",
       )
     )
       return;
     try {
       await api("/wallets/" + w.id + "/archive", { method: "POST" });
-      setToast("Đã lưu trữ ví.");
+      setToast("Đã xóa ví.");
       await load();
     } catch (e) {
       setSaveError(errorMessage(e));
@@ -121,10 +142,15 @@ export default function Wallets() {
             </label>
             <label>
               Loại
-              <select value={type} onChange={(e) => setType(e.target.value)}>
-                <option value="CASH">Tiền mặt</option>
-                <option value="BANK">Ngân hàng</option>
-              </select>
+              <div className="wallet-type-select" ref={walletTypeRef}>
+                <button type="button" className="wallet-type-trigger" ref={walletTypeTriggerRef} aria-expanded={typeOpen} aria-haspopup="listbox" onClick={() => setTypeOpen((open) => !open)} onKeyDown={(event) => { if (event.key === "ArrowDown" && !typeOpen) { event.preventDefault(); setTypeOpen(true); } }}>
+                  <span>{type === "BANK" ? "Ngân hàng" : "Tiền mặt"}</span>
+                  <span className="select-arrow-icon" aria-hidden="true" />
+                </button>
+                {typeOpen && <div className="wallet-type-menu" ref={walletTypeMenuRef} role="listbox" aria-label="Loại ví">
+                  {[{ value: "CASH", label: "Tiền mặt" }, { value: "BANK", label: "Ngân hàng" }].map((option, index) => <button type="button" role="option" aria-selected={type === option.value} className={type === option.value ? "selected" : ""} key={option.value} onKeyDown={(event) => { let next: number | null = null; if (event.key === "ArrowDown") next = (index + 1) % 2; if (event.key === "ArrowUp") next = (index + 1) % 2; if (event.key === "Home") next = 0; if (event.key === "End") next = 1; if (next !== null) { event.preventDefault(); walletTypeMenuRef.current?.querySelectorAll<HTMLButtonElement>("[role='option']")[next]?.focus(); } }} onClick={() => { setType(option.value); setTypeOpen(false); walletTypeTriggerRef.current?.focus(); }}>{option.label}</button>)}
+                </div>}
+              </div>
             </label>
             {!editing && (
               <label>
@@ -171,14 +197,6 @@ export default function Wallets() {
               xóa.
             </p>
           </div>
-          <label>
-            <input
-              type="checkbox"
-              checked={showArchived}
-              onChange={(e) => setShowArchived(e.target.checked)}
-            />{" "}
-            Hiện đã lưu trữ
-          </label>
         </div>
         {loading ? (
           <LoadingSkeleton label="Đang tải số dư ví…" />
@@ -266,10 +284,10 @@ export default function Wallets() {
                         Sửa
                       </button>
                       <button
-                        className="danger"
-                        onClick={() => void archive(w)}
+                        className="danger wallet-delete"
+                        onClick={() => void removeWallet(w)}
                       >
-                        Lưu trữ
+                        Xóa
                       </button>
                     </>
                   )}

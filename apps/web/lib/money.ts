@@ -1,30 +1,34 @@
 // Money remains a decimal string; bigint is used only for exact input validation.
+export const MAX_MONEY_AMOUNT = 1_000_000_000_000n;
+
 function parseMoneyInput(value: string): { whole: string; fraction: string } | null {
   const raw = value.trim().replace(/\s/g, "");
-  if (!raw) return null;
-  if (!/^\d[\d,.]*$/.test(raw)) return null;
-  const commas = (raw.match(/,/g) ?? []).length;
-  const dots = (raw.match(/\./g) ?? []).length;
-  const lastComma = raw.lastIndexOf(",");
-  const lastDot = raw.lastIndexOf(".");
-  if ((commas === 1 && dots === 0 && raw.length - lastComma - 1 > 2) || (dots === 1 && commas === 0 && raw.length - lastDot - 1 > 2)) return null;
-  let decimalIndex = -1;
-  if (commas && dots) {
-    const fractionLength = raw.length - Math.max(lastComma, lastDot) - 1;
-    if (fractionLength > 0 && fractionLength <= 2) decimalIndex = Math.max(lastComma, lastDot);
+  if (!raw || !/^\d[\d,.]*$/.test(raw)) return null;
+
+  const normalizeWhole = (whole: string) => whole.replace(/\./g, "").replace(/^0+(?=\d)/, "") || "0";
+  const commaCount = (raw.match(/,/g) ?? []).length;
+
+  // The app displays Vietnamese thousands separators as dots and decimals as commas.
+  if (commaCount) {
+    if (commaCount !== 1) return null;
+    const [whole, fraction] = raw.split(",");
+    if (!/^\d[\d.]*$/.test(whole) || !/^\d{0,2}$/.test(fraction)) return null;
+    return { whole: normalizeWhole(whole), fraction };
   }
-  else if (commas) {
-    const fractionLength = raw.length - lastComma - 1;
-    if (commas === 1 && fractionLength > 0 && fractionLength <= 2) decimalIndex = lastComma;
-  } else if (dots) {
-    const fractionLength = raw.length - lastDot - 1;
-    if (dots === 1 && fractionLength > 0 && fractionLength <= 2) decimalIndex = lastDot;
+
+  const dotCount = (raw.match(/\./g) ?? []).length;
+  if (!dotCount) return { whole: normalizeWhole(raw), fraction: "" };
+
+  // A dot followed by 1–2 digits can be a decimal separator. Three or more
+  // digits after it means the user is continuing to type a grouped integer
+  // (for example, the visible "1.234" becoming "1.2345").
+  if (dotCount === 1) {
+    const [whole, fraction] = raw.split(".");
+    if (!/^\d+$/.test(whole)) return null;
+    if (/^\d{1,2}$/.test(fraction)) return { whole: normalizeWhole(whole), fraction };
   }
-  const wholePart = decimalIndex >= 0 ? raw.slice(0, decimalIndex) : raw;
-  const fractionPart = decimalIndex >= 0 ? raw.slice(decimalIndex + 1) : "";
-  const whole = wholePart.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
-  if (!whole && !fractionPart.replace(/\D/g, "")) return null;
-  return { whole: whole || "0", fraction: fractionPart.replace(/\D/g, "").slice(0, 2) };
+  if (!/^\d[\d.]*$/.test(raw)) return null;
+  return { whole: normalizeWhole(raw), fraction: "" };
 }
 
 export function normalizeMoneyInput(value: string): string {
@@ -41,14 +45,21 @@ export function formatMoneyInput(value: string): string {
   return fraction !== "00" ? grouped + "," + fraction : grouped;
 }
 
+export function isMoneyInputWithinLimit(value: string): boolean {
+  const normalized = normalizeMoneyInput(value);
+  if (!normalized) return false;
+  const [whole, fraction = ""] = normalized.split(".");
+  return BigInt(whole) * 100n + BigInt(fraction) <= MAX_MONEY_AMOUNT * 100n;
+}
+
 export function formatVnd(value: string): string {
   const [whole, fraction = "00"] = value.split(".");
-  return whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (fraction !== "00" && fraction !== "0" ? "," + fraction : "") + " ₫";
+  return whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (fraction !== "00" && fraction !== "0" ? "," + fraction : "");
 }
 
 export function positiveAmount(value: string): string | null {
   const normalized = normalizeMoneyInput(value);
-  if (!/^\d{1,17}(\.\d{1,2})?$/.test(normalized)) return null;
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized) || !isMoneyInputWithinLimit(normalized)) return null;
   const [whole, fraction = ""] = normalized.split(".");
   if (BigInt(whole) * 100n + BigInt(fraction.padEnd(2, "0")) <= 0n) return null;
   return whole + "." + fraction.padEnd(2, "0");

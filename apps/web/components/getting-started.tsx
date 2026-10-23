@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { api } from "../lib/api";
 
 type GettingStartedProps = {
   month: string;
@@ -21,7 +22,12 @@ type Step = {
   done: boolean;
 };
 
-export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: GettingStartedProps) {
+export function GettingStarted({
+  month,
+  hasWallet,
+  hasPlan,
+  hasTransactions,
+}: GettingStartedProps) {
   const [year, monthNumber] = month.split("-");
   const [showGettingStarted, setShowGettingStarted] = useState(false);
   const [showTour, setShowTour] = useState(false);
@@ -31,9 +37,11 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
     {
       number: "01",
       title: "Tạo ví tiền",
-      description: "Khai báo nơi bạn đang giữ tiền: tiền mặt, ngân hàng hoặc ví điện tử.",
-      howTo: "Vào Ví tiền → Thêm ví → chọn loại ví → nhập số dư hiện tại → Lưu.",
-      example: "Tài khoản ngân hàng 20.000.000đ và Tiền mặt 2.000.000đ.",
+      description:
+        "Khai báo nơi bạn đang giữ tiền: tiền mặt, ngân hàng hoặc ví điện tử.",
+      howTo:
+        "Vào Ví tiền → Thêm ví → chọn loại ví → nhập số dư hiện tại → Lưu.",
+      example: "Tài khoản ngân hàng 20.000.000 và Tiền mặt 2.000.000.",
       href: "/wallets",
       action: "Mở Ví tiền",
       done: hasWallet,
@@ -41,9 +49,12 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
     {
       number: "02",
       title: "Lập kế hoạch tháng",
-      description: "Đặt trước thu nhập, ngân sách và thêm danh mục riêng nếu khoản chi chưa có sẵn.",
-      howTo: "Vào Kế hoạch tháng → nhập Thu nhập dự kiến → bấm Thêm danh mục dự kiến. Nếu thiếu mục chi, chọn Tạo danh mục riêng → nhập tên → chọn icon, màu → Tạo và thêm vào kế hoạch → Lưu.",
-      example: "Tạo mục Thú cưng với icon dấu chân, rồi đặt ngân sách 500.000đ.",
+      description:
+        "Đặt trước thu nhập, ngân sách và thêm danh mục riêng nếu khoản chi chưa có sẵn.",
+      howTo:
+        "Vào Kế hoạch tháng → nhập Thu nhập dự kiến → bấm Thêm danh mục dự kiến. Nếu thiếu mục chi, chọn Tạo danh mục riêng → nhập tên → chọn icon, màu → Tạo và thêm vào kế hoạch → Lưu.",
+      example:
+        "Tạo mục Thú cưng với icon dấu chân, rồi đặt ngân sách 500.000.",
       href: `/plans/${year}/${monthNumber}`,
       action: "Mở Kế hoạch tháng",
       done: hasPlan,
@@ -51,9 +62,11 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
     {
       number: "03",
       title: "Ghi giao dịch thực tế",
-      description: "Mỗi khoản thu, chi hoặc chuyển tiền phát sinh đều được ghi lại tại đây.",
-      howTo: "Vào Giao dịch → Thêm giao dịch → chọn loại, danh mục, ví và số tiền → Lưu.",
-      example: "Chi 120.000đ cho Di chuyển từ ví Tiền mặt.",
+      description:
+        "Mỗi khoản thu, chi hoặc chuyển tiền phát sinh đều được ghi lại tại đây.",
+      howTo:
+        "Vào Giao dịch → Thêm giao dịch → chọn loại, danh mục, ví và số tiền → Lưu.",
+      example: "Chi 120.000 cho Di chuyển từ ví Tiền mặt.",
       href: "/transactions",
       action: "Mở Giao dịch",
       done: hasTransactions,
@@ -61,8 +74,10 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
     {
       number: "04",
       title: "So sánh và điều chỉnh",
-      description: "Theo dõi số đã chi so với kế hoạch để biết khoản nào đang vượt ngân sách.",
-      howTo: "Vào Phân tích → chọn tháng → xem Planned là dự kiến và Actual là thực tế.",
+      description:
+        "Theo dõi số đã chi so với kế hoạch để biết khoản nào đang vượt ngân sách.",
+      howTo:
+        "Vào Phân tích → chọn tháng → xem Planned là dự kiến và Actual là thực tế.",
       example: "Actual cao hơn Planned nghĩa là bạn đang chi vượt ngân sách.",
       href: "/analysis",
       action: "Mở Phân tích",
@@ -71,10 +86,20 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
   ];
 
   useEffect(() => {
-    if (window.localStorage.getItem("budgetmap-tour-seen") !== "1") {
-      setShowGettingStarted(true);
-      setShowTour(true);
-    }
+    let cancelled = false;
+    api<{ id: string }>("/auth/me")
+      .then((user) => {
+        if (cancelled) return;
+        const key = `budgetmap-tour-pending:${user.id}`;
+        if (window.localStorage.getItem(key) === "1") {
+          setShowGettingStarted(true);
+          setShowTour(true);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const openTour = () => {
@@ -83,7 +108,12 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
   };
 
   const closeTour = () => {
-    window.localStorage.setItem("budgetmap-tour-seen", "1");
+    // The pending flag is removed by the first completed/closed tour. Since
+    // it is keyed by user id, logging in as another newly registered user on
+    // the same browser still gets exactly one onboarding tour.
+    api<{ id: string }>("/auth/me")
+      .then((user) => window.localStorage.removeItem(`budgetmap-tour-pending:${user.id}`))
+      .catch(() => {});
     setShowGettingStarted(false);
     setShowTour(false);
   };
@@ -92,47 +122,92 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
 
   return (
     <>
-      {showGettingStarted && <section className="card getting-started" aria-labelledby="getting-started-title">
-        <div className="getting-started-header">
-          <div>
-            <p className="eyebrow">BẮT ĐẦU NHANH</p>
-            <h2 id="getting-started-title">Quản lý dòng tiền theo 4 bước</h2>
-            <p className="muted">Lập kế hoạch trước, ghi thực tế sau, rồi xem chênh lệch để điều chỉnh.</p>
-          </div>
-          <div className="getting-started-header-actions">
-            <div className="getting-started-legend" aria-label="Giải thích loại dữ liệu">
-              <span><i className="legend-dot planned" /> Dự kiến</span>
-              <span><i className="legend-dot actual" /> Thực tế</span>
+      {showGettingStarted && (
+        <section
+          className="card getting-started"
+          aria-labelledby="getting-started-title"
+        >
+          <div className="getting-started-header">
+            <div>
+              <p className="eyebrow">BẮT ĐẦU NHANH</p>
+              <h2 id="getting-started-title">Quản lý dòng tiền theo 4 bước</h2>
+              <p className="muted">
+                Lập kế hoạch trước, ghi thực tế sau, rồi xem chênh lệch để điều
+                chỉnh.
+              </p>
             </div>
-            <button type="button" className="getting-started-help" onClick={openTour}>Xem hướng dẫn</button>
+            <div className="getting-started-header-actions">
+              <div
+                className="getting-started-legend"
+                aria-label="Giải thích loại dữ liệu"
+              >
+                <span>
+                  <i className="legend-dot planned" /> Dự kiến
+                </span>
+                <span>
+                  <i className="legend-dot actual" /> Thực tế
+                </span>
+              </div>
+              <button
+                type="button"
+                className="getting-started-help"
+                onClick={openTour}
+              >
+                Xem hướng dẫn
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="getting-started-steps">
-          {steps.map((step, index) => (
-            <Link
-              className={`getting-started-step ${step.done ? "is-done" : ""} ${index === steps.findIndex((item) => !item.done) ? "is-next" : ""}`}
-              href={step.href}
-              key={step.number}
-            >
-              <span className="getting-started-number">{step.done ? "✓" : step.number}</span>
-              <span className="getting-started-copy">
-                <strong>{step.title}</strong>
-                <small>{step.description}</small>
-                <em>{step.done ? "Đã hoàn thành" : step.action}</em>
-              </span>
-              <span className="getting-started-arrow" aria-hidden="true">→</span>
-            </Link>
-          ))}
-        </div>
-      </section>}
+          <div className="getting-started-steps">
+            {steps.map((step, index) => (
+              <Link
+                className={`getting-started-step ${step.done ? "is-done" : ""} ${index === steps.findIndex((item) => !item.done) ? "is-next" : ""}`}
+                href={step.href}
+                key={step.number}
+              >
+                <span className="getting-started-number">
+                  {step.done ? "✓" : step.number}
+                </span>
+                <span className="getting-started-copy">
+                  <strong>{step.title}</strong>
+                  <small>{step.description}</small>
+                  <em>{step.done ? "Đã hoàn thành" : step.action}</em>
+                </span>
+                <span className="getting-started-arrow" aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {showTour && (
         <div className="tour-backdrop" role="presentation" onClick={closeTour}>
-          <section className="tour-dialog" role="dialog" aria-modal="true" aria-labelledby="tour-title" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="tour-close" aria-label="Đóng hướng dẫn" onClick={closeTour}>×</button>
-            <p className="eyebrow">HƯỚNG DẪN NHANH · {tourIndex + 1}/{steps.length}</p>
+          <section
+            className="tour-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tour-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="tour-close"
+              aria-label="Đóng hướng dẫn"
+              onClick={closeTour}
+            >
+              ×
+            </button>
+            <p className="eyebrow">
+              HƯỚNG DẪN NHANH · {tourIndex + 1}/{steps.length}
+            </p>
             <div className="tour-progress" aria-hidden="true">
-              {steps.map((step, index) => <span key={step.number} className={index <= tourIndex ? "is-active" : ""} />)}
+              {steps.map((step, index) => (
+                <span
+                  key={step.number}
+                  className={index <= tourIndex ? "is-active" : ""}
+                />
+              ))}
             </div>
             <span className="tour-number">{currentStep.number}</span>
             <h2 id="tour-title">{currentStep.title}</h2>
@@ -141,16 +216,46 @@ export function GettingStarted({ month, hasWallet, hasPlan, hasTransactions }: G
               <strong>Bạn cần làm</strong>
               <p>{currentStep.howTo}</p>
             </div>
-            <p className="tour-example"><strong>Ví dụ:</strong> {currentStep.example}</p>
-            <Link className="tour-open-link" href={currentStep.href} onClick={closeTour}>{currentStep.action} <span aria-hidden="true">→</span></Link>
+            <p className="tour-example">
+              <strong>Ví dụ:</strong> {currentStep.example}
+            </p>
+            <Link
+              className="tour-open-link"
+              href={currentStep.href}
+              onClick={closeTour}
+            >
+              {currentStep.action} <span aria-hidden="true">→</span>
+            </Link>
             <div className="tour-actions">
-              <button type="button" className="tour-skip" onClick={closeTour}>Bỏ qua</button>
+              <button type="button" className="tour-skip" onClick={closeTour}>
+                Bỏ qua
+              </button>
               <div>
-                {tourIndex > 0 && <button type="button" className="button-secondary" onClick={() => setTourIndex((index) => index - 1)}>Quay lại</button>}
+                {tourIndex > 0 && (
+                  <button
+                    type="button"
+                    className="button-secondary"
+                    onClick={() => setTourIndex((index) => index - 1)}
+                  >
+                    Quay lại
+                  </button>
+                )}
                 {tourIndex < steps.length - 1 ? (
-                  <button type="button" className="button-primary" onClick={() => setTourIndex((index) => index + 1)}>Tiếp theo</button>
+                  <button
+                    type="button"
+                    className="button-primary"
+                    onClick={() => setTourIndex((index) => index + 1)}
+                  >
+                    Tiếp theo
+                  </button>
                 ) : (
-                  <button type="button" className="button-primary" onClick={closeTour}>Bắt đầu sử dụng</button>
+                  <button
+                    type="button"
+                    className="button-primary"
+                    onClick={closeTour}
+                  >
+                    Bắt đầu sử dụng
+                  </button>
                 )}
               </div>
             </div>

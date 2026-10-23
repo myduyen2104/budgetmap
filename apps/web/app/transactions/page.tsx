@@ -70,6 +70,7 @@ export default function Transactions() {
   const [page, setPage] = useState(1),
     [transferPage, setTransferPage] = useState(1),
     [revision, setRevision] = useState(0);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [wallets, setWallets] = useState<WalletRef[]>([]),
     [categories, setCategories] = useState<CategoryRef[]>([]);
   const [usedCategoryIds, setUsedCategoryIds] = useState<Set<string>>(new Set());
@@ -87,7 +88,15 @@ export default function Transactions() {
     [deleteError, setDeleteError] = useState("");
   const showTransfers = !categoryId && (kind === "" || kind === "TRANSFER");
   const showTransactions = kind !== "TRANSFER";
-  const visibleTransactions = transactions?.items.filter((t) => !search.trim() || `${t.note ?? ""} ${t.category.name}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ?? [];
+  const normalizedSearch = search.trim().toLocaleLowerCase();
+  const visibleTransactions = transactions?.items.filter((t) => !normalizedSearch || `${t.note ?? ""} ${t.category.name} ${t.wallet.name}`.toLocaleLowerCase().includes(normalizedSearch)) ?? [];
+  const visibleTransfers = transfers?.items.filter((transfer) => !normalizedSearch || `${transfer.note ?? ""} ${transfer.sourceWallet.name} ${transfer.destinationWallet.name}`.toLocaleLowerCase().includes(normalizedSearch)) ?? [];
+  const transactionGroups = visibleTransactions.reduce<{ date: string; items: Transaction[] }[]>((groups, transaction) => {
+    const previous = groups[groups.length - 1];
+    if (previous?.date === transaction.transactionDate) previous.items.push(transaction);
+    else groups.push({ date: transaction.transactionDate, items: [transaction] });
+    return groups;
+  }, []);
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
@@ -110,7 +119,7 @@ export default function Transactions() {
     const tq = new URLSearchParams({
       month,
       page: String(transferPage),
-      pageSize: "20",
+      pageSize: search.trim() ? "100" : "20",
     });
     const usageQ = new URLSearchParams({ month, page: "1", pageSize: "1000" });
     if (kind && kind !== "TRANSFER") q.set("type", kind);
@@ -211,16 +220,50 @@ export default function Transactions() {
   };
 
   return (
-    <main>
+    <main className="transactions-page">
       <PageHeader
         title="Giao dịch"
         description="Thu nhập, chi tiêu và chuyển tiền giữa các ví."
         actions={
-          <div className="planner-month transactions-month-picker">
+          <div className="header-actions transactions-header-actions">
+            <button type="button" onClick={() => { setEditing(null); setEditor(true); setToast(""); }}>+ Thêm giao dịch</button>
             <MonthPicker value={month} onChange={(value) => filter(() => setMonth(value))} />
           </div>
         }
       />
+      <div className="transactions-mobile-controls">
+        <label className="transaction-mobile-search">
+          <i className="fi-rr-search" aria-hidden="true" />
+          <input aria-label="Tìm giao dịch" placeholder="Tìm giao dịch..." value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); setTransferPage(1); }} />
+        </label>
+        <div className="transaction-mobile-actions">
+          <MonthPicker
+            value={month}
+            aria-label={`Chọn tháng, Tháng ${Number(month.slice(5, 7))} ${month.slice(0, 4)}`}
+            className="transaction-mobile-month-picker"
+            onChange={(value) => filter(() => setMonth(value))}
+          />
+          <button
+            type="button"
+            className="transaction-mobile-add"
+            aria-label="Thêm giao dịch"
+            title="Thêm giao dịch"
+            onClick={() => { setEditing(null); setEditor(true); setToast(""); }}
+          >
+            <i className="fi-rr-plus" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="transaction-filter-toggle"
+            aria-expanded={mobileFiltersOpen}
+            aria-label={mobileFiltersOpen ? "Ẩn bộ lọc khác" : "Mở bộ lọc khác"}
+            onClick={() => setMobileFiltersOpen((open) => !open)}
+          >
+            <span className="sr-only">{mobileFiltersOpen ? "Ẩn bộ lọc khác" : "Bộ lọc khác"}</span>
+            <i className="fi-rr-settings-sliders" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
       {toast && (
         <div className="feedback-toast" role="status">
           {toast}
@@ -234,7 +277,7 @@ export default function Transactions() {
           </button>
         </div>
       )}
-      <section className="movement-filters card" aria-label="Bộ lọc">
+      <section className={`movement-filters card${mobileFiltersOpen ? " filters-expanded" : ""}`} aria-label="Bộ lọc">
         <label>
           Loại
           <SelectField ariaLabel="Loại" value={kind} options={[{value:"",label:"Tất cả"},{value:"INCOME",label:"Thu nhập"},{value:"EXPENSE",label:"Chi tiêu"},{value:"TRANSFER",label:"Chuyển tiền"}]} onChange={(value) =>
@@ -270,6 +313,7 @@ export default function Transactions() {
               categories={categories}
               editing={editing}
               initialKind={initialKind}
+              onValidationNotice={(message) => setToast(message)}
               onCancel={closeEditor}
               onDelete={editing ? () => askDelete(editing) : undefined}
               onSaved={(message) => {
@@ -286,12 +330,38 @@ export default function Transactions() {
               aria-label="Lịch sử thu chi"
             >
               <h2>Thu nhập và chi tiêu</h2>
-              {transactions.items.length === 0 ? (
+              {visibleTransactions.length === 0 ? (
                 <EmptyState
-                  title="Chưa có khoản thu hoặc chi"
-                  description="Thay đổi bộ lọc hoặc thêm giao dịch đầu tiên."
+                  title={search.trim() ? "Không tìm thấy giao dịch phù hợp" : "Chưa có khoản thu hoặc chi"}
+                  description={search.trim() ? "Thử từ khóa khác hoặc thay đổi bộ lọc." : "Thay đổi bộ lọc hoặc thêm giao dịch đầu tiên."}
                 />
               ) : (
+                <>
+                <div className="transaction-mobile-list" aria-label="Giao dịch theo ngày">
+                  {transactionGroups.map((group) => (
+                    <div className="transaction-date-group" key={group.date}>
+                      <h3>{formatDate(group.date)}</h3>
+                      {group.items.map((t) => (
+                        <article className="transaction-mobile-card" key={t.id}>
+                          <CategoryBadge category={t.category} compact />
+                          <span className={t.type === "INCOME" ? "badge movement-income" : "badge movement-expense"}>
+                            {t.type === "INCOME" ? "Thu nhập" : "Chi tiêu"}
+                          </span>
+                          <button type="button" className="icon-action-button" aria-label="Sửa giao dịch" title="Sửa giao dịch" onClick={() => edit({ kind: "TRANSACTION", item: t })}>
+                            <span className="pencil-icon" aria-hidden="true" />
+                          </button>
+                          <div className="transaction-mobile-meta">
+                            <span className="transaction-mobile-wallet">{t.wallet.name}</span>
+                            <span className="transaction-mobile-note">{t.note || "Không có ghi chú"}</span>
+                          </div>
+                          <strong className={`transaction-mobile-amount ${t.type === "INCOME" ? "is-income" : "is-expense"}`}>
+                            {t.type === "INCOME" ? "+" : "−"}{formatVnd(t.amount)}
+                          </strong>
+                        </article>
+                      ))}
+                    </div>
+                  ))}
+                </div>
                 <table className="movement-table">
                   <caption className="sr-only">
                     Thu nhập và chi tiêu trong tháng đã chọn
@@ -301,6 +371,7 @@ export default function Transactions() {
                       <th scope="col">Ngày</th>
                       <th scope="col">Loại / Danh mục</th>
                       <th scope="col">Ví</th>
+                      <th scope="col" className="tablet-wallet-note-header">Ví / Ghi chú</th>
                       <th scope="col">Số tiền</th>
                       <th scope="col">Ghi chú</th>
                       <th scope="col"><span className="sr-only">Thao tác</span></th>
@@ -323,6 +394,10 @@ export default function Transactions() {
                           <CategoryBadge category={t.category} compact /></div>
                         </td>
                         <td data-label="Ví">{t.wallet.name}</td>
+                        <td className="tablet-wallet-note" data-label="Ví / Ghi chú">
+                          <span>{t.wallet.name}</span>
+                          <span>{t.note || "—"}</span>
+                        </td>
                         <td data-label="Số tiền">
                           {t.type === "INCOME" ? "+" : "−"}
                           {formatVnd(t.amount)}
@@ -335,6 +410,7 @@ export default function Transactions() {
                     ))}
                   </tbody>
                 </table>
+                </>
               )}
               <Pagination
                 name="Phân trang thu chi"
@@ -354,10 +430,10 @@ export default function Transactions() {
                 Không tính vào thu nhập hoặc chi tiêu. Lọc theo ví nguồn hoặc ví
                 nhận.
               </p>
-              {transfers.items.length === 0 ? (
+              {visibleTransfers.length === 0 ? (
                 <EmptyState
-                  title="Chưa có chuyển tiền"
-                  description="Chọn Chuyển tiền khi thêm giao dịch để di chuyển tiền giữa các ví."
+                  title={search.trim() ? "Không tìm thấy giao dịch phù hợp" : "Chưa có chuyển tiền"}
+                  description={search.trim() ? "Thử từ khóa khác hoặc thay đổi bộ lọc." : "Chọn Chuyển tiền khi thêm giao dịch để di chuyển tiền giữa các ví."}
                 />
               ) : (
                 <table className="movement-table">
@@ -375,7 +451,7 @@ export default function Transactions() {
                     </tr>
                   </thead>
                   <tbody>
-                    {transfers.items.map((t) => (
+                    {visibleTransfers.map((t) => (
                       <tr key={t.id}>
                         <td data-label="Ngày">{t.transferDate}</td>
                         <td data-label="Loại">
@@ -399,7 +475,7 @@ export default function Transactions() {
               <Pagination
                 name="Phân trang chuyển tiền"
                 page={transferPage}
-                total={transfers.total}
+                total={search.trim() ? visibleTransfers.length : transfers.total}
                 onChange={setTransferPage}
               />
             </section>
