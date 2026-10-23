@@ -4,7 +4,7 @@
 |---|---|---|---|
 | User | id, username, email, passwordHash, displayName | Persisted | Account identity; financial data is user-owned |
 | Wallet | initialBalance | Persisted | Balance when tracking starts; Decimal >= 0 |
-| Wallet | currentBalance | Derived | initial + income - expense |
+| Wallet | currentBalance | Derived | opening balance + income - expense + incoming transfers - outgoing transfers; ignore soft-deleted records |
 | Category | type | Persisted | INCOME or EXPENSE |
 | Transaction | type | Persisted | INCOME or EXPENSE only |
 | Transaction | amount | Persisted | Positive Decimal |

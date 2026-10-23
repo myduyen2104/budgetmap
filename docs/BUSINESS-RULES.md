@@ -91,7 +91,8 @@ If Health has no allocation but has VND 500,000 in expenses: planned amount = 0,
 
 `initialBalance` is the wallet balance when the user starts tracking. Do not enter the same money as both initial balance and an income transaction.
 
-`walletBalance = initialBalance + income - expense`.
+`walletBalance = initialBalance + income - expense + incomingTransfers - outgoingTransfers`.
+Transfers move money between wallets without changing total assets or income/expense totals. Only non-deleted transactions and transfers affect balances; archiving a wallet preserves its historical balance.
 
 Archiving a wallet only prevents new transactions; historical transactions and balances remain included.
 

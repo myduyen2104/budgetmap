@@ -55,8 +55,34 @@ export function unallocatedAmount(plannedIncome: bigint, carryOver: bigint, tota
   return plannedAvailableMoney(plannedIncome, carryOver) - totalAllocated(totalExpenseAllocated, plannedSaving);
 }
 
-export function walletBalance(initialBalance: bigint, income: bigint, expense: bigint): bigint {
-  return initialBalance + income - expense;
+/** Convert a decimal money string to integer minor units without floating-point math. */
+export function moneyToMinorUnits(amount: string): bigint {
+  const match = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(amount);
+  if (!match) throw new Error('amount must be a decimal with at most two fractional digits');
+  const [, sign, whole, fraction = ''] = match;
+  const minorUnits = BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0'));
+  return sign === '-' ? -minorUnits : minorUnits;
+}
+
+/** Format integer minor units as a fixed two-decimal money string. */
+export function minorUnitsToMoney(amount: bigint): string {
+  const sign = amount < 0n ? '-' : '';
+  const absolute = amount < 0n ? -amount : amount;
+  return `${sign}${absolute / 100n}.${String(absolute % 100n).padStart(2, '0')}`;
+}
+
+/**
+ * Calculate a wallet's current balance from its opening balance and all
+ * non-deleted movements. All arguments are integer minor units (cents).
+ */
+export function walletBalance(
+  initialBalance: bigint,
+  income: bigint,
+  expense: bigint,
+  incomingTransfers = 0n,
+  outgoingTransfers = 0n,
+): bigint {
+  return initialBalance + income - expense + incomingTransfers - outgoingTransfers;
 }
 
 export function monthlyCashFlow(actualIncome: bigint, carryOver: bigint, actualExpense: bigint): bigint {

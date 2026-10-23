@@ -7,6 +7,8 @@ exports.validatePlanAllocation = validatePlanAllocation;
 exports.plannedAvailableMoney = plannedAvailableMoney;
 exports.totalAllocated = totalAllocated;
 exports.unallocatedAmount = unallocatedAmount;
+exports.moneyToMinorUnits = moneyToMinorUnits;
+exports.minorUnitsToMoney = minorUnitsToMoney;
 exports.walletBalance = walletBalance;
 exports.monthlyCashFlow = monthlyCashFlow;
 exports.validatePositiveAmount = validatePositiveAmount;
@@ -66,8 +68,21 @@ function totalAllocated(totalExpenseAllocated, plannedSaving) {
 function unallocatedAmount(plannedIncome, carryOver, totalExpenseAllocated, plannedSaving) {
     return plannedAvailableMoney(plannedIncome, carryOver) - totalAllocated(totalExpenseAllocated, plannedSaving);
 }
-function walletBalance(initialBalance, income, expense) {
-    return initialBalance + income - expense;
+function moneyToMinorUnits(amount) {
+    const match = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(amount);
+    if (!match)
+        throw new Error('amount must be a decimal with at most two fractional digits');
+    const [, sign, whole, fraction = ''] = match;
+    const minorUnits = BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0'));
+    return sign === '-' ? -minorUnits : minorUnits;
+}
+function minorUnitsToMoney(amount) {
+    const sign = amount < 0n ? '-' : '';
+    const absolute = amount < 0n ? -amount : amount;
+    return `${sign}${absolute / 100n}.${String(absolute % 100n).padStart(2, '0')}`;
+}
+function walletBalance(initialBalance, income, expense, incomingTransfers = 0n, outgoingTransfers = 0n) {
+    return initialBalance + income - expense + incomingTransfers - outgoingTransfers;
 }
 function monthlyCashFlow(actualIncome, carryOver, actualExpense) {
     return actualIncome + carryOver - actualExpense;

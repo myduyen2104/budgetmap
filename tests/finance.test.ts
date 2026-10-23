@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allocationResult, monthlyBudgetUsage, monthlyCashFlow, plannedAvailableMoney, totalAllocated, unallocatedAmount, validateMonth, validatePlanAllocation, validatePositiveAmount, walletBalance } from '../packages/shared/src/finance.js';
+import { allocationResult, minorUnitsToMoney, moneyToMinorUnits, monthlyBudgetUsage, monthlyCashFlow, plannedAvailableMoney, totalAllocated, unallocatedAmount, validateMonth, validatePlanAllocation, validatePositiveAmount, walletBalance } from '../packages/shared/src/finance.js';
 import { CATEGORY_COLORS, CATEGORY_ICONS, DEFAULT_CATEGORIES } from '../packages/shared/src/categories';
 
 describe('budget calculations', () => {
@@ -61,6 +61,21 @@ describe('budget calculations', () => {
 
   it('calculates wallet balance from initial balance and transactions', () => {
     expect(walletBalance(5_000_000n, 2_000_000n, 1_000_000n)).toBe(6_000_000n);
+  });
+
+  it('calculates exact wallet balances including both transfer directions', () => {
+    const balance = walletBalance(10_010n, 20_015n, 10_005n, 125_050n, 50n);
+    expect(balance).toBe(145_020n);
+    expect(minorUnitsToMoney(balance)).toBe('1450.20');
+  });
+
+  it('preserves cents and negative balances in wallet money conversions', () => {
+    expect(moneyToMinorUnits('5000000.10')).toBe(500_000_010n);
+    expect(moneyToMinorUnits('0.05')).toBe(5n);
+    expect(moneyToMinorUnits('-0.30')).toBe(-30n);
+    expect(minorUnitsToMoney(-30n)).toBe('-0.30');
+    expect(minorUnitsToMoney(walletBalance(0n, 0n, 1n))).toBe('-0.01');
+    expect(() => moneyToMinorUnits('1.001')).toThrow();
   });
 
   it('validates positive transaction amounts and plan months', () => {

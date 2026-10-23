@@ -8,7 +8,7 @@ Owns all financial data. One user has many wallets, categories, transactions and
 
 ### Wallet
 
-`id`, `userId`, `name`, `type`, `initialBalance`, `archivedAt`, timestamps. Current balance is derived from initial balance and transactions.
+`id`, `userId`, `name`, `type`, `initialBalance`, `archivedAt`, timestamps. Current balance is derived from opening balance, non-deleted income/expense transactions, and non-deleted wallet transfers (incoming adds; outgoing subtracts).
 
 ### Category
 
