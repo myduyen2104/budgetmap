@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { formatMoneyInput, isMoneyInputWithinLimit, MAX_MONEY_AMOUNT, normalizeMoneyInput, positiveAmount } from "../lib/money";
 import { CategorySelect } from "./category";
 import { SelectField } from "./select-field";
+import { ReceiptImporter } from "./receipt-importer";
 import type {
   CategoryColor,
   CategoryIcon,
@@ -711,6 +712,18 @@ export function MovementForm({
               onChange={(e) => setNote(e.target.value)}
             />
           </label>
+          {!editing && kind === "EXPENSE" && (
+            <ReceiptImporter
+              categories={categories}
+              onRecognized={(fields) => {
+                setAmount(fields.amount ? formatMoneyInput(fields.amount) : "");
+                setDate(fields.date);
+                setNote(fields.note);
+                setError("");
+              }}
+              onChooseCategory={setCategory}
+            />
+          )}
         </fieldset>
         {error && (
           <p className="error" role="alert" tabIndex={-1} ref={errorRef}>
