@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "node scripts/deploy-migrations.mjs && prisma generate --schema ../../packages/api/prisma/schema.prisma && tsc -p tsconfig.json",
+    "build": "node scripts/deploy-migrations.mjs && prisma generate --schema ../../packages/api/prisma/schema.prisma && tsc -p tsconfig.json && cp dist/apps/api/src/app.module.js dist/apps/api/src/notifications.controller.js dist/apps/api/src/notifications.service.js src/",
     "postinstall": "prisma generate --schema ../../packages/api/prisma/schema.prisma",
     "start": "node dist/apps/api/src/main.js"
   },
