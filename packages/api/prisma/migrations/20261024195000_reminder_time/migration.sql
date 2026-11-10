@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "dailyReminderTime" TEXT NOT NULL DEFAULT '19:00';

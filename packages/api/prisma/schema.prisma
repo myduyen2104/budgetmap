@@ -29,8 +29,40 @@ model User {
   transfers    WalletTransfer[]
   monthlyPlans MonthlyPlan[]
   sessions     Session[]
+  notifications Notification[]
+  pushSubscriptions PushSubscription[]
+  dailyReminderEnabled Boolean @default(false)
+  dailyReminderTime String @default("19:00")
+  dailyReminderTimes String[] @default(["19:00"])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  kind      String
+  dateKey   String
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kind, dateKey])
+  @@index([userId, readAt, createdAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Session {

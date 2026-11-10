@@ -15,7 +15,7 @@ export const THEME_PALETTES = [
 
 export function applyThemePalette(id: string) {
   const root = document.documentElement;
-  if (id === "purple" || id === "lavender" || !THEME_PALETTES.some((item) => item.id === id)) {
+  if (id === "lavender" || !THEME_PALETTES.some((item) => item.id === id)) {
     root.removeAttribute("data-theme-color");
     ["--theme-bg", "--theme-page-bg", "--theme-primary", "--theme-primary-strong", "--theme-primary-soft", "--theme-border", "--theme-surface", "--theme-surface-muted", "--theme-surface-2", "--theme-line", "--theme-shadow", "--purple", "--purple-strong", "--purple-soft", "--purple-line", "--purple-border", "--brand", "--brand-strong", "--brand-soft", "--brand-border", "--brand-gradient"].forEach((name) => root.style.removeProperty(name));
     return;

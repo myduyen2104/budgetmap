@@ -46,6 +46,20 @@ const previousMonth = (value: string) => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 };
 
+function TrendArrow({ direction }: { direction: "up" | "down" }) {
+  return (
+    <svg
+      className="analysis-trend-arrow"
+      data-direction={direction}
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <path d="M10 16V4m0 0L5.5 8.5M10 4l4.5 4.5" />
+    </svg>
+  );
+}
+
 export default function Analysis() {
   const initialMonth = currentMonth();
   const [monthA, setMonthA] = useState(initialMonth);
@@ -153,6 +167,7 @@ export default function Analysis() {
 
   const totalA = Number(dataA?.currentExpense ?? 0);
   const totalB = Number(dataB?.currentExpense ?? 0);
+  // A negative delta means lower spending in the period currently being viewed.
   const difference = totalA - totalB;
   const differencePercent = totalB === 0 ? null : (difference / totalB) * 100;
 
@@ -231,12 +246,13 @@ export default function Analysis() {
                     : "Chi tiêu hai kỳ bằng nhau"}
               </span>
               <strong className={difference > 0 ? "is-increase" : "is-decrease"}>
+                {difference !== 0 && <TrendArrow direction={difference > 0 ? "up" : "down"} />}
                 {money(Math.abs(difference))}
               </strong>
               <small>
                 {differencePercent === null
                   ? "Chưa có dữ liệu kỳ B để tính tỷ lệ thay đổi"
-                  : `${differencePercent > 0 ? "+" : ""}${differencePercent.toFixed(1)}% so với kỳ B`}
+                  : `${differencePercent > 0 ? "+" : "−"}${Math.abs(differencePercent).toFixed(1)}% so với kỳ B`}
               </small>
             </div>
           </section>
@@ -290,7 +306,7 @@ export default function Analysis() {
                           <strong>{money(row.expenseB)}</strong>
                         </div>
                         <div className={`analysis-comparison-delta${delta > 0 ? " is-increase" : delta < 0 ? " is-decrease" : ""}`}>
-                          {delta > 0 ? "+" : delta < 0 ? "−" : "—"}
+                          {delta !== 0 ? <TrendArrow direction={delta > 0 ? "up" : "down"} /> : "—"}
                           {delta === 0 ? "" : money(Math.abs(delta))}
                         </div>
                       </article>

@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
+import Script from "next/script";
 import "./globals.css";
 import "./theme.css";
 import "./accessibility.css";
 import "./responsive.css";
 import { AppShell } from "../components/app-shell";
 import { InstallPrompt } from "../components/install-prompt";
+import { THEME_PALETTES } from "../lib/theme";
+
+const paletteMap = Object.fromEntries(THEME_PALETTES.map(({ id, vars }) => [id, vars]));
+const themeInitScript = `(()=>{try{const root=document.documentElement;const savedTheme=localStorage.getItem('budgetmap-theme');const theme=savedTheme==='dark'||savedTheme==='light'?savedTheme:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');root.dataset.theme=theme;const palettes=${JSON.stringify(paletteMap)};const savedPalette=localStorage.getItem('budgetmap-theme-color');if(savedPalette!==null&&!Object.prototype.hasOwnProperty.call(palettes,savedPalette)){root.dataset.themeColor='';return}const id=savedPalette??'purple';const [primary,strong,soft,line]=palettes[id];const dark=theme==='dark';const activePrimary=dark&&id==='burgundy'?'#6f102b':primary;const activeStrong=dark&&id==='burgundy'?'#941f40':strong;root.dataset.themeColor=id;const set=(name,value)=>root.style.setProperty(name,value);set('--theme-primary',dark?activePrimary:primary);set('--theme-primary-strong',dark?activeStrong:strong);set('--theme-primary-soft',dark?'#262b31':soft);set('--theme-border',dark?'#3b424a':line);set('--theme-page-bg',dark?'#111315':'color-mix(in srgb, '+soft+' 28%, #fbfaff)');set('--theme-bg',dark?'#111315':'color-mix(in srgb, '+soft+' 28%, #fbfaff)');set('--theme-surface',dark?'#1a1d21':'color-mix(in srgb, '+soft+' 10%, #ffffff)');set('--theme-surface-2',dark?'#23272c':'color-mix(in srgb, '+soft+' 42%, #ffffff)');set('--theme-surface-muted',dark?'#23272c':'color-mix(in srgb, '+soft+' 42%, #ffffff)');set('--theme-line',dark?'#3b424a':'color-mix(in srgb, '+line+' 76%, #ffffff)');set('--theme-shadow','0 10px 30px color-mix(in srgb, '+(dark?activeStrong:strong)+' 20%, transparent)');set('--purple',dark?activePrimary:primary);set('--purple-strong',dark?activeStrong:strong);set('--purple-soft',dark?'#262b31':soft);set('--purple-line',dark?'#3b424a':line);set('--purple-border',dark?'#3b424a':line);set('--brand',dark?activePrimary:primary);set('--brand-strong',dark?activeStrong:strong);set('--brand-soft',dark?'#262b31':soft);set('--brand-border',dark?'#3b424a':line);set('--brand-gradient','linear-gradient(135deg, '+(dark?activePrimary:primary)+' 0%, '+(dark?activeStrong:strong)+' 100%)')}catch{document.documentElement.dataset.theme='light'}})()`;
 
 export const metadata = {
   title: "BudgetMap",
@@ -32,13 +37,10 @@ export default function Layout({ children }: { children: ReactNode }) {
     <html lang="vi" suppressHydrationWarning>
       <head>
         <title>BudgetMap</title>
+        <link rel="preload" href="/fonts/GoogleSansFlex-Variable.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(()=>{try{const root=document.documentElement;const saved=localStorage.getItem('budgetmap-theme');const theme=saved==='dark'||saved==='light'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');root.dataset.theme=theme;const palettes={orange:['#e6a47f','#cf8a65','#fff3ec','#f3d8c9'],yellow:['#f2d477','#d9b332','#fff8e3','#efdfa9'],brown:['#b99a82','#6f4e37','#f7f1eb','#e8d9cc'],blue:['#82aee0','#6f9fd6','#eef5ff','#d3e3f8'],cyan:['#82cfe0','#519eb2','#effafd','#d2edf2'],red:['#df6268','#bf3f4b','#fff0f0','#f0c5c7'],burgundy:['#800020','#600018','#f8edf0','#e6cbd2'],pink:['#df8fb4','#c9789f','#fff0f6','#f2d3e1'],green:['#82b98f','#64a976','#eff8f0','#d2e7d7']};const id=localStorage.getItem('budgetmap-theme-color');const values=palettes[id]||['#806fe5','#5b4bb7','#eee9ff','#ddd5ff'];const dark=theme==='dark';const primary=id==='burgundy'&&dark?'#6f102b':values[0];const strong=id==='burgundy'&&dark?'#941f40':values[1];root.dataset.themeColor=palettes[id]?id:'';[['--theme-primary',primary],['--theme-primary-strong',strong],['--theme-primary-soft',dark?'#262b31':values[2]],['--theme-border',dark?'#3b424a':values[3]],['--theme-page-bg',dark?'#111315':values[2]],['--theme-bg',dark?'#111315':values[2]],['--theme-surface',dark?'#1a1d21':'#ffffff'],['--theme-surface-muted',dark?'#23272c':values[2]],['--theme-surface-2',dark?'#23272c':'#ffffff'],['--theme-line',dark?'#3b424a':values[3]],['--brand',primary],['--brand-strong',strong],['--brand-soft',dark?'#262b31':values[2]],['--brand-border',dark?'#3b424a':values[3]]].forEach(([name,value])=>root.style.setProperty(name,value))}catch{document.documentElement.dataset.theme='light'}})()`,
-          }}
-        />
+        <Script id="budgetmap-theme-init" strategy="beforeInteractive">{themeInitScript}</Script>
         <AppShell>{children}</AppShell>
         <InstallPrompt />
       </body>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { CATEGORY_COLORS, CATEGORY_ICONS, CategoryColor, CategoryIcon } from "../../../packages/shared/src/categories";
 import { defaultCategory } from "../../../packages/shared/src/categories";
@@ -48,7 +49,7 @@ export function CategoryPicker({ icon, color, name, onIconChange, onColorChange 
     <div className="category-preview"><CategoryBadge category={{ name: name?.trim() || "Xem trước", icon, color }} /></div>
     <span className="picker-label">Biểu tượng</span>
     <div className="icon-grid" role="radiogroup" aria-label="Biểu tượng danh mục">
-      {icons.map((x) => <button type="button" key={x} className={icon === x ? "selected" : ""} aria-label={`Chọn biểu tượng ${x}`} aria-pressed={icon === x} onClick={() => onIconChange(x)}><i className={categoryIconClass(x)} aria-hidden="true" /></button>)}
+      {icons.map((x) => <button type="button" key={x} className={icon === x ? "selected" : ""} style={{ "--picker-color": categoryColorValue(color) } as CSSProperties} aria-label={`Chọn biểu tượng ${x}`} aria-pressed={icon === x} onClick={() => onIconChange(x)}><i className={categoryIconClass(x)} aria-hidden="true" /></button>)}
     </div>
     <button type="button" className="secondary picker-more" onClick={() => setShowAll(!showAll)}>{showAll ? "Thu gọn" : "Xem thêm biểu tượng"}</button>
     <span className="picker-label">Màu nhận diện</span>

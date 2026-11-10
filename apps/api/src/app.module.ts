@@ -11,6 +11,7 @@ import {InsightsController} from './insights.controller.js';import {InsightsServ
 import {HealthController} from './health.controller.js';import {HealthService} from './health.service.js';
 import {PrismaModule} from './prisma.module.js';
 import {TransfersController} from './transfers.controller.js';import {TransfersService} from './transfers.service.js';
+import {NotificationsController} from './notifications.controller.js';import {NotificationsService} from './notifications.service.js';
 
-@Module({imports:[PrismaModule],controllers:[HealthController,AuthController,WalletsController,CategoriesController,TransactionsController,MonthlyPlansController,InsightsController,TransfersController],providers:[HealthService,AuthService,WalletsService,CategoriesService,TransactionsService,MonthlyPlansService,InsightsService,TransfersService]})
+@Module({imports:[PrismaModule],controllers:[HealthController,AuthController,WalletsController,CategoriesController,TransactionsController,MonthlyPlansController,InsightsController,TransfersController,NotificationsController],providers:[HealthService,AuthService,WalletsService,CategoriesService,TransactionsService,MonthlyPlansService,InsightsService,TransfersService,NotificationsService]})
 export class AppModule {}

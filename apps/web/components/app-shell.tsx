@@ -11,6 +11,7 @@ const baseLinks = [
   ["/transactions", "Giao dịch", "fi-rr-exchange-alt"],
   ["/plans/current", "Kế hoạch tháng", "fi-rr-calendar-days"],
   ["/analysis", "Phân tích", "fi-rr-chart-pie"],
+  ["/financial-map", "Bản đồ tài chính", "fi-rr-route"],
   ["/wallets", "Ví tiền", "fi-rr-wallet"],
   ["/categories", "Danh mục", "fi-rr-category"],
   ["/profile", "Hồ sơ", "fi-rr-user"],
@@ -21,6 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     [open, setOpen] = useState(false),
     [headerHidden, setHeaderHidden] = useState(false),
     [name, setName] = useState(""),
+    [unreadCount, setUnreadCount] = useState(0),
     [theme, setTheme] = useState<"light" | "dark">("light");
   const [currentYear, currentMonthNumber] = currentMonth().split("-");
   const links = baseLinks.map(([href, label, icon]) =>
@@ -77,6 +79,18 @@ export function AppShell({ children }: { children: ReactNode }) {
       .then((u) => setName(u.displayName ?? "Bạn"))
       .catch(() => {});
   }, [publicPage]);
+  useEffect(() => {
+    if (publicPage) { setUnreadCount(0); return; }
+    let active = true;
+    const refresh = () => api<{ unreadCount: number }>("/notifications")
+      .then((data) => { if (active) setUnreadCount(data.unreadCount); })
+      .catch(() => {});
+    void refresh();
+    const timer = window.setInterval(refresh, 60_000);
+    const onUpdate = () => void refresh();
+    window.addEventListener("budgetmap-notifications-updated", onUpdate);
+    return () => { active = false; window.clearInterval(timer); window.removeEventListener("budgetmap-notifications-updated", onUpdate); };
+  }, [publicPage, path]);
   useEffect(() => {
     document.documentElement.classList.toggle("mobile-menu-open", open);
     document.body.classList.toggle("mobile-menu-open", open);
@@ -250,6 +264,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div>
             <strong>{name || "BudgetMap"}</strong>
           </div>
+          <div className="topbar-actions">
+            <button
+              className="notification-bell"
+              aria-label={unreadCount ? `Thông báo, ${unreadCount} chưa đọc` : "Thông báo"}
+              onClick={() => router.push("/notifications")}
+            >
+              <i className="fi-rr-bell" aria-hidden="true" />
+              {unreadCount > 0 && <span className="notification-badge" aria-hidden="true">{unreadCount > 99 ? "99+" : unreadCount}</span>}
+            </button>
           <button
             className="avatar"
             aria-label="Mở hồ sơ"
@@ -257,6 +280,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             {name.slice(0, 1).toUpperCase() || "B"}
           </button>
+          </div>
         </header>
         <div className="page">{children}</div>
         <nav

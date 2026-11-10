@@ -12,6 +12,29 @@
   --theme-primary-soft: #eee9ff;
   --theme-shadow: 0 10px 30px rgba(88, 65, 128, 0.08);
   color-scheme: light;
+
+  /* Legacy component tokens mapped to the active semantic palette. A number
+     of older screens still use these names, so keep them theme-aware too. */
+  --bg: var(--theme-bg);
+  --paper: var(--theme-bg);
+  --surface: var(--theme-surface);
+  --card: var(--theme-surface);
+  --surface-2: var(--theme-surface-2, var(--theme-surface-muted));
+  --text: var(--theme-text);
+  --ink: var(--theme-text);
+  --muted: var(--theme-muted);
+  --muted-2: var(--theme-muted);
+  --line: var(--theme-line, var(--theme-border));
+  --purple: var(--theme-primary);
+  --purple-strong: var(--theme-primary-strong);
+  --purple-soft: var(--theme-primary-soft);
+  --purple-line: var(--theme-border);
+  --purple-border: var(--theme-border);
+  --brand: var(--theme-primary);
+  --brand-strong: var(--theme-primary-strong);
+  --brand-soft: var(--theme-primary-soft);
+  --brand-border: var(--theme-border);
+  --brand-gradient: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-strong));
 }
 
 [data-theme="dark"] {
@@ -132,19 +155,19 @@ button:not(.theme-toggle),
 .sidebar nav a.active,
 .mobile-nav a.active { border-color: var(--theme-border); }
 
-button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):not(.notification-item):not(.notification-time-trigger):not(.notification-add-time):not(.notification-time-remove),
 .planner-actions a:first-child,
 .quick-actions a:first-child,
 .sidebar nav a.active,
 .mobile-nav a.active { background: var(--theme-primary-strong); color: var(--theme-on-primary); }
 
-button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
+button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):not(.notification-item):not(.notification-time-trigger):not(.notification-add-time):not(.notification-time-remove):hover,
 .sidebar nav a:hover,
 .mobile-nav a:hover,
 .section-heading a:hover { color: var(--theme-primary-strong); }
 
 /* Dark mode keeps the active palette for all primary actions. */
-[data-theme="dark"] button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option),
+[data-theme="dark"] button:not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):not(.theme-palette-option):not(.notification-item):not(.notification-time-trigger):not(.notification-add-time):not(.notification-time-remove),
 [data-theme="dark"] .quick-actions a,
 [data-theme="dark"] .planner-actions a,
 [data-theme="dark"] .month-nav button {
@@ -152,7 +175,7 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
   color: var(--theme-on-primary) !important;
 }
 
-[data-theme="dark"] button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
+[data-theme="dark"] button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):not(.notification-item):not(.notification-time-trigger):not(.notification-add-time):not(.notification-time-remove):hover,
 [data-theme="dark"] .quick-actions a:hover,
 [data-theme="dark"] .planner-actions a:hover,
 [data-theme="dark"] .month-nav button:hover {
@@ -257,8 +280,8 @@ button:not(:disabled):not(.theme-toggle):not(.theme-palette-option):hover,
   border-color: var(--theme-primary) !important;
   color: #fff !important;
 }
-.movement-edit-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgb(20 15 32 / 42%); }
-.movement-edit-modal .movement-editor { width: min(100%, 920px); min-height: min(620px, calc(100vh - 48px)); max-height: calc(100vh - 32px); overflow: visible; box-shadow: var(--theme-shadow); }
+.movement-edit-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; overflow-y: auto; overscroll-behavior: contain; background: rgb(20 15 32 / 42%); }
+.movement-edit-modal .movement-editor { width: min(100%, 920px); min-height: min(620px, calc(100vh - 48px)); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain; box-shadow: var(--theme-shadow); }
 .transaction-date-picker { position: relative; width: 100%; min-width: 0; }
 .date-picker-control {
   position: relative;
@@ -1495,6 +1518,32 @@ html[data-theme="dark"] .wallet-type-menu {
   border-color: var(--theme-primary) !important;
 }
 
+/* Wallet dropdown: accent surfaces need high-contrast text in every palette. */
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme="dark"] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu > button.selected {
+  background: var(--theme-primary) !important;
+  background-color: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover *,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected *,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu > button:hover *,
+html[data-theme="dark"] .wallet-type-select .wallet-type-menu > button.selected * {
+  color: inherit !important;
+}
+
 /* Analysis table uses the same dark surface as its containing card. */
 html[data-theme="dark"] .analysis-table-card,
 html[data-theme="dark"] .analysis-table-card table,
@@ -2562,9 +2611,11 @@ html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="t
   border-color: var(--theme-primary) !important;
 }
 html[data-theme-color] .wallet-type-select .wallet-type-menu {
-  position: static !important;
-  inset: auto !important;
-  z-index: auto !important;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  right: 0 !important;
+  left: 0 !important;
+  z-index: 30 !important;
   width: 100% !important;
   max-height: none !important;
   margin-top: 6px !important;
@@ -2825,8 +2876,178 @@ html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected {
 .analysis-difference > strong {
   grid-column: 2;
   grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
   font-size: 1.1rem;
   font-variant-numeric: tabular-nums;
+}
+
+.analysis-trend-arrow {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.analysis-trend-arrow[data-direction="down"] {
+  transform: rotate(180deg);
+}
+
+.topbar-actions { margin-left: auto; display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
+.topbar-actions .avatar { margin-left: 0; }
+.notification-bell { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--theme-text); cursor: pointer; font-size: 1.15rem; line-height: 1; }
+.notification-bell > i, .notification-reminder-icon > i { display: block; width: 1em; height: 1em; margin: 0; line-height: 1; text-align: center; }
+.notification-bell:hover { background: var(--theme-surface-muted); }
+.notification-badge { position: absolute; top: 1px; right: 0; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; border: 2px solid var(--theme-surface); border-radius: 999px; background: var(--theme-primary-strong); color: var(--theme-on-primary); font: 700 .62rem/1 system-ui; }
+.notifications-page { max-width: 980px; margin: 0 auto; padding: 28px 24px 48px; }
+.notifications-heading, .notification-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.notifications-heading h1 { margin: 2px 0 6px; }
+.notifications-heading p { margin: 0; }
+.notification-reminder-card { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, 320px) auto; align-items: center; gap: 20px; margin: 24px 0 16px; padding: 22px 24px; overflow: visible; }
+.notification-reminder-intro { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.notification-reminder-icon { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; padding: 0; flex: 0 0 auto; border-radius: 14px; background: var(--theme-primary-soft); color: var(--theme-primary-strong); font-size: 1.2rem; line-height: 1; }
+.notification-reminder-copy { min-width: 0; }
+.notification-time-field { position: relative; display: grid; gap: 8px; width: 100%; min-width: 0; color: var(--theme-muted); font-size: .75rem; font-weight: 650; }
+.notification-time-field > span small { font-size: inherit; font-weight: 500; }
+.notification-time-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; gap: 8px; width: 100%; }
+.notification-time-slot { display: flex; align-items: stretch; gap: 4px; min-width: 0; }
+.notification-time-fixed { display: inline-flex; align-items: center; justify-content: space-between; box-sizing: border-box; gap: 8px; width: 100%; min-width: 0; height: 40px; padding: 7px 10px; border: 1px solid var(--theme-primary) !important; border-radius: 10px; background: var(--theme-surface) !important; color: var(--theme-primary-strong) !important; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.notification-time-fixed > i { font-size: .9rem; }
+.notification-time-trigger { display: inline-flex; align-items: center; justify-content: space-between; box-sizing: border-box; flex: 1 1 auto; gap: 8px; width: 100%; min-width: 0; height: 40px; min-height: 40px; padding: 7px 10px; border: 1px solid var(--theme-primary) !important; border-radius: 10px; background: var(--theme-surface) !important; background-color: var(--theme-surface) !important; color: var(--theme-primary-strong) !important; font: inherit; font-size: .9rem; font-variant-numeric: tabular-nums; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+.notification-time-trigger:hover, .notification-time-trigger[aria-expanded="true"] { border-color: var(--theme-primary-strong) !important; background: var(--theme-primary-soft) !important; background-color: var(--theme-primary-soft) !important; color: var(--theme-primary-strong) !important; }
+.notification-time-trigger > span,
+.notification-time-trigger > i { color: var(--theme-primary-strong) !important; -webkit-text-fill-color: var(--theme-primary-strong) !important; }
+.notification-time-trigger > i { font-size: .9rem; }
+html[data-theme="light"] .notification-time-trigger:hover,
+html[data-theme="light"] .notification-time-trigger[aria-expanded="true"] { background: var(--theme-primary-strong) !important; background-color: var(--theme-primary-strong) !important; color: var(--theme-on-primary) !important; }
+html[data-theme="light"] .notification-time-trigger:hover > span,
+html[data-theme="light"] .notification-time-trigger:hover > i,
+html[data-theme="light"] .notification-time-trigger[aria-expanded="true"] > span,
+html[data-theme="light"] .notification-time-trigger[aria-expanded="true"] > i { color: var(--theme-on-primary) !important; -webkit-text-fill-color: var(--theme-on-primary) !important; }
+.notification-time-popover { position: fixed; z-index: 1000; width: 204px; padding: 10px; border: 1px solid var(--theme-border); border-radius: 14px; background: var(--theme-surface); color: var(--theme-text); box-shadow: 0 14px 36px color-mix(in srgb, var(--theme-text) 16%, transparent); }
+.notification-time-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.notification-time-column { min-width: 0; }
+.notification-time-column-label { display: block; padding: 0 6px 7px; color: var(--theme-muted); font-size: .7rem; }
+.notification-time-options { max-height: 204px; overflow-y: auto; overscroll-behavior: contain; padding: 0; border-radius: 10px; background: var(--theme-surface-muted); scrollbar-width: none; -ms-overflow-style: none; }
+.notification-time-options::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.notification-time-cycle { display: grid; grid-auto-rows: 34px; gap: 0; padding: 3px; }
+.notification-time-cycle > button { min-width: 0; }
+.notification-time-cycle > button { min-height: 30px; padding: 4px; border: 0; border-radius: 7px; background: transparent !important; color: var(--theme-text) !important; font: inherit; font-size: .85rem; font-variant-numeric: tabular-nums; cursor: pointer; }
+.notification-time-cycle > button:hover { background: color-mix(in srgb, var(--theme-primary) 12%, var(--theme-surface)) !important; }
+.notification-time-cycle > button:disabled { opacity: .35; cursor: not-allowed; }
+.notification-time-cycle > button.selected { background: var(--theme-primary) !important; color: var(--theme-on-primary) !important; font-weight: 700; }
+html[data-theme="light"] .notification-time-cycle > button:hover,
+html[data-theme="light"] .notification-time-cycle > button:focus-visible { background: var(--theme-primary-strong) !important; color: var(--theme-on-primary) !important; }
+.notification-time-done { width: 100%; min-height: 36px; margin-top: 10px; border: 0; border-radius: 9px; background: var(--theme-primary); color: var(--theme-on-primary); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.notification-time-remove { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; align-self: stretch; flex: 0 0 24px; width: 24px; height: 40px; min-height: 40px; padding: 0; border: 0 !important; border-radius: 0; background: transparent !important; color: var(--theme-primary-strong) !important; box-shadow: none !important; font: inherit; font-size: 1.05rem; line-height: 1; cursor: pointer; }
+.notification-time-remove:hover,
+.notification-time-remove:focus-visible,
+html[data-theme="light"] .notification-time-slot > .notification-time-remove:hover,
+html[data-theme="light"] .notification-time-slot > .notification-time-remove:focus-visible {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: var(--theme-primary-strong) !important;
+  box-shadow: none !important;
+}
+html[data-theme="light"] .notification-time-slot > button.notification-time-remove:not(:disabled):hover,
+html[data-theme="light"] .notification-time-slot > button.notification-time-remove:focus,
+html[data-theme="light"] .notification-time-slot > button.notification-time-remove:focus-visible,
+html[data-theme="light"] .notification-time-slot > button.notification-time-remove:active {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: var(--theme-primary-strong) !important;
+  box-shadow: none !important;
+}
+.notification-add-time { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%; min-height: 40px; padding: 4px 9px; border: 1px dashed var(--theme-primary); border-radius: 10px; background: var(--theme-surface) !important; color: var(--theme-primary-strong) !important; font: inherit; font-size: .76rem; font-weight: 700; line-height: 1; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+.notification-add-time > i { color: var(--theme-primary-strong) !important; font-size: .9rem; line-height: 1; }
+.notification-add-time:hover { border-color: var(--theme-primary-strong); background: var(--theme-primary-soft) !important; color: var(--theme-primary-strong) !important; }
+.notification-add-time:disabled, .notification-time-remove:disabled { opacity: .5; cursor: not-allowed; }
+.notification-reminder-actions { display: flex; align-items: center; gap: 8px; }
+.notification-reminder-copy h2, .notification-list-heading h2 { margin: 0; font-size: 1rem; }
+.notification-reminder-copy p { margin: 5px 0 0; font-size: .88rem; }
+.notification-setup-note, .notification-error { margin: 8px 4px 16px; color: var(--theme-muted); font-size: .86rem; }
+.notification-error { color: var(--danger); }
+.notification-list { min-height: 172px; padding: 20px 24px; }
+.notification-list-heading { padding-bottom: 12px; border-bottom: 1px solid var(--theme-border); }
+.notification-list-heading > span { color: var(--theme-muted); font-size: .8rem; }
+.notification-items { display: grid; gap: 8px; padding-top: 12px; }
+.notification-item { display: grid; grid-template-columns: 12px minmax(0,1fr) 16px; align-items: center; gap: 12px; width: 100%; padding: 16px 12px; border: 1px solid transparent; border-radius: 12px; background: transparent; color: var(--theme-text); text-align: left; cursor: pointer; }
+.notification-item:last-child { border-bottom-width: 1px; }
+.notification-item-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--theme-primary-strong); box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 16%, transparent); }
+.notification-item.is-read .notification-item-dot { background: transparent; box-shadow: none; }
+.notification-item-content { display: grid; gap: 4px; }
+.notification-item-content strong { font-size: .91rem; }
+.notification-item-content > span { color: var(--theme-muted); font-size: .85rem; }
+.notification-item-content small { color: var(--theme-muted); font-size: .75rem; }
+.notification-item.is-read { opacity: .56; }
+.notification-item.is-unread { opacity: 1; border-color: var(--theme-primary); background: var(--theme-surface); color: var(--theme-text); box-shadow: none; }
+.notification-item.is-unread:hover { border-color: var(--theme-primary-strong); background: var(--theme-surface); color: var(--theme-text); }
+.notification-items > .notification-item.is-unread,
+.notification-items > .notification-item.is-unread:hover { background: var(--theme-surface) !important; background-color: var(--theme-surface) !important; color: var(--theme-text) !important; }
+html[data-theme="dark"] .notification-items > .notification-item.is-unread,
+html[data-theme="dark"] .notification-items > .notification-item.is-unread:hover { background: var(--theme-surface) !important; background-color: var(--theme-surface) !important; color: var(--theme-text) !important; }
+.notification-item.is-unread .notification-item-content strong { color: var(--theme-primary-strong); }
+.notification-item.is-unread .notification-item-content > span,
+.notification-item.is-unread .notification-item-content small,
+.notification-item.is-unread > i { color: var(--theme-muted); }
+.notification-items > .notification-item.is-unread .notification-item-content strong { color: var(--theme-primary-strong) !important; }
+.notification-items > .notification-item.is-unread .notification-item-content > span,
+.notification-items > .notification-item.is-unread .notification-item-content small,
+.notification-items > .notification-item.is-unread > i { color: var(--theme-muted) !important; }
+html[data-theme="light"] .notification-items > .notification-item:hover {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border-color: color-mix(in srgb, var(--theme-primary) 42%, var(--theme-surface)) !important;
+  color: var(--theme-text) !important;
+}
+html[data-theme="dark"] .notification-items > .notification-item:hover {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+}
+/* Keep unread notification emphasis on the dot and outer border only. */
+.notification-items > button.notification-item.is-unread,
+.notification-items > button.notification-item.is-unread:hover {
+  box-shadow: none !important;
+  background-image: none !important;
+}
+html[data-theme="dark"] .notification-items > .notification-item.is-unread .notification-item-content strong { color: var(--theme-primary-strong) !important; }
+html[data-theme="dark"] .notification-items > .notification-item.is-unread .notification-item-content > span,
+html[data-theme="dark"] .notification-items > .notification-item.is-unread .notification-item-content small,
+html[data-theme="dark"] .notification-items > .notification-item.is-unread > i { color: var(--theme-muted) !important; }
+.notification-empty { display: grid; justify-items: center; gap: 8px; padding: 44px 16px; color: var(--theme-muted); text-align: center; }
+.notification-empty > i { font-size: 1.5rem; }
+.notification-empty strong { color: var(--theme-text); }
+.notification-detail-backdrop { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 20px; background: color-mix(in srgb, var(--theme-text) 38%, transparent); backdrop-filter: blur(5px); }
+.notification-detail { position: relative; width: min(100%, 460px); padding: 26px; border: 1px solid var(--theme-border); border-radius: 20px; background: var(--theme-surface); color: var(--theme-text); box-shadow: 0 24px 70px color-mix(in srgb, var(--theme-text) 18%, transparent); }
+.notification-detail-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.notification-detail-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 14px; background: var(--theme-primary-soft); color: var(--theme-primary-strong); font-size: 1.15rem; }
+.notification-detail-close { display: grid; width: 36px; height: 36px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent !important; color: var(--theme-muted) !important; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.notification-detail-close:hover { background: transparent !important; color: var(--theme-text) !important; }
+.notification-detail > .eyebrow { margin-bottom: 8px; }
+.notification-detail h2 { margin: 0; color: var(--theme-text); font-size: 1.35rem; }
+.notification-detail-body { margin: 14px 0 18px; color: var(--theme-muted); line-height: 1.65; overflow-wrap: anywhere; }
+.notification-detail-date { color: var(--theme-muted); font-size: .82rem; }
+.notification-detail-done { display: block; width: 100%; margin-top: 24px; }
+@media (max-width: 880px) {
+  .notification-reminder-card { grid-template-columns: minmax(0, 1fr) minmax(280px, 320px); gap: 16px; }
+  .notification-reminder-actions { grid-column: 2; justify-self: end; }
+}
+@media (max-width: 640px) {
+  .notifications-page { padding: 20px 14px 40px; }
+  .notification-reminder-card { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .notification-reminder-intro { grid-column: 1; }
+  .notification-time-field { grid-column: 1; }
+  .notification-reminder-actions { grid-column: 1; justify-self: end; }
+  .notification-list { min-height: 172px; padding: 16px; }
 }
 
 .analysis-difference > small {
@@ -2903,6 +3124,10 @@ html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected {
 }
 
 .analysis-comparison-delta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
   font-weight: 750;
 }
 
@@ -3330,4 +3555,376 @@ html[data-theme-color] .card.loading-skeleton {
       var(--theme-primary, #806fe5) 8%
     )
   );
+}
+
+/* Palette parity: every light theme follows the orange reference states.
+   Controls are neutral at rest and use the active accent only on hover/open;
+   accent surfaces always use high-contrast text. */
+html[data-theme-color] .movement-editor .select-trigger,
+html[data-theme-color] .movement-editor .category-select-trigger,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger,
+html[data-theme-color] .category-type-select .select-trigger,
+html[data-theme-color] .date-picker-control .date-picker-trigger {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .movement-editor .select-trigger:hover,
+html[data-theme-color] .movement-editor .select-trigger[aria-expanded="true"],
+html[data-theme-color] .movement-editor .category-select-trigger:hover,
+html[data-theme-color] .movement-editor .category-select-trigger[aria-expanded="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"],
+html[data-theme-color] .category-type-select .select-trigger:hover,
+html[data-theme-color] .category-type-select .select-trigger[aria-expanded="true"],
+html[data-theme-color] .date-picker-control .date-picker-trigger:hover,
+html[data-theme-color] .date-picker-control .date-picker-trigger[aria-expanded="true"] {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .movement-editor .select-trigger:hover *,
+html[data-theme-color] .movement-editor .select-trigger[aria-expanded="true"] *,
+html[data-theme-color] .movement-editor .category-select-trigger:hover *,
+html[data-theme-color] .movement-editor .category-select-trigger[aria-expanded="true"] *,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:hover *,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger[aria-expanded="true"] *,
+html[data-theme-color] .category-type-select .select-trigger:hover *,
+html[data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] *,
+html[data-theme-color] .date-picker-control .date-picker-trigger:hover * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu button:hover,
+html[data-theme-color] .movement-editor .select-menu button.selected,
+html[data-theme-color] .movement-editor .category-select-menu > button:hover,
+html[data-theme-color] .movement-editor .category-select-menu > button[aria-selected="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected,
+html[data-theme-color] .category-type-select .select-menu > button:hover,
+html[data-theme-color] .category-type-select .select-menu > button.selected {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu button:hover *,
+html[data-theme-color] .movement-editor .select-menu button.selected *,
+html[data-theme-color] .movement-editor .category-select-menu > button:hover *,
+html[data-theme-color] .movement-editor .category-select-menu > button[aria-selected="true"] *,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover *,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected *,
+html[data-theme-color] .category-type-select .select-menu > button:hover *,
+html[data-theme-color] .category-type-select .select-menu > button.selected * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* Final specificity guard: generic themed buttons must not paint every
+   dropdown option. Match the orange reference: rest -> neutral, selected ->
+   soft accent, hover -> strong accent with white text. */
+html[data-theme-color] .movement-editor .select-field .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle),
+html[data-theme-color] .movement-editor .category-select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle),
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle) {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .category-type-select .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle),
+html[data-theme-color] .movement-editor .date-picker-control .date-picker-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle) {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .movement-editor .select-field .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):hover,
+html[data-theme-color] .movement-editor .select-field .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle)[aria-expanded="true"],
+html[data-theme-color] .movement-editor .category-select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):hover,
+html[data-theme-color] .movement-editor .category-select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle)[aria-expanded="true"],
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):hover,
+html[data-theme-color] .wallet-type-select .wallet-type-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle)[aria-expanded="true"] {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .category-type-select .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):hover,
+html[data-theme-color] .category-type-select .select-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle)[aria-expanded="true"] {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu > button.select-option:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle),
+html[data-theme-color] .movement-editor .category-select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle),
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .category-type-select .select-menu > button:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle) {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu > button.select-option.selected:not(:hover),
+html[data-theme-color] .movement-editor .category-select-menu > button[aria-selected="true"]:not(:hover),
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected:not(:hover) {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .category-type-select .select-menu > button.selected:not(:hover) {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu > button.select-option:hover,
+html[data-theme-color] .movement-editor .category-select-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button.selected:hover {
+  background: var(--theme-primary-strong) !important;
+  background-color: var(--theme-primary-strong) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-on-primary) !important;
+}
+
+html[data-theme-color] .category-type-select .select-menu > button:hover,
+html[data-theme-color] .category-type-select .select-menu > button.selected:hover {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Dropdown options keep the orange-reference hover treatment across every
+   palette: accent border + accent text + a soft accent surface. */
+html[data-theme-color] .movement-editor .select-menu > button.select-option:hover,
+html[data-theme-color] .movement-editor .category-select-menu > button:hover,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover,
+html[data-theme-color] .category-type-select .select-menu > button:hover {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme-color] .movement-editor .select-menu > button.select-option:hover *,
+html[data-theme-color] .movement-editor .category-select-menu > button:hover *,
+html[data-theme-color] .wallet-type-select .wallet-type-menu > button:hover *,
+html[data-theme-color] .category-type-select .select-menu > button:hover * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme-color] .movement-editor .date-picker-control .date-picker-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):hover,
+html[data-theme-color] .movement-editor .date-picker-control .date-picker-trigger:not(.theme-palette-option):not(.button-secondary):not(.secondary):not(.menu):not(.theme-toggle):not(.password-toggle):focus-visible {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-primary-strong) !important;
+}
+
+/* Light mode calendar interactions use the active palette. Dark mode keeps
+   its existing contrast treatment and is intentionally excluded here. */
+html[data-theme="light"][data-theme-color] .transaction-date-popover .calendar-select .select-option:hover,
+html[data-theme="light"][data-theme-color] .transaction-date-popover .calendar-select .select-option:focus-visible {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="light"][data-theme-color] .transaction-date-popover .calendar-day:hover,
+html[data-theme="light"][data-theme-color] .transaction-date-popover .calendar-day:focus-visible {
+  border-color: var(--theme-primary-strong) !important;
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+/* Final light-mode fallback for every shared SelectField instance. Keep the
+   selector independent from the form wrapper so wallet/category/transfer
+   dropdowns all receive the same visible hover state. */
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:hover,
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:focus-visible {
+  border: 1px solid var(--theme-primary-strong) !important;
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:hover *,
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:focus-visible * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option,
+html[data-theme="light"][data-theme-color] .category-select-menu > button {
+  border: 1px solid transparent !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-select-menu > button:hover,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:focus-visible {
+  border: 1px solid var(--theme-primary-strong) !important;
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-select-menu > button:hover *,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:focus-visible * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* Light-theme hover text follows the active palette across category actions
+   and controls instead of falling back to white or a fixed purple value. */
+html[data-theme="light"][data-theme-color] .category-list-item .row-actions button:hover,
+html[data-theme="light"][data-theme-color] .category-list-item .row-actions button:focus-visible,
+html[data-theme="light"][data-theme-color] .icon-grid button:hover,
+html[data-theme="light"][data-theme-color] .icon-grid button:focus-visible,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:hover,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:focus-visible,
+html[data-theme="light"][data-theme-color] .category-type-select .select-menu > button:hover,
+html[data-theme="light"][data-theme-color] .category-type-select .select-menu > button:focus-visible {
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-list-item .row-actions button:hover *,
+html[data-theme="light"][data-theme-color] .category-list-item .row-actions button:focus-visible *,
+html[data-theme="light"][data-theme-color] .icon-grid button:hover *,
+html[data-theme="light"][data-theme-color] .icon-grid button:focus-visible * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* Category type badges use the same semantic colors as transaction badges. */
+.category-list-item .category-type-badge.category-type-expense {
+  color: var(--danger) !important;
+  border: 1px solid color-mix(in srgb, var(--danger) 24%, var(--theme-border)) !important;
+  background: color-mix(in srgb, var(--danger) 9%, var(--theme-surface)) !important;
+}
+
+.category-list-item .category-type-badge.category-type-income {
+  color: var(--success) !important;
+  border: 1px solid color-mix(in srgb, var(--success) 24%, var(--theme-border)) !important;
+  background: color-mix(in srgb, var(--success) 9%, var(--theme-surface)) !important;
+}
+
+/* Category type selector: readable dark text in light mode, with the active
+   palette used only for hover/open states. */
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger {
+  background: var(--theme-surface) !important;
+  background-color: var(--theme-surface) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  -webkit-text-fill-color: var(--theme-text) !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:hover,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:focus-visible,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] {
+  background: var(--theme-primary-soft) !important;
+  background-color: var(--theme-primary-soft) !important;
+  border-color: var(--theme-primary-strong) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:hover *,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:focus-visible *,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] * {
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger > span,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger > i {
+  color: #343041 !important;
+  -webkit-text-fill-color: #343041 !important;
+}
+
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:hover > span,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:hover > i,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:focus-visible > span,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger:focus-visible > i,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] > span,
+html[data-theme="light"][data-theme-color] .category-type-select .select-trigger[aria-expanded="true"] > i {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* In light mode a selected category icon keeps the chosen category color;
+   only its container state changes. */
+html[data-theme="light"][data-theme-color] .icon-grid button.selected,
+html[data-theme="light"][data-theme-color] .icon-grid button.selected i,
+html[data-theme="light"][data-theme-color] .icon-grid button.selected svg {
+  color: var(--picker-color, var(--theme-primary-strong)) !important;
+  border-color: var(--picker-color, var(--theme-primary-strong)) !important;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Some button resets remove the visible border even when border-color is set.
+   The inset ring restores the original, unmistakable theme outline. */
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:hover,
+html[data-theme="light"][data-theme-color] .select-menu > button.select-option:focus-visible,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:hover,
+html[data-theme="light"][data-theme-color] .category-select-menu > button:focus-visible {
+  border: 1px solid var(--theme-primary-strong) !important;
+  box-shadow: inset 0 0 0 1px var(--theme-primary-strong) !important;
+  color: var(--theme-primary-strong) !important;
+  -webkit-text-fill-color: var(--theme-primary-strong) !important;
+}
+
+/* The global button hover paints primary backgrounds. Keep the reminder
+   remove control as a bare themed × in every interactive state. */
+html[data-theme="light"] .notification-time-field .notification-time-slots .notification-time-slot > button.notification-time-remove:hover,
+html[data-theme="light"] .notification-time-field .notification-time-slots .notification-time-slot > button.notification-time-remove:focus,
+html[data-theme="light"] .notification-time-field .notification-time-slots .notification-time-slot > button.notification-time-remove:focus-visible,
+html[data-theme="light"] .notification-time-field .notification-time-slots .notification-time-slot > button.notification-time-remove:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: var(--theme-primary-strong) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Keep the bare × unpainted on hover/focus in both themes. */
+html[data-theme] .notification-reminder-card .notification-time-slots .notification-time-slot > button.notification-time-remove,
+html[data-theme] .notification-reminder-card .notification-time-slots .notification-time-slot > button.notification-time-remove:hover,
+html[data-theme] .notification-reminder-card .notification-time-slots .notification-time-slot > button.notification-time-remove:focus,
+html[data-theme] .notification-reminder-card .notification-time-slots .notification-time-slot > button.notification-time-remove:focus-visible,
+html[data-theme] .notification-reminder-card .notification-time-slots .notification-time-slot > button.notification-time-remove:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }

@@ -109,7 +109,7 @@ function TransactionDatePicker({
   const isYearAllowed = (calendarYear: number) => calendarYear >= firstYear && calendarYear <= lastYear;
 
   useEffect(() => {
-    if (selectedDate) setDateSlots(dateSlotsFromIso(value));
+    setDateSlots(dateSlotsFromIso(value));
   }, [value]);
 
   useEffect(() => {
