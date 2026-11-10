@@ -7,10 +7,15 @@ const prisma = new PrismaClient();
 
 try {
   const [migrationTable] = await prisma.$queryRaw`
-    SELECT to_regclass(current_schema() || '._prisma_migrations') AS name
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.tables
+      WHERE table_schema = current_schema()
+        AND table_name = '_prisma_migrations'
+    ) AS present
   `;
 
-  if (migrationTable?.name) {
+  if (migrationTable?.present) {
     const [failedMigration] = await prisma.$queryRaw`
       SELECT "finished_at", "rolled_back_at"
       FROM "_prisma_migrations"
