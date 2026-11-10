@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "prisma generate --schema ../../packages/api/prisma/schema.prisma && tsc -p tsconfig.json",
+    "build": "prisma migrate deploy --schema ../../packages/api/prisma/schema.prisma && prisma generate --schema ../../packages/api/prisma/schema.prisma && tsc -p tsconfig.json",
     "postinstall": "prisma generate --schema ../../packages/api/prisma/schema.prisma",
     "start": "node dist/apps/api/src/main.js"
   },
